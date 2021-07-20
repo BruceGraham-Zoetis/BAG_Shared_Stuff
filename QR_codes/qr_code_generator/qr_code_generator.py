@@ -1,9 +1,8 @@
 
 # pip3 install qrcode
-
 import qrcode
+from qrcode.main import QRCode
 
-strTestText = "100 characters\n012345678901234567890123456789012345678901234567890123456789012345678901234567890123"
 
 """
 The version parameter is an integer from 1 to 40 that controls the size of the QR Code.
@@ -37,18 +36,130 @@ The following four constants are made available on the qrcode package:
 
 The box_size parameter controls how many pixels each “box” of the QR code is.
 
-The border parameter controls how many boxes thick the border should be (the default is 4, which is the minimum according to the specs).
+The border parameter controls how many boxes thick the border should be.
+The default is 4, which is the minimum according to the specs.
 """
 
-qr = qrcode.QRCode(
-    version=1,
-    error_correction=qrcode.constants.ERROR_CORRECT_M,
-    box_size=10,
-    border=0,
-)
-qr.add_data(strTestText)
-qr.make(fit=True)
 
-img = qr.make_image(fill_color="black", back_color="white")
+def fncMakeFileData(iDataLength : int):
+    strTestText = str(iDataLength) + " characters\n"
+    iStrLen = len(strTestText)
+    chChar = 'A'
+    while (iStrLen < iDataLength):
+        strTestText += chChar
+        iStrLen = len(strTestText)
+        if ('Z' == chChar):
+            chChar = 'A'
+        else:
+            chChar = chr(ord(chChar) + 1)
+    return strTestText
 
-img.save("QR_label_100_chars.png")
+
+txDirectory_QR_Labels = "QR_labels/"
+# works
+# version 10, 400 chars
+# version 20, ?? chars
+# version 40, ?? chars
+
+class cLabel: 
+    def __init__(self, iVersion, iDataLength): 
+        self.iVersion = iVersion 
+        self.iDataLength = iDataLength
+   
+# creating list       
+list = [] 
+  
+# appending instances to list 
+
+# 10 mm -scanned at 3.5'
+#=======================================
+## Version 1 max theoretical limit: 14 Alphanumeric Chars
+#list.append( cLabel(1, 12) ) # pass 
+#list.append( cLabel(1, 13) ) # pass 
+#list.append( cLabel(1, 14) ) # pass 
+
+# Version 3 max theoretical limit: 53 Alphanumeric Chars
+#list.append( cLabel(3, 40) ) # pass
+#list.append( cLabel(3, 50) ) # pass
+#list.append( cLabel(3, 53) ) # pass
+
+# Version 4 max theoretical limit: 82 Alphanumeric Chars
+list.append( cLabel(4, 60) ) # fail
+list.append( cLabel(4, 70) ) # fail
+list.append( cLabel(4, 82) ) # fail
+
+# Version 5 max theoretical limit: 113 Alphanumeric Chars
+#list.append( cLabel(5, 100) ) # fail
+#list.append( cLabel(5, 110) ) # fail
+#list.append( cLabel(5, 113) ) # fail
+
+
+# 50 mm - scanned at 1.7'
+#=======================================
+## Version 1 max theoretical limit: 14 Alphanumeric Chars
+##list.append( cLabel(1, 12) ) # pass 
+##list.append( cLabel(1, 13) ) # pass 
+##list.append( cLabel(1, 14) ) # pass 
+
+## Version 10 max theoretical limit: 301 Alphanumeric Chars
+#list.append( cLabel(10, 100) ) # pass
+#list.append( cLabel(10, 150) ) # pass
+#list.append( cLabel(10, 200) ) # pass
+#list.append( cLabel(10, 250) ) # pass
+#list.append( cLabel(10, 300) ) # pass
+#list.append( cLabel(10, 301) ) # pass
+
+## Version 12 max theoretical limit: 408 Alphanumeric Chars
+#list.append( cLabel(12, 100) ) # pass
+#list.append( cLabel(12, 200) ) # pass
+#list.append( cLabel(12, 300) ) # pass
+#list.append( cLabel(12, 408) ) # pass
+
+## Version 14 max theoretical limit: 517 Alphanumeric Chars
+#list.append( cLabel(14, 100) ) # pass
+#list.append( cLabel(14, 200) ) # pass
+#list.append( cLabel(14, 300) ) # pass
+#list.append( cLabel(14, 517) ) # pass
+
+## Version 15 max theoretical limit: 590 Alphanumeric Chars
+#list.append( cLabel(15, 100) ) # fail
+#list.append( cLabel(15, 200) ) # fail
+#list.append( cLabel(15, 300) ) # fail
+#list.append( cLabel(15, 590) ) # fail
+
+## Version 10 max theoretical limit: 959 Alphanumeric Chars
+#list.append( cLabel(20, 100) ) # fail
+#list.append( cLabel(20, 200) ) # fail
+#list.append( cLabel(20, 400) ) # fail
+#list.append( cLabel(20, 800) ) # fail
+#list.append( cLabel(20, 959) ) # fail
+
+
+## Version 10 max theoretical limit: 3380 Alphanumeric Chars
+#list.append( cLabel(40, 100) ) # fail
+#list.append( cLabel(40, 500) ) # fail
+#list.append( cLabel(40, 1000) ) # fail
+#list.append( cLabel(40, 2000) ) # fail
+#list.append( cLabel(40, 3000) ) # fail
+#list.append( cLabel(40, 3380) ) # fail 
+
+  
+for obj in list:
+    print( obj.iVersion, obj.iDataLength, sep =' ' )
+
+    qr = qrcode.QRCode(
+        version=obj.iVersion,
+        error_correction=qrcode.constants.ERROR_CORRECT_M,
+        box_size=10,
+        border=0,
+    )
+    txfileName = "Ver_" + str(obj.iVersion) + "_" + str(obj.iDataLength) + "_chars.png"
+    txFilePath = txDirectory_QR_Labels + txfileName
+    strTestText = fncMakeFileData(obj.iDataLength)
+    qr.clear()
+    qr.add_data(strTestText)
+    qr.make(fit=False) # Don't 'fit' the data to a larger version.
+    img = qr.make_image(fill_color="black", back_color="white")
+    print("file:" + txFilePath)
+    img.save(txFilePath)
+
