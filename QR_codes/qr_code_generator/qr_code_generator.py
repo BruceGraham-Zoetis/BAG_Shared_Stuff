@@ -71,7 +71,7 @@ list = []
   
 # appending instances to list 
 
-# 10 mm -scanned at 3.5'
+# 10 mm -scanned on 3.5' box
 #=======================================
 ## Version 1 max theoretical limit: 14 Alphanumeric Chars
 #list.append( cLabel(1, 12) ) # pass 
@@ -94,7 +94,7 @@ list.append( cLabel(4, 82) ) # fail
 #list.append( cLabel(5, 113) ) # fail
 
 
-# 50 mm - scanned at 1.7'
+# 50 mm - scanned on 1.7' box
 #=======================================
 ## Version 1 max theoretical limit: 14 Alphanumeric Chars
 ##list.append( cLabel(1, 12) ) # pass 
@@ -127,7 +127,7 @@ list.append( cLabel(4, 82) ) # fail
 #list.append( cLabel(15, 300) ) # fail
 #list.append( cLabel(15, 590) ) # fail
 
-## Version 10 max theoretical limit: 959 Alphanumeric Chars
+## Version 20 max theoretical limit: 959 Alphanumeric Chars
 #list.append( cLabel(20, 100) ) # fail
 #list.append( cLabel(20, 200) ) # fail
 #list.append( cLabel(20, 400) ) # fail

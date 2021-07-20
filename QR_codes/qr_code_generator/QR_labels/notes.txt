@@ -2,4 +2,12 @@
 50mm = 1.9685 inches
 
 
+Used qr_code_generator.py to generate the QR labels images.
+Added images to the tables in the QR_labels/QR_labels.docx file.
+Sized the images in the table to 50mm x 50mm or 10mm x 10mm.
+Printed each page of the docx file.
+Cut out the QR images in the docx file.
+Recorded pass or fail in the qr_code_generator.py for each QR image.
+For 50mm x 50mm, the max density QR label was Version 14 (73x73), 517 chars
+For 10mm x 10mm, the max density QR label was Version 4 (33x33), 82 chars
 
