@@ -69,79 +69,29 @@ class cLabel:
 # creating list       
 list = [] 
   
-# appending instances to list 
+# appending instances to list with max Alphanumeric Chars
 
-# 10 mm -scanned on 3.5' box
-#=======================================
-## Version 1 max theoretical limit: 14 Alphanumeric Chars
-#list.append( cLabel(1, 12) ) # pass 
-#list.append( cLabel(1, 13) ) # pass 
-#list.append( cLabel(1, 14) ) # pass 
-
-# Version 3 max theoretical limit: 53 Alphanumeric Chars
-#list.append( cLabel(3, 40) ) # pass
-#list.append( cLabel(3, 50) ) # pass
-#list.append( cLabel(3, 53) ) # pass
-
-# Version 4 max theoretical limit: 82 Alphanumeric Chars
-list.append( cLabel(4, 60) ) # fail
-list.append( cLabel(4, 70) ) # fail
-list.append( cLabel(4, 82) ) # fail
-
-# Version 5 max theoretical limit: 113 Alphanumeric Chars
-#list.append( cLabel(5, 100) ) # fail
-#list.append( cLabel(5, 110) ) # fail
-#list.append( cLabel(5, 113) ) # fail
-
-
-# 50 mm - scanned on 1.7' box
-#=======================================
-## Version 1 max theoretical limit: 14 Alphanumeric Chars
-##list.append( cLabel(1, 12) ) # pass 
-##list.append( cLabel(1, 13) ) # pass 
-##list.append( cLabel(1, 14) ) # pass 
-
-## Version 10 max theoretical limit: 301 Alphanumeric Chars
-#list.append( cLabel(10, 100) ) # pass
-#list.append( cLabel(10, 150) ) # pass
-#list.append( cLabel(10, 200) ) # pass
-#list.append( cLabel(10, 250) ) # pass
-#list.append( cLabel(10, 300) ) # pass
-#list.append( cLabel(10, 301) ) # pass
-
-## Version 12 max theoretical limit: 408 Alphanumeric Chars
-#list.append( cLabel(12, 100) ) # pass
-#list.append( cLabel(12, 200) ) # pass
-#list.append( cLabel(12, 300) ) # pass
-#list.append( cLabel(12, 408) ) # pass
-
-## Version 14 max theoretical limit: 517 Alphanumeric Chars
-#list.append( cLabel(14, 100) ) # pass
-#list.append( cLabel(14, 200) ) # pass
-#list.append( cLabel(14, 300) ) # pass
-#list.append( cLabel(14, 517) ) # pass
-
-## Version 15 max theoretical limit: 590 Alphanumeric Chars
-#list.append( cLabel(15, 100) ) # fail
-#list.append( cLabel(15, 200) ) # fail
-#list.append( cLabel(15, 300) ) # fail
-#list.append( cLabel(15, 590) ) # fail
-
-## Version 20 max theoretical limit: 959 Alphanumeric Chars
-#list.append( cLabel(20, 100) ) # fail
-#list.append( cLabel(20, 200) ) # fail
-#list.append( cLabel(20, 400) ) # fail
-#list.append( cLabel(20, 800) ) # fail
-#list.append( cLabel(20, 959) ) # fail
-
-
-## Version 10 max theoretical limit: 3380 Alphanumeric Chars
-#list.append( cLabel(40, 100) ) # fail
-#list.append( cLabel(40, 500) ) # fail
-#list.append( cLabel(40, 1000) ) # fail
-#list.append( cLabel(40, 2000) ) # fail
-#list.append( cLabel(40, 3000) ) # fail
-#list.append( cLabel(40, 3380) ) # fail 
+list.append( cLabel(1, 14) )
+list.append( cLabel(3, 53) )
+list.append( cLabel(4, 82) )
+list.append( cLabel(5, 113) )
+list.append( cLabel(6, 145) )
+list.append( cLabel(7, 169) )
+list.append( cLabel(8, 212) )
+list.append( cLabel(9, 253) )
+list.append( cLabel(10, 301) )
+list.append( cLabel(12, 408) )
+list.append( cLabel(14, 517) )
+list.append( cLabel(15, 590) )
+list.append( cLabel(20, 959) )
+list.append( cLabel(25, 1440) )
+list.append( cLabel(30, 1983) )
+list.append( cLabel(31, 2102) )
+list.append( cLabel(32, 2227) )
+list.append( cLabel(33, 2358) )
+list.append( cLabel(34, 2495) )
+list.append( cLabel(35, 2621) )
+list.append( cLabel(40, 3380) )
 
   
 for obj in list:
