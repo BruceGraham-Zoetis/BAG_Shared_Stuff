@@ -80,7 +80,9 @@ list.append( cLabel(7, 169) )
 list.append( cLabel(8, 212) )
 list.append( cLabel(9, 253) )
 list.append( cLabel(10, 301) )
+list.append( cLabel(11, 356) )
 list.append( cLabel(12, 408) )
+list.append( cLabel(13, 472) )
 list.append( cLabel(14, 517) )
 list.append( cLabel(15, 590) )
 list.append( cLabel(20, 959) )
@@ -93,7 +95,14 @@ list.append( cLabel(34, 2495) )
 list.append( cLabel(35, 2621) )
 list.append( cLabel(40, 3380) )
 
-  
+"""
+# find max data length by trail and error
+iDataLength = 408
+while iDataLength < 517:
+    list.append( cLabel(13, iDataLength) )
+    iDataLength += 1
+"""
+
 for obj in list:
     print( obj.iVersion, obj.iDataLength, sep =' ' )
 

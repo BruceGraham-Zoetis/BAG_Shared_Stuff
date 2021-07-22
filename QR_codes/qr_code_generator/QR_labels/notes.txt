@@ -1,4 +1,5 @@
 10mm = 0.393701 inches
+20mm = 0.787402 inches
 50mm = 1.9685 inches
 
 
