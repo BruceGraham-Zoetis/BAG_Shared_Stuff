@@ -1,0 +1,1303 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "Analyzer and HUB API",
+        "version": "1.0",
+        "description": "The definition of the software interface between analyzers and the HUB.  The interface will be implemented as a RESTful interface with all server endpoints hosted on the Analyzer.\n\nThe following requirements will be met by all interfaces: \n1. All data passed back from server shall be in JSON format.  \n2.  All query parameters and JSON data properties shall be named with a prefix indicating data type: s-string, b-boolean, n-number, o-object, a-array of multiple types, ax-array of any of the other types where x denotes the types in the array.\n3.  All query parameters and JSON data properties shall be named using camel case. \n4. All data types that describe a measurement value shall end with an underscore followed by the unit of that physical value.  i.e. nMotorCurrent_mA.  \nNote: Naming conventions will not be met on error returns as those are handled by the base library."
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8080",
+            "description": "Release Data 30 APR 2021"
+        }
+    ],
+    "components": {
+        "headers": {},
+        "parameters": {
+            "sPartialVersionInfo": {
+                "name": "sPartialVersionInfo",
+                "in": "query",
+                "description": "The specific part of the analyzer version",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "enum": [
+                        "sAnalyzerID",
+                        "sAnalyzerType",
+                        "sAnalyzerSerialNumber",
+                        "sAnalyzerSoftwareVersion",
+                        "sAnalyzerFirmwareVersion",
+                        "sAnalyzerHardwareVersion"
+                    ]
+                }
+            },
+            "sPartialConfigurationInformation": {
+                "name": "sPartialConfigurationInformation",
+                "in": "query",
+                "description": "The specific part of the analyzer configuration",
+                "required": false,
+                "schema": {
+                    "type": "string"
+                }
+            },
+            "sStartTime": {
+                "name": "sStartTime",
+                "in": "query",
+                "description": "The time to start looking for results to return",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "description": "HH:MM:SS",
+                    "example": "23:13:01"
+                }
+            },
+            "sStartDate": {
+                "name": "sStartDate",
+                "in": "query",
+                "description": "The date to start looking for results to return",
+                "required": true,
+                "schema":{
+                    "type": "string",
+                    "description": "YYYY-MM-DD",
+                    "example": "2021-05-13"
+                }
+            },
+            "sEndTime": {
+                "name": "sEndTime",
+                "in": "query",
+                "description": "The time to stop looking for results to return",
+                "required": true,
+                "schema": {
+                    "type": "string",
+                    "description": "HH:MM:SS",
+                    "example": "06:05:23"
+                }
+            },
+            "sEndDate": {
+                "name": "sEndDate",
+                "in": "query",
+                "description": "The date to stop looking for results to return",
+                "required": true,
+                "schema":{
+                    "type": "string",
+                    "description": "YYYY-MM-DD",
+                    "example": "2021-05-15"
+                }
+            }
+        },
+        "schemas": {
+            "sAnalyzerID": {
+                "type": "string",
+                "description": "The ID of the analyzer"
+            },
+            "sAnalyzerType": {
+                "type": "string",
+                "description": "The type of analyzer ",
+                "enum": [
+                    "SPE",
+                    "LTF",
+                    "MOL"
+                ]
+            },
+            "sAnalyzerSerialNumber": {
+                "type": "string",
+                "description": "The serial number of the analyzer"
+            },
+            "sAnalyzerSoftwareVersion": {
+                "type": "string",
+                "description": "The version of the software that is currently running on the analyzer"
+            },
+            "sAnalyzerFirmwareVersion": {
+                "type": "string",
+                "description": "The version of the firmware that is currently running on the analyzer"
+            },
+            "sAnalyzerHardwareVersion": {
+                "type": "string",
+                "description": "The version of the hardware the the analyzer consists of"
+            },
+            "errorDetail": {
+                "type": "string",
+                "description": "A description of the problem with the request"
+            },
+            "errorStatus": {
+                "type": "number",
+                "description": "The number of the HTTP error code"
+            },
+            "errorTitle": {
+                "type": "string",
+                "description": "The title of the error indicated by the status"
+            },
+            "errorType": {
+                "type": "string",
+                "description": "Additional error information if available describing the type of error"
+            },
+            "sConsumableName": {
+                "type": "string",
+                "description": "A descriptive name of the consumable that can be used to uniquely identify it"
+            },
+            "oMeasurementResult": {
+                "type": "object",
+                "description": "This object will contain results of the most recent measurement",
+                "properties": {
+                    "sConsumableName": {
+                        "$ref": "#/components/schemas/sConsumableName"
+                    },
+                    "sStartDateAndTime": {
+                        "type": "string",
+                        "description": "The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS",
+                        "example": "05-05-2021 22:07:04"
+                    },
+                    "sEndDateAndTime": {
+                        "type": "string",
+                        "description": "The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS",
+                        "example": "05-05-2021 22:07:55"
+                    },
+                    "nDuration_sec": {
+                        "type": "number",
+                        "description": "The number of seconds the measurement took from start to end",
+                        "minimum": 0,
+                        "maximum": 9999
+                    },
+                    "sResult": {
+                        "type": "string",
+                        "description": "The overall result of the measurement",
+                        "enum": [
+                            "Failed",
+                            "Cancelled",
+                            "Completed"
+                        ]
+                    },
+                    "oTestResults": {
+                        "type": "object",
+                        "description": "The test results.  Will need to flush this out as we go on as to what this looks like"
+                    }
+                }
+            },
+            "sMeasurementID": {
+                "type": "string",
+                "description": "The ID value for a measurement"
+            },
+            "nElapsedTime_msec": {
+                "type":  "number",
+                "description": "The time the operation has taken so far",
+                "minimum": 0
+            },
+            "sMeasurementStatus": {
+                "type": "string",
+                "description": "The status of the measurement",
+                "enum": ["Initializing", "Running", "Aborted", "Stopping", "Complete"]
+            },
+            "sStatusDetail": {
+                "type": "string",
+                "description": "Additional information in plain text that describes the value status of the analyzer.  If no additional detail is available or necessary, this will be an empty string"
+            },
+            "oEventInfo":{
+                "type": "object",
+                "description": "This object will contain information about an event that occurred",
+                "properties": {
+                    "sActivationTime": {
+                        "type": "string",
+                        "description": "The local date and time the event was activated in format MM-DD-YYYY HH:MM:SS",
+                        "example": "05-05-2021 22:07:04"
+                    },
+                    "sSeverity": {
+                        "type": "string",
+                        "description": "A string value indicating the severity of the event",
+                        "enum": ["Notification", "Warning", "Error", "Halt"]
+                    },
+                    "sEventName": {
+                        "type": "string",
+                        "description": "The name of the event"
+                    },
+                    "sEventAdditionalInformation": {
+                        "type": "string",
+                        "description": "Additional information to describe the event that has occurred.  This can be anything that will help the operator understand in more detail the event"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "MeasurementStatus": {
+                "description": "This response is sent to notify the HUB of the status of a measurement that was requested to start, cancel, or whose status is being queried",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "sMeasurementID":{
+                                    "$ref": "#/components/schemas/sMeasurementID"
+                                },
+                                "nElapsedTime_msec":{
+                                    "$ref": "#/components/schemas/nElapsedTime_msec"
+                                },
+                                "sMeasurementStatus":{
+                                    "$ref": "#/components/schemas/sMeasurementStatus"
+                                },
+                                "sStatusDetail":{
+                                    "$ref": "#/components/schemas/sStatusDetail"
+                                }
+                            },
+                            "required": [
+                                "sMeasurementID",
+                                "nElapsedTime_msec",
+                                "sMeasurementStatus",
+                                "sStatusDetail"
+                            ]
+                        }
+                    }
+                }
+            },
+            "400_BadRequest": {
+                "description": "This response is sent to a request that violates the predefined request schema",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "detail":{
+                                    "$ref": "#/components/schemas/errorDetail"
+                                },
+                                "status": {
+                                    "$ref": "#/components/schemas/errorStatus",
+                                    "enum": [400]
+                                },
+                                "title": {
+                                    "$ref": "#/components/schemas/errorTitle",
+                                    "enum": ["Bad Request"]
+                                },
+                                "type": {
+                                    "$ref": "#/components/schemas/errorType"
+                                }
+                            },
+                            "required": [
+                                "detail",
+                                "status",
+                                "title",
+                                "type"
+                            ]
+                        }
+                    }
+                }
+            },
+            "404_BadRequest": {
+                "description": "This response is sent to a request to a server endpoint that is not defined",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "detail":{
+                                    "$ref": "#/components/schemas/errorDetail"
+                                },
+                                "status": {
+                                    "$ref": "#/components/schemas/errorStatus",
+                                    "enum": [404]
+                                },
+                                "title": {
+                                    "$ref": "#/components/schemas/errorTitle",
+                                    "enum": ["Not Found"]
+                                },
+                                "type": {
+                                    "$ref": "#/components/schemas/errorType"
+                                }
+                            },
+                            "required": [
+                                "detail",
+                                "status",
+                                "title",
+                                "type"
+                            ]
+                        }
+                    }
+                }
+            },
+            "405_MethodNotAllowed":{
+                "description": "This response is sent to any request sent to a valid location but with an method that is not supported",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "detail":{
+                                    "$ref": "#/components/schemas/errorDetail"
+                                },
+                                "status": {
+                                    "$ref": "#/components/schemas/errorStatus",
+                                    "enum": [405]
+                                },
+                                "title": {
+                                    "$ref": "#/components/schemas/errorTitle",
+                                    "enum": ["Method Not Allowed"]
+                                },
+                                "type": {
+                                    "$ref": "#/components/schemas/errorType"
+                                }
+                            },
+                            "required": [
+                                "detail",
+                                "status",
+                                "title",
+                                "type"
+                            ]
+                        }
+                    }
+                }
+            },
+            "500_BadRequest": {
+                "description": "This response is sent to any request whose subsequent server response violates the predefined response schema",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "detail":{
+                                    "$ref": "#/components/schemas/errorDetail"
+                                },
+                                "status": {
+                                    "$ref": "#/components/schemas/errorStatus",
+                                    "enum": [500]
+                                },
+                                "title": {
+                                    "$ref": "#/components/schemas/errorTitle",
+                                    "enum": ["Response body does not conform to specification"]
+                                },
+                                "type": {
+                                    "$ref": "#/components/schemas/errorType"
+                                }
+                            },
+                            "required": [
+                                "detail",
+                                "status",
+                                "title",
+                                "type"
+                            ]
+                        }
+                    }
+                }
+            },
+            "503_ServiceUnavailable": {
+                "description": "This response is sent to any request that the analyzer is unable to do at the time",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "detail":{
+                                    "$ref": "#/components/schemas/errorDetail"
+                                },
+                                "status": {
+                                    "$ref": "#/components/schemas/errorStatus",
+                                    "enum": [503]
+                                },
+                                "title": {
+                                    "$ref": "#/components/schemas/errorTitle",
+                                    "enum": ["Service Unavailable"]
+                                },
+                                "type": {
+                                    "$ref": "#/components/schemas/errorType"
+                                }
+                            },
+                            "required": [
+                                "detail",
+                                "status",
+                                "title",
+                                "type"
+                            ]
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/Config/FullVersion": {
+            "get": {
+                "operationId": "channel_config.get_config_full_version",
+                "tags": [
+                    "Config Channel"
+                ],
+                "description": "The HUB is requesting the analyzer send all information about its version",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer response with all version information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "sAnalyzerID": {
+                                            "$ref": "#/components/schemas/sAnalyzerID"
+                                        },
+                                        "sAnalyzerType": {
+                                            "$ref": "#/components/schemas/sAnalyzerType"
+                                        },
+                                        "sAnalyzerSerialNumber": {
+                                            "$ref": "#/components/schemas/sAnalyzerSerialNumber"
+                                        },
+                                        "sAnalyzerSoftwareVersion": {
+                                            "$ref": "#/components/schemas/sAnalyzerSoftwareVersion"
+                                        },
+                                        "sAnalyzerFirmwareVersion": {
+                                            "$ref": "#/components/schemas/sAnalyzerFirmwareVersion"
+                                        },
+                                        "sAnalyzerHardwareVersion": {
+                                            "$ref": "#/components/schemas/sAnalyzerHardwareVersion"
+                                        }
+                                    },
+                                    "required": [
+                                        "sAnalyzerID",
+                                        "sAnalyzerType",
+                                        "sAnalyzerSerialNumber",
+                                        "sAnalyzerSoftwareVersion",
+                                        "sAnalyzerFirmwareVersion",
+                                        "sAnalyzerHardwareVersion"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Config/PartialVersion": {
+            "get": {
+                "operationId": "channel_config.get_config_partial_version",
+                "tags": [
+                    "Config Channel"
+                ],
+                "description": "The HUB is requesting the Analyzer send a single part of the its version information",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/sPartialVersionInfo"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analyzer is responding with a single part of its version information as requested",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "oneOf": [
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerID": {
+                                                    "$ref": "#/components/schemas/sAnalyzerID"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerID"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerType": {
+                                                    "$ref": "#/components/schemas/sAnalyzerType"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerType"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerSerialNumber": {
+                                                    "$ref": "#/components/schemas/sAnalyzerSerialNumber"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerSerialNumber"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerSoftwareVersion": {
+                                                    "$ref": "#/components/schemas/sAnalyzerSoftwareVersion"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerSoftwareVersion"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerFirmwareVersion": {
+                                                    "$ref": "#/components/schemas/sAnalyzerFirmwareVersion"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerFirmwareVersion"
+                                            ]
+                                        },
+                                        {
+                                            "type": "object",
+                                            "properties": {
+                                                "sAnalyzerHardwareVersion": {
+                                                    "$ref": "#/components/schemas/sAnalyzerHardwareVersion"
+                                                }
+                                            },
+                                            "required": [
+                                                "sAnalyzerHardwareVersion"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Config/Configuration": {
+            "get": {
+                "operationId": "channel_config.get_config_configuration",
+                "tags": [
+                    "Config Channel"
+                ],
+                "description": "The HUB is requesting the analyzer send configuration",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/sPartialConfigurationInformation"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analyzer response with the configuration information the HUB requested",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            },
+            "put": {
+                "operationId": "channel_config.put_config_configuration",
+                "tags": [
+                    "Config Channel"
+                ],
+                "description": "The HUB is requesting the analyzer set a specific configuration values",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "description": "An object containing all the key value pairs that the HUB would like to update on the analyzer"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Analyzer successfully made configuration changes requested by the HUB"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/RemoteControl/LightBlink": {
+            "put": {
+                "operationId": "channel_remote_control.put_remote_control_light_blink",
+                "tags": [
+                    "RemoteControl Channel"
+                ],
+                "description": "Cause an analyzer to blink its light ring.  The purpose of this is to identify an analyzer. If you have multiple analyzers of the same kind it is nice to have a way to get a visual que which is which instead of having to read the serial number of each analyzer to identify it.",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer was successful blinking the light ring as requested by the HUB"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Power/Reboot": {
+            "put": {
+                "operationId": "channel_power.put_power_reboot",
+                "tags": [
+                    "Power Channel"
+                ],
+                "description": "Request sent from the HUB to reboot the analyzer (power off and power back on), leaving all settings and data intact",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer successfully initiated a reboot"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Power/On": {
+            "put": {
+                "operationId": "channel_power.put_power_on",
+                "tags": [
+                    "Power Channel"
+                ],
+                "description": "Go from a state of no power to powered. The Dx Modules don't support wake on LAN, so this will mean return from low power mode",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer successfully powered on or woke up"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Power/Off": {
+            "put": {
+                "operationId": "channel_power.put_power_off",
+                "tags": [
+                    "Power Channel"
+                ],
+                "description": "Go from a state of powered to no power. This behavior of this action will depend on what a particular analyzer supports. If it doesn't support power off, go to 'deep sleep' mode",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer successfully began to power off or go to sleep"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Maintenance/FactoryReset": {
+            "put": {
+                "operationId": "channel_maintenance.put_maintenance_factory_reset",
+                "tags": [
+                    "Maintenance Channel"
+                ],
+                "description": "Restore the analyzer to the state it was in when it left the factory. All settings and data are removed.",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer successfully began a factory reset"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/SupportedConsumables": {
+            "get": {
+                "operationId": "channel_measurement.get_measurement_supported_consumables",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "Return a list of all consumable types the analyzer supports. Each consumable returned will include a universally unique identifier, which will be used by the IC when starting a measurement. Any information required to run a consumable will be described in the response using the JSON Schema format (https://json-schema.org/).",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer is responding the HUB with a detailed list of all supported consumables.",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "aoSupportedConsumables": {
+                                            "type": "array",
+                                            "description": "An array of objects describing the consumables supported by this analyzer.  Each item in the array represents a distinct type of consumable and should be validated by its own specific JSON schema.  If there was an error retrieving this information, this will be returned as an empty array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "sName": {
+                                                        "$ref": "#/components/schemas/sConsumableName"
+                                                    },
+                                                    "sUUID": {
+                                                        "type": "string",
+                                                        "description": "A unique identifier for the consumable"
+                                                    },
+                                                    "sType": {
+                                                        "type": "string",
+                                                        "description": "The general type of consumable",
+                                                        "enum": [
+                                                            "Cartridge"
+                                                        ]
+                                                    },
+                                                    "sSpecies": {
+                                                        "type": "string",
+                                                        "description": "A list of the species this consumable may be used for",
+                                                        "enum": [
+                                                            "Cat",
+                                                            "Dog",
+                                                            "Parrot",
+                                                            "Trout",
+                                                            "Cow",
+                                                            "Pig",
+                                                            "Chicken",
+                                                            "Sheep"
+                                                        ]
+                                                    },
+                                                    "sDuration_sec": {
+                                                        "type": "number",
+                                                        "description": "The number of seconds this consumable is expected to take to complete measurement",
+                                                        "minimum": 0,
+                                                        "maximum": 9999
+                                                    },
+                                                    "asAssays": {
+                                                        "type": "array",
+                                                        "description": "A string list of all the supported assays",
+                                                        "items": {
+                                                            "type": "string",
+                                                            "enum": [
+                                                                "PT",
+                                                                "aPTT",
+                                                                "Phenobarbitol"
+                                                            ]
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "aoSupportedConsumables"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/ByScript": {
+            "post": {
+                "operationId": "channel_measurement.post_measurement_by_script",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "Start an analyzer measurement script sent as a string.  This is intended for R&D use only and should not be used during normal operation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "sScript": {
+                                        "type": "string",
+                                        "description": "This string will contain a script that the analyzer will consume and begin the execution of"
+                                    }
+                                },
+                                "required": [
+                                    "sScript"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/MeasurementStatus"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/ByFile": {
+            "post": {
+                "operationId": "channel_measurement.post_measurement_by_file",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "Start an analyzer measurement script as described in a file stored on the analyzer.  This is intended for R&D use only and should not be used during normal operation",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "sFilename": {
+                                        "type": "string",
+                                        "description": "This string will the full path to the file that stores the measurement script as it is stored on the analyzer"
+                                    }
+                                },
+                                "required": [
+                                    "sFilename"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/MeasurementStatus"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/Normal": {
+            "post": {
+                "operationId": "channel_measurement.post_measurement_normal",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "Start an analyzer measurement",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "sConsumableName": {
+                                        "$ref": "#/components/schemas/sConsumableName"
+                                    }
+                                },
+                                "required": [
+                                    "sConsumableName"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/MeasurementStatus"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/Status": {
+            "get": {
+                "operationId": "channel_measurement.get_measurement_status",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "The HUB is requesting the analyzer return the status of the current measurement being performed",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/MeasurementStatus"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/Cancel": {
+            "delete": {
+                "operationId": "channel_measurement.delete_measurement_cancel",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "The HUB is requesting the analyzer cancel the measurement that is currently being performed",
+                "responses": {
+                    "200": {
+                        "$ref": "#/components/responses/MeasurementStatus"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/Result": {
+            "get": {
+                "operationId": "channel_measurement.get_measurement_result",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "The HUB requests that the analyzer return the result of the most recent measurement performed",
+                "responses": {
+                    "200": {
+                        "description": "The analyzer is sending the HUB the results of the most recent measurement performed",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref":  "#/components/schemas/oMeasurementResult"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Measurement/PastResults": {
+            "get": {
+                "operationId": "channel_measurement.get_measurement_past_results",
+                "tags": [
+                    "Measurement Channel"
+                ],
+                "description": "The HUB is requesting the analyzer send past results between two times",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/sStartTime"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sStartDate"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sEndTime"
+                    },
+                    {
+                        "$ref": "#/components/parameters/sEndDate"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Analyzer is responding with the results of all measurements taken between the times in the request",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "aoMeasurementResults": {
+                                            "type": "array",
+                                            "description": "An array of measurement result objects that were taken in between the times sent in the request.  If there are no historical results to report, this will return as an empty array",
+                                            "items": {
+                                                "$ref": "#/components/schemas/oMeasurementResult"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "aoMeasurementResults"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Status/Operational": {
+            "get": {
+                "operationId": "channel_status.get_status_operational",
+                "tags": [
+                    "Status Channel"
+                ],
+                "description": "The HUB can use send this message to get the status of an analyzer",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer is responding with its status",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "sStatus": {
+                                            "type": "string",
+                                            "description": "The status of the analyzer",
+                                            "enum": [
+                                                "NotReady",
+                                                "Ready",
+                                                "Analyzing",
+                                                "UserActionNeeded",
+                                                "Advisory",
+                                                "TestComplete"
+                                            ]
+                                        }
+                                    },
+                                    "required": [
+                                        "sStatus"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        },
+        "/Status/CurrentlyActivatedEvents": {
+            "get": {
+                "operationId": "channel_status.get_status_currently_activated_events",
+                "tags": [
+                    "Status Channel"
+                ],
+                "description": "The HUB is requesting the analyzer respond with a list of all currently activated events",
+                "responses": {
+                    "200": {
+                        "description": "Analyzer is responding with a list of all currently activated events",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "aoCurrentlyActivatedEvents": {
+                                            "type": "array",
+                                            "description": "An array of all events that are currently activated",
+                                            "items": {
+                                                "$ref":  "#/components/schemas/oEventInfo"
+                                            }
+                                        }
+                                    },
+                                    "required": [
+                                        "aoCurrentlyActivatedEvents"
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_BadRequest"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/404_BadRequest"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405_MethodNotAllowed"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500_BadRequest"
+                    }, 
+                    "503": {
+                        "$ref": "#/components/responses/503_ServiceUnavailable"
+                    }
+                }
+            }
+        }
+    }
+}
