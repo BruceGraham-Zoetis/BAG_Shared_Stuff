@@ -42,16 +42,18 @@ The default is 4, which is the minimum according to the specs.
 
 
 def fncMakeFileData(iDataLength : int):
-    strTestText = str(iDataLength) + " characters\n"
-    iStrLen = len(strTestText)
+    iStrLen = 0
     chChar = 'A'
+    strTestText = ""
+
     while (iStrLen < iDataLength):
         strTestText += chChar
-        iStrLen = len(strTestText)
+        iStrLen += 1
         if ('Z' == chChar):
             chChar = 'A'
         else:
             chChar = chr(ord(chChar) + 1)
+
     return strTestText
 
 
@@ -69,56 +71,40 @@ class cLabel:
 # creating list       
 list = [] 
   
-# appending instances to list with max Alphanumeric Chars
-
-list.append( cLabel(1, 14) )
-list.append( cLabel(3, 53) )
-list.append( cLabel(4, 82) )
-list.append( cLabel(5, 113) )
-list.append( cLabel(6, 145) )
-list.append( cLabel(7, 169) )
-list.append( cLabel(8, 212) )
-list.append( cLabel(9, 253) )
-list.append( cLabel(10, 301) )
-list.append( cLabel(11, 356) )
-list.append( cLabel(12, 408) )
-list.append( cLabel(13, 472) )
-list.append( cLabel(14, 517) )
-list.append( cLabel(15, 590) )
-list.append( cLabel(20, 959) )
-list.append( cLabel(25, 1440) )
-list.append( cLabel(30, 1983) )
-list.append( cLabel(31, 2102) )
-list.append( cLabel(32, 2227) )
-list.append( cLabel(33, 2358) )
-list.append( cLabel(34, 2495) )
-list.append( cLabel(35, 2621) )
-list.append( cLabel(40, 3380) )
-
-"""
 # find max data length by trail and error
-iDataLength = 408
-while iDataLength < 517:
-    list.append( cLabel(13, iDataLength) )
-    iDataLength += 1
-"""
+iDataLength = 10
+iVersion = 1
+chChar = 'A'
 
-for obj in list:
-    print( obj.iVersion, obj.iDataLength, sep =' ' )
-
+while iVersion <= 40:
     qr = qrcode.QRCode(
-        version=obj.iVersion,
+        version=iVersion,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
         box_size=10,
         border=0,
     )
-    txfileName = "Ver_" + str(obj.iVersion) + "_" + str(obj.iDataLength) + "_chars.png"
-    txFilePath = txDirectory_QR_Labels + txfileName
-    strTestText = fncMakeFileData(obj.iDataLength)
-    qr.clear()
-    qr.add_data(strTestText)
-    qr.make(fit=False) # Don't 'fit' the data to a larger version.
-    img = qr.make_image(fill_color="black", back_color="white")
-    print("file:" + txFilePath)
-    img.save(txFilePath)
+
+    while iDataLength < 3400:
+        qr.clear()
+        strTestText = fncMakeFileData(iDataLength)
+        qr.add_data(strTestText)
+
+        try:
+            qr.make(fit=False) # Don't 'fit' the data to a larger version.
+        except:
+            print("Ver: " + str(iVersion) + " " + str(iDataLength - 1))
+
+            qr.clear()
+            strTestText = fncMakeFileData(iDataLength - 1)
+            qr.add_data(strTestText)
+            qr.make(fit=False) # Don't 'fit' the data to a larger version.
+            img = qr.make_image(fill_color="black", back_color="white")
+
+            txfileName = "Ver_" + str(iVersion) + "_" + str(iDataLength - 1) + "_chars.png"
+            txFilePath = txDirectory_QR_Labels + txfileName
+            img.save(txFilePath)
+            break
+        iDataLength += 1
+
+    iVersion += 1
 
