@@ -3,6 +3,10 @@
 import qrcode
 from qrcode.main import QRCode
 
+# seed the pseudorandom number generator
+from random import seed
+from random import random
+from random import randrange
 
 """
 The version parameter is an integer from 1 to 40 that controls the size of the QR Code.
@@ -40,43 +44,40 @@ The border parameter controls how many boxes thick the border should be.
 The default is 4, which is the minimum according to the specs.
 """
 
+txtMinTestText = "{\n\"exp\":\"2022-05-27\",\n\"name\":\"CDP\",\n\"lot\":\"500-1038\",\n\"data\":\""
+txtTestData = ""
 
 def fncMakeFileData(iDataLength : int):
-    iStrLen = 0
-    chChar = 'A'
-    strTestText = ""
+    strTestText = txtMinTestText
 
-    while (iStrLen < iDataLength):
-        strTestText += chChar
-        iStrLen += 1
-        if ('Z' == chChar):
-            chChar = 'A'
-        else:
-            chChar = chr(ord(chChar) + 1)
+    # -2 for ending "\n}
+    iRemainder = iDataLength - len(txtMinTestText) -3
+
+    if (0 < iRemainder):
+        strTestText += txtTestData[:iRemainder]
+
+    strTestText += "\"\n}"
 
     return strTestText
 
 
 txDirectory_QR_Labels = "QR_labels/"
-# works
-# version 10, 400 chars
-# version 20, ?? chars
-# version 40, ?? chars
 
-class cLabel: 
-    def __init__(self, iVersion, iDataLength): 
-        self.iVersion = iVersion 
-        self.iDataLength = iDataLength
-   
-# creating list       
-list = [] 
-  
+# build random data string of numbers
+# seed random number generator
+seed(1)
+print("Building random data numbers")
+for iCount in range(0, 3391):
+    txtTestData += str(randrange(0, 9))
+
 # find max data length by trail and error
-iDataLength = 10
+iDataLength = len(txtMinTestText) + 3
 iVersion = 1
 chChar = 'A'
+bFirstTestForVerison = True
 
 while iVersion <= 40:
+
     qr = qrcode.QRCode(
         version=iVersion,
         error_correction=qrcode.constants.ERROR_CORRECT_M,
@@ -91,8 +92,14 @@ while iVersion <= 40:
 
         try:
             qr.make(fit=False) # Don't 'fit' the data to a larger version.
+            bFirstTestForVerison = False
         except:
-            print("Ver: " + str(iVersion) + " " + str(iDataLength - 1))
+            if (bFirstTestForVerison):
+                print("Version " + str(iVersion) + " does not fit min data length " + str(iDataLength))
+                bFirstTestForVerison = True
+                break
+
+            print("Version: " + str(iVersion) + " " + str(iDataLength - 1) + "\n" + strTestText)
 
             qr.clear()
             strTestText = fncMakeFileData(iDataLength - 1)
@@ -107,4 +114,6 @@ while iVersion <= 40:
         iDataLength += 1
 
     iVersion += 1
+    bFirstTestForVerison = True
+
 
