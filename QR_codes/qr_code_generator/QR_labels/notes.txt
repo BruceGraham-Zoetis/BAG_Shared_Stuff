@@ -6,4 +6,10 @@ sudo pip install Pillow
 sudo pip install opencv-python
 sudo pip install pyzbar
 
-	 
+TODO
+==============
+Use binary search to minimize determining max size for a given amount of data.
+Create a label with: alpha only, number only, special (binary?)
+
+
+

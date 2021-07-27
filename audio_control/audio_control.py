@@ -15,12 +15,20 @@ import alsaaudio
 >>> newVol
 [60L]
 
+TODO - SEE 
+import alsaaudio
+m = alsaaudio.Mixer(alsaaudio.mixers[0]) # alsaaudio.mixers = ["PCM"] for me.
+m.setvolume(90) # Or whatever
+
+
 """
 
 from subprocess import call
 
 """
 Uses amixer to set the Master Volume as a percent of max volume.
+amixer - see https://linux.die.net/man/1/amixer
+
 @param[in] iPercent - percentage from 0 to 100
 @returns True - success
 @returns False - failed to set volume

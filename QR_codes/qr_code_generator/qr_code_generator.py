@@ -3,117 +3,166 @@
 import qrcode
 from qrcode.main import QRCode
 
-# seed the pseudorandom number generator
+# pseudorandom number generator
 from random import seed
 from random import random
 from random import randrange
 
-"""
-The version parameter is an integer from 1 to 40 that controls the size of the QR Code.
-
-Version	Modules	Error Correction	Data bits	Numeric	Alphanumeric	Binary
-    1	21x21	L	                152	        41	    25	            17
-                M	                128	        34	    20	            14
-                Q	                104     	27	    16	            11
-                H	                72	        17	    10	            7
-
-    40	177x177	L	                23.648	    7.089	4.296	        2.953
-                M	                18.672	    5.596	3.391	        2,331
-                Q	                13.328	    3.993	2,420	        1.663
-                H	                10.208	    3,057	1.852	        1.273
-
-    
-Set to None and use the fit parameter when making the code to determine this automatically.
-See https://blog.qr4.nl/page/QR-Code-Data-Capacity.aspx for versions and max data.
-
-fill_color and back_color can change the background and the painting color of the QR, when using the default image factory.
-Both parameters accept RGB color tuples.
-
-img = qr.make_image(back_color=(255, 195, 235), fill_color=(55, 95, 35))
-
-The error_correction parameter controls the error correction used for the QR Code.
-The following four constants are made available on the qrcode package:
-    ERROR_CORRECT_L - About 7% or less errors can be corrected.
-    ERROR_CORRECT_M (default) - About 15% or less errors can be corrected.
-    ERROR_CORRECT_Q - About 25% or less errors can be corrected.
-    ERROR_CORRECT_H - About 30% or less errors can be corrected.
-
-The box_size parameter controls how many pixels each “box” of the QR code is.
-
-The border parameter controls how many boxes thick the border should be.
-The default is 4, which is the minimum according to the specs.
-"""
+import os
 
 txtMinTestText = "{\n\"exp\":\"2022-05-27\",\n\"name\":\"CDP\",\n\"lot\":\"500-1038\",\n\"data\":\""
-txtTestData = ""
 
-def fncMakeFileData(iDataLength : int):
+
+def fncMakeJsonData(TestData, iDataLength : int):
     strTestText = txtMinTestText
 
     # -2 for ending "\n}
     iRemainder = iDataLength - len(txtMinTestText) -3
 
     if (0 < iRemainder):
-        strTestText += txtTestData[:iRemainder]
+        strTestText += TestData[:iRemainder]
 
     strTestText += "\"\n}"
 
     return strTestText
 
 
-txDirectory_QR_Labels = "QR_labels/"
+def fncMakeRawData(TestData, iDataLength : int):
+    strTestText = TestData[:iDataLength]
+    return strTestText
 
-# build random data string of numbers
-# seed random number generator
-seed(1)
-print("Building random data numbers")
-for iCount in range(0, 3391):
-    txtTestData += str(randrange(0, 9))
 
 # find max data length by trail and error
-iDataLength = len(txtMinTestText) + 3
-iVersion = 1
-chChar = 'A'
-bFirstTestForVerison = True
+def findAndSaveMaxImage(txtDirectory : str, bUseJson : bool, TestData):
+    txtFilePath = os.getcwd()
+    txtFilePath += "/"
+    txtFilePath += txtDirectory
 
-while iVersion <= 40:
+    if (not os.path.isdir(txtFilePath)):
+        os.mkdir(txtFilePath)
 
-    qr = qrcode.QRCode(
-        version=iVersion,
-        error_correction=qrcode.constants.ERROR_CORRECT_M,
-        box_size=10,
-        border=0,
-    )
+    file = open(txtFilePath + "version_sizes.txt", "wt")
+    file.write("File: " + txtFilePath + "version_sizes.txt" + "\n")
 
-    while iDataLength < 3400:
-        qr.clear()
-        strTestText = fncMakeFileData(iDataLength)
-        qr.add_data(strTestText)
+    iDataLength = len(txtMinTestText) + 3
+    iVersion = 1
 
-        try:
-            qr.make(fit=False) # Don't 'fit' the data to a larger version.
-            bFirstTestForVerison = False
-        except:
-            if (bFirstTestForVerison):
-                print("Version " + str(iVersion) + " does not fit min data length " + str(iDataLength))
-                bFirstTestForVerison = True
-                break
+    iLow = 0
+    iHigh = 5000
+    bFit = False
 
-            print("Version: " + str(iVersion) + " " + str(iDataLength - 1) + "\n" + strTestText)
+    while iVersion <= 40:
 
+        qr = qrcode.QRCode(
+            version=iVersion,
+            error_correction=qrcode.constants.ERROR_CORRECT_M,
+            #error_correction=qrcode.constants.ERROR_CORRECT_L,
+            box_size=1, # 1 pixel per box in the saved image. A version 11 png will be 37 x 37 pixels
+            border=0, # no border around the saved png image.
+        )
+
+        while (True): 
             qr.clear()
-            strTestText = fncMakeFileData(iDataLength - 1)
+            if (bUseJson):
+                strTestText = fncMakeJsonData(TestData, iDataLength)
+            else:
+                strTestText = fncMakeRawData(TestData, iDataLength)
             qr.add_data(strTestText)
-            qr.make(fit=False) # Don't 'fit' the data to a larger version.
-            img = qr.make_image(fill_color="black", back_color="white")
 
-            txfileName = "Ver_" + str(iVersion) + "_" + str(iDataLength - 1) + "_chars.png"
-            txFilePath = txDirectory_QR_Labels + txfileName
-            img.save(txFilePath)
-            break
-        iDataLength += 1
+            try:
+                qr.make(fit=False) # Don't 'fit' the data to a larger version.
+                bFit = True
+            except:
+                bFit = False
 
-    iVersion += 1
-    bFirstTestForVerison = True
+            if (bFit):
+                # try between iDataLength and iHigh
+                # iDataLength:20 + iHigh:30 / 2 = 25
+                iLow = iDataLength
+                iTried = iDataLength
+                iDataLength = (iDataLength + iHigh) // 2
+                #print("fit " + str(iTried) + "  Try " + str(iDataLength))
+                if ((iTried + 1) == iHigh):
+                    print("Version: " + str(iVersion) + " Length: " + str(iDataLength))
+                    # print("JSON: " + strTestText)
+
+                    qr.clear()
+                    if (bUseJson):
+                        strTestText = fncMakeJsonData(TestData, iDataLength)
+                    else:
+                        strTestText = fncMakeRawData(TestData, iDataLength)
+                    qr.add_data(strTestText)
+                    qr.make(fit=False) # Don't 'fit' the data to a larger version.
+                    img = qr.make_image(fill_color="black", back_color="white")
+
+                    txfileName = "Ver_" + str(iVersion) + "_" + str(iDataLength) + "_chars.png"
+                    txFilePath = txtDirectory + txfileName
+                    img.save(txFilePath)
+
+                    txtRecord = str(iVersion) + " " + str(iDataLength) + "\n"
+                    file.write(txtRecord)
+
+                    # setup for the next version
+                    iHigh *= 2
+                    iVersion += 1
+                    break
+            else:
+                if (iDataLength < (len(txtMinTestText) + 3)):
+                    print("QR version " + str(iVersion) + " is too small")
+
+                    # setup for the next version
+                    iHigh *= 2
+                    iVersion += 1
+                    break
+
+                # try between iLow and iDataLength
+                # iLow:10 + iDataLength:20 / 2 = 15
+                iHigh = iDataLength
+                iTried = iDataLength
+                iDataLength = (iLow + iDataLength) // 2
+                #print("big " + str(iTried) + "  Try " + str(iDataLength))
+
+    file.close()
+
+######## main #########
+
+# seed random number generator
+# seed(1)
+
+# 'd' = chr(ord('a') + 3)
+
+# 23,648 = max data length for version = 40, ECC = L
+print("Building QR_labels_Alphanumeric")
+TestData = ""
+for iCount in range(0, 23648):
+    TestData += "A0"   # Alphanumeric, class str, "A0A0A0"
+
+findAndSaveMaxImage("QR_labels_Alphanumeric_JSON/", True, TestData)
+findAndSaveMaxImage("QR_labels_Alphanumeric/", False, TestData)
 
 
+print("Building QR_labels_Numeric")
+TestData = ""
+for iCount in range(0, 23648):
+    TestData += str(randrange(0, 9))  # Numeric, class str, "3546868"
+
+findAndSaveMaxImage("QR_labels_Numeric_JSON/", True, TestData)
+findAndSaveMaxImage("QR_labels_Numeric/", False, TestData)
+
+
+print("Building QR_labels_Binary_not_displayable")
+TestData = ""
+for iCount in range(0, 23648):
+    TestData += chr(randrange(0, 9))  # Binary, class str, -- not displayable
+
+findAndSaveMaxImage("QR_labels_Binary_not_displayable_JSON/", True, TestData)
+findAndSaveMaxImage("QR_labels_Binary_not_displayable/", False, TestData)
+
+
+print("Building QR_labels_Binary_displayable")
+TestData = ""
+for iCount in range(0, 23648):
+    TestData += "A{\n"    # Binary, class str, "A{\nA{\nA{\n"
+
+findAndSaveMaxImage("QR_labels_Binary_displayable_JSON/", True, TestData)
+findAndSaveMaxImage("QR_labels_Binary_displayable/", False, TestData)
