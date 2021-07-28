@@ -21,32 +21,32 @@ def read_barcodes(frame):
             dic1 = json.loads(barcode_info)
 
             try:
-                txtDisplay = " exp:" + dic1['exp']
+                txtDisplay = " exp: " + dic1['exp']
             except:
                 txtDisplay = " exp: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y - 60), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, txtDisplay, (x + 6, y + h + 30), font, 1.0, (255, 255, 255), 1)
 
             try:
-                txtDisplay = "name:" + dic1['name']
+                txtDisplay = "name: " + dic1['name']
             except:
                 txtDisplay = " name: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y - 35), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, txtDisplay, (x + 6, y + h + 60), font, 1.0, (255, 255, 255), 1)
 
             try:
-                txtDisplay = " lot:" + dic1['lot']
+                txtDisplay = " lot: " + dic1['lot']
             except:
                 txtDisplay = " lot: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y - 6), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, txtDisplay, (x + 6, y + h + 90), font, 1.0, (255, 255, 255), 1)
 
-            """
             try:
-                txtDisplay += "data:" + dic1['data']
+                txtDisplay = "data: " + dic1['data']
             except:
-                txtDisplay += "data: ?"
-            """
+                txtDisplay = "data: ?"
+            cv2.putText(frame, txtDisplay, (x + 6, y + h + 120), font, 1.0, (255, 255, 255), 1)
+
         except:
             txtDisplay = barcode_info
-            cv2.putText(frame, txtDisplay, (x + 6, y - 6), font, 1.0, (255, 255, 255), 1)
+            cv2.putText(frame, txtDisplay, (x + 6, y + h + 30), font, 1.0, (255, 255, 255), 1)
 
     return frame
 
