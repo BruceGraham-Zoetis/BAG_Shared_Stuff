@@ -50,10 +50,12 @@ def play(f):
 	periodsize = f.getframerate() // 8
 	device = 'default'
 
+	"""
 	print('%d channels, %d sampling rate, format %d, periodsize %d\n' % (f.getnchannels(),
 																		 f.getframerate(),
 																		 format,
 																		 periodsize))
+	"""
 
 	device = alsaaudio.PCM(channels=f.getnchannels(), rate=f.getframerate(), format=format, periodsize=periodsize, device=device)
 	
@@ -64,10 +66,4 @@ def play(f):
 		data = f.readframes(periodsize)
 
 
-"""
-Tests
-"""
 
-f = wave.open("./beep-08b.wav", 'rb')
-for i in range(1, 10):
-	play(f)
