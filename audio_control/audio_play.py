@@ -4,9 +4,10 @@ File: audio_play.py
 Purpose: Python wrapper for playing wav files, etc.
 
 download https://pypi.org/project/pyalsaaudio/#files
-cd Downloads/pyalsaaudio-0.9.0/
-python3 setup.py build
-sudo python3 setup.py install
+$ tar xf pyalsaaudio-0.9.0.tar.gz
+$ cd Downloads/pyalsaaudio-0.9.0/
+$ python3 setup.py build
+$ sudo python3 setup.py install
 
 Test Python app
 =========================
