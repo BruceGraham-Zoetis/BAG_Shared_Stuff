@@ -67,7 +67,7 @@ if __name__ == '__main__':
         lstCmd = ["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D0", "-w", "-a2043", "-e0"]
         print("call ")
         for x in range(len(lstCmd)):
-            print(lstCmd[x])
+            print(lstCmd[x],)
         subprocess.call(lstCmd)
         print("sleeping 5 seconds...")
         time.sleep(5)
