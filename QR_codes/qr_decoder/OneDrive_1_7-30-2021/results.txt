@@ -1,0 +1,56 @@
+xuser@vetscan-hub-a8ae07a15abb0dc149a7aecc60feac08 ~/Zoetis/QR_codes/qr_decoder/OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin (master)$ ./SPCA_v4l2_tool_GNU_x64                       
+Usage: sudo ./SPCA_v4l2_tool_GNU_x64 [OPTION...] [FILE]
+
+ Initial device (1): 
+	-V, --vid <hex-val>    target device vid
+	-P, --pid <hex-val>    target device pid
+ Initial device (2): 
+	-D, --device <val>     target device number ( /dev/video# )
+
+	-u, --update <FILE>    Update FW <FILE>
+	-d, --dump             Dump FW from device
+ Backend register : 
+	Read register
+	  -r, --reg-read
+	  -a, --address <val>  Address (hex)
+	Write register
+	  -w, --reg-write
+	  -a, --address <val>  Address (hex)
+	  -e, --value <val>    Value (hex)
+	Upload sector
+	  -n, --up-sector <val>
+	Write sector
+	  -m, --dl-sector <val>
+xuser@vetscan-hub-a8ae07a15abb0dc149a7aecc60feac08 ~/Zoetis/QR_codes/qr_decoder/OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin (master)$ ./SPCA_v4l2_tool_GNU_x64 -D 0 -w -a 2043 -e 1 
+Command: write sensor register
+open device : /dev/video0
+IC TYPE : 110, Flash Type : 51
+ Command : Register Write
+ Register Write : 0x2043 => 0x1
+uninit...
+main end
+xuser@vetscan-hub-a8ae07a15abb0dc149a7aecc60feac08 ~/Zoetis/QR_codes/qr_decoder/OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin (master)$ ./SPCA_v4l2_tool_GNU_x64 -D 0 -w -a 2043 -e 0
+Command: write sensor register
+open device : /dev/video0
+IC TYPE : 110, Flash Type : 51
+ Command : Register Write
+ Register Write : 0x2043 => 0x0
+uninit...
+main end
+xuser@vetscan-hub-a8ae07a15abb0dc149a7aecc60feac08 ~/Zoetis/QR_codes/qr_decoder/OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin (master)$ ./SPCA_v4l2_tool_GNU_x64 -D 0 -w -a 2041 -e 0
+Command: write sensor register
+open device : /dev/video0
+IC TYPE : 110, Flash Type : 51
+ Command : Register Write
+ Register Write : 0x2041 => 0x0
+uninit...
+main end
+xuser@vetscan-hub-a8ae07a15abb0dc149a7aecc60feac08 ~/Zoetis/QR_codes/qr_decoder/OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin (master)$ ./SPCA_v4l2_tool_GNU_x64 -D 0 -w -a 2041 -e 1
+Command: write sensor register
+open device : /dev/video0
+IC TYPE : 110, Flash Type : 51
+ Command : Register Write
+ Register Write : 0x2041 => 0x1
+uninit...
+main end
+
