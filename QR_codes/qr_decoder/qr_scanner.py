@@ -63,9 +63,11 @@ if __name__ == '__main__':
     if (os.name == 'nt'):
         print("NT")
     elif (os.name == 'posix'):
-        subprocess.call(["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D 0", "-w", "-a 2043", "-e 0"])
-        print("sleeping 10 seconds...")
-        time.sleep(50)
+        lstCmd = ["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D 0", "-w", "-a 2043", "-e 0"]
+        print("call " + lstCmd)
+        subprocess.call(lstCmd)
+        print("sleeping 5 seconds...")
+        time.sleep(5)
         print("... end of sleep")
 
     camera = cv2.VideoCapture(0)
