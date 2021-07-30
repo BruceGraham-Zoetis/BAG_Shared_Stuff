@@ -1,6 +1,9 @@
-# see https://towardsdatascience.com/building-a-barcode-qr-code-reader-using-python-360e22dfb6e5
+#!/usr/bin/env python3
+# 
+# # see https://towardsdatascience.com/building-a-barcode-qr-code-reader-using-python-360e22dfb6e5
 
-# pip install pyzbar
+# pip3 install pyzbar
+# pip3 install playsound
 
 #import libraries
 import subprocess
@@ -8,6 +11,7 @@ import cv2
 from pyzbar import pyzbar
 import json
 import os
+import playsound
 import time
 
 def decode_display_barcodes(frame):
@@ -17,6 +21,13 @@ def decode_display_barcodes(frame):
         return
 
     for barcode in barcodes:
+        try:
+            # Detected some data in the QR code, so beep.
+            playsound.playsound('beep-08b.wav')
+            time.sleep(0.2)
+        except:
+            pass
+
         x, y , w, h = barcode.rect
 
         barcode_info = barcode.data.decode('utf-8')
@@ -58,27 +69,24 @@ def decode_display_barcodes(frame):
     return frame
 
 if __name__ == '__main__':
-
     camera = cv2.VideoCapture(0)
+
+    # turn off the LED
+    if (os.name == 'nt'):
+        print("NT")
+    elif (os.name == 'posix'):
+        lstCmd = ["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D0", "-w", "-a2043", "-e0"]
+        print(*lstCmd)
+        subprocess.call(lstCmd)
+
     ret, frame = camera.read()
 
     while ret:
-        # turn off the LED
-        if (os.name == 'nt'):
-            print("NT")
-        elif (os.name == 'posix'):
-            lstCmd = ["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D0", "-w", "-a2043", "-e0"]
-            print("call ")
-            print(*lstCmd)
-            subprocess.call(lstCmd)
-            print("sleeping 5 seconds...")
-            time.sleep(5)
-            print("... end of sleep")
-        ret, frame = camera.read()
         frame = decode_display_barcodes(frame)
         cv2.imshow('Barcode/QR code reader', frame)
         if cv2.waitKey(1) & 0xFF == 27:
             break
+        ret, frame = camera.read()
 
     camera.release()
     cv2.destroyAllWindows()
