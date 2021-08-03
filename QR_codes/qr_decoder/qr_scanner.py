@@ -4,6 +4,11 @@
 
 # pip3 install pyzbar
 # pip3 install playsound
+# pip install v4l2ctl
+#   v4l2ctl is a python package to control v4l2 drivers.
+#   https://pypi.org/project/v4l2ctl/
+#   https://v4l2ctl.readthedocs.io/en/latest/
+#   
 
 #import libraries
 import subprocess

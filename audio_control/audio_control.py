@@ -55,10 +55,8 @@ Purpose: Set the Master volume given a percent of maximum volume.
 def audio_set_master_volume(iPercent: int) -> bool:
     if (0 <= iPercent) and (iPercent <= 100):
         try:
-            # mixer = alsaaudio.mixers(0)
-            m = alsaaudio.Mixer('Master')
-            m.setvolume(iPercent)
-            #call(["amixer", "-D", "pulse", "sset", "Master", str(iPercent)+"%"])
+            mixer = alsaaudio.Mixer('Master')
+            mixer.setvolume(iPercent)
             return True
         except ValueError:
             return False
@@ -73,8 +71,8 @@ Purpose: Get the Master volume given a percent of maximum volume.
 """
 def audio_get_master_volume() -> int:
     try:
-        m = alsaaudio.Mixer('Master')
-        iPercents = m.getvolume()
+        mixer = alsaaudio.Mixer('Master')
+        iPercents = mixer.getvolume()
         iPercent = iPercents[0]
         return iPercent
     except ValueError:

@@ -17,7 +17,8 @@ import audio_play
 # The test volume play, Hear “front left”, then “front right”, at 100% to 0%
 def test_audio_set_master_volume():
 
-    for iPercent in range(100, -25, -25):
+    #for iPercent in range(0, 125, 25):
+    for iPercent in range(50, 125, 25):
         print("Testing at " + str(iPercent) + "%")
         bRtn = audio_control.audio_set_master_volume(iPercent)
         if (not bRtn):
@@ -31,7 +32,10 @@ def test_audio_set_master_volume():
 
         for i in range(1, 5):
             print("   Beep")
-            audio_play.playWaveFileAndBlock("./beep-08b.wav")
+            bRtn = audio_play.playWaveFileAndBlock("./beep-08b.wav")
+            if (not bRtn):
+                print("Failed playWaveFileAndBlock() returned False")
+                break
             print("   ...sleep(0.2)...")
             time.sleep(0.2)
 

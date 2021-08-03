@@ -39,7 +39,7 @@ def playWaveFileAndBlock(txtPathFileName : Text) -> bool:
 	try:
 		oFile = wave.open(txtPathFileName, 'rb')
 	except:
-		print("ERROR: File not found")
+		print("ERROR: File not found %s" % (txtPathFileName))
 		return False
 
 	format = None
@@ -67,6 +67,7 @@ def playWaveFileAndBlock(txtPathFileName : Text) -> bool:
 																		 periodsize))
 	"""
 
+	# Setup PCM device
 	pcmDevice = alsaaudio.PCM(channels=oFile.getnchannels(),
 							mode=alsaaudio.PCM_NORMAL,
 							rate=oFile.getframerate(),
@@ -74,24 +75,42 @@ def playWaveFileAndBlock(txtPathFileName : Text) -> bool:
 							periodsize=periodsize,
 							device=txtOutputDeviceName)
 	
+	# get master mixer
 	mixer = alsaaudio.Mixer(control='Master')
-	poll = select.poll()
-	descriptors = mixer.polldescriptors()
-	#poll.register(descriptors[0][0])
-	#print(descriptors)
-	#poll.register(oFile, select.POLLOUT)
-	poll.register(descriptors[0][0], select.POLLOUT)
-	
-	data = oFile.readframes(periodsize)
-	while data:
-		# wait for "write buffer not full" event
-		listWriteEvents = poll.poll()                   ########## TODO -stuck here - poll.register() is not setup correctly.
-		mixer.handleevents()
-		for eventWrite in listWriteEvents:
-			print("write")
 
-		# Read data from stdin
+	# get descriptors from mixer
+	descriptors = mixer.polldescriptors()
+	#print(descriptors)
+
+	# setup polling with mixer's descriptors
+	poll = select.poll()
+	#poll.register(descriptors[0][0])
+	poll.register(descriptors[0][0], select.POLLOUT)
+	#poll.register(descriptors[0][0], select.POLLOUT | select.POLLIN | select.POLLPRI)
+	#poll.register(descriptors[0][0])
+
+	# read first data from the file
+	data = oFile.readframes(periodsize)
+
+	while data:
+		# clear the events for the write
+		mixer.handleevents()
+
+		print("write: %d bytes to PCM Device" % (len(data)))
 		pcmDevice.write(data)
+
+		print("wait for events from the mixer")
+		events = poll.poll()                   ########## TODO -stuck here - poll.register() is not setup correctly.
+		for event in events:
+			print("fd: %d  event: %d " % (event[0], event[1]))
+			if (event[1] == select.POLLOUT):
+				print("POLLOUT - queue is writable")
+			elif (event[1] == select.POLLIN):
+				print("POLLIN - can read without blocking")
+			elif (event[1] == select.POLLPRI):
+				print("POLLPRI - high-pri msg at head of queue")
+
+		# read more data from the file
 		data = oFile.readframes(periodsize)
 
 	oFile.close()
