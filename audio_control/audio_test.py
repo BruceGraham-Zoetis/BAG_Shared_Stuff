@@ -19,13 +19,23 @@ def test_audio_set_master_volume():
 
     for iPercent in range(100, -25, -25):
         print("Testing at " + str(iPercent) + "%")
-        audio_control.audio_set_master_volume(iPercent)
+        bRtn = audio_control.audio_set_master_volume(iPercent)
+        if (not bRtn):
+            print("Failed audio_get_master_volume() returned False")
+            break
         
         iPercentOrg = audio_control.audio_get_master_volume()
-        if (iPercentOrg == iPercent):
-            print("Passed ")
-        else:
-            print("Failed ")
+        if (iPercentOrg != iPercent):
+            print("Failed audio_get_master_volume() did not get what audio_set_master_volume() set")
+            break
+
+        for i in range(1, 5):
+            print("   Beep")
+            audio_play.playWaveFileAndBlock("./beep-08b.wav")
+            print("   ...sleep(0.2)...")
+            time.sleep(0.2)
+
+        print("\n")
 
 
 
@@ -35,10 +45,5 @@ if __name__ == '__main__':
     print("Setting volume to 100%")
     audio_control.audio_set_master_volume(100)
 
-    time.sleep(2)
 
-    f = wave.open("./beep-08b.wav", 'rb')
-    for i in range(1, 10):
-        print("Beep")
-        audio_play.play(f)
-        time.sleep(2)
+    

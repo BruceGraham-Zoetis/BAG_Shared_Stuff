@@ -6,14 +6,21 @@ File: audio_control.py
 Purpose: Python wrapper for the Linux audio device (amixer).
 Used to control the Vetscan speaker volume.
 
-
+amixer app - command line
+================================
 Uses amixer to set the Master Volume as a percent of max volume.
 amixer - see https://linux.die.net/man/1/amixer
 
 call(["amixer", "-D", "pulse", "sset", "Master", str(iPercent)+"%"])
 
-sudo apt-get update
-sudo apt-get install python-alsaaudio
+
+Python ALSA audio
+===================================
+$ git clone https://github.com/larsimmisch/pyalsaaudio.git
+$ cd pyalsaaudio
+$ python3 setup.py build
+$ sudo python3 setup.py install
+
 import alsaaudio
 >>> m = alsaaudio.Mixer()
 >>> vol = m.getvolume()
@@ -45,7 +52,7 @@ Purpose: Set the Master volume given a percent of maximum volume.
 @returns True - success
 @returns False - failed to set volume
 """
-def audio_set_master_volume(iPercent: int):
+def audio_set_master_volume(iPercent: int) -> bool:
     if (0 <= iPercent) and (iPercent <= 100):
         try:
             # mixer = alsaaudio.mixers(0)

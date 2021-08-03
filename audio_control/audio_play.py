@@ -19,54 +19,81 @@ $ python3 playwav.py ./beep-08b.wav
 
 #from subprocess import call
 #import sys
+from typing import Text
 import wave
-#import getopt
+import select
 import alsaaudio
 
 """
-Purpose: Play a wav file, given a file handle to the file
+Purpose: Play a wav file, given a path and file name
 
 Example:
-	with wave.open("./beep-08b.wav", 'rb') as f:
-		play(f)
+	playWaveFileAndBlock("./beep-08b.wav")
 
-@param[in] f = file handle to a wav file.
+@param[in] txtPathFileName = path and file name of a wav file.
 
+@returns True = played file
+@returns False = failed
 """
-def play(f):	
+def playWaveFileAndBlock(txtPathFileName : Text) -> bool:	
+	try:
+		oFile = wave.open(txtPathFileName, 'rb')
+	except:
+		print("ERROR: File not found")
+		return False
 
 	format = None
 
 	# 8bit is unsigned in wav files
-	if f.getsampwidth() == 1:
+	if oFile.getsampwidth() == 1:
 		format = alsaaudio.PCM_FORMAT_U8
 	# Otherwise we assume signed data, little endian
-	elif f.getsampwidth() == 2:
+	elif oFile.getsampwidth() == 2:
 		format = alsaaudio.PCM_FORMAT_S16_LE
-	elif f.getsampwidth() == 3:
+	elif oFile.getsampwidth() == 3:
 		format = alsaaudio.PCM_FORMAT_S24_3LE
-	elif f.getsampwidth() == 4:
+	elif oFile.getsampwidth() == 4:
 		format = alsaaudio.PCM_FORMAT_S32_LE
 	else:
 		raise ValueError('Unsupported format')
 
-	periodsize = f.getframerate() // 8
-	device = 'default'
+	periodsize = oFile.getframerate() // 8
+	txtOutputDeviceName = 'default'
 
 	"""
-	print('%d channels, %d sampling rate, format %d, periodsize %d\n' % (f.getnchannels(),
-																		 f.getframerate(),
+	print('%d channels, %d sampling rate, format %d, periodsize %d\n' % (oFile.getnchannels(),
+																		 oFile.getframerate(),
 																		 format,
 																		 periodsize))
 	"""
 
-	device = alsaaudio.PCM(channels=f.getnchannels(), rate=f.getframerate(), format=format, periodsize=periodsize, device=device)
+	pcmDevice = alsaaudio.PCM(channels=oFile.getnchannels(),
+							mode=alsaaudio.PCM_NORMAL,
+							rate=oFile.getframerate(),
+							format=format,
+							periodsize=periodsize,
+							device=txtOutputDeviceName)
 	
-	data = f.readframes(periodsize)
+	mixer = alsaaudio.Mixer(control='Master')
+	poll = select.poll()
+	descriptors = mixer.polldescriptors()
+	#poll.register(descriptors[0][0])
+	#print(descriptors)
+	#poll.register(oFile, select.POLLOUT)
+	poll.register(descriptors[0][0], select.POLLOUT)
+	
+	data = oFile.readframes(periodsize)
 	while data:
+		# wait for "write buffer not full" event
+		listWriteEvents = poll.poll()                   ########## TODO -stuck here - poll.register() is not setup correctly.
+		mixer.handleevents()
+		for eventWrite in listWriteEvents:
+			print("write")
+
 		# Read data from stdin
-		device.write(data)
-		data = f.readframes(periodsize)
+		pcmDevice.write(data)
+		data = oFile.readframes(periodsize)
 
-
+	oFile.close()
+	return True
 
