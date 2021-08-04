@@ -4,7 +4,10 @@
 
 # Computer Vision
 # ==========================
-#   $ pip3 install pyzbar
+#   $ sudo pip3 install opnecv-python
+#   $ sudo apt-get install libzbar0
+#   $ sudo pip3 install pyzbar
+#   $ sudo pip3 install pyzbar[scripts]
 #
 # Video for Linux
 # ==================
@@ -27,7 +30,7 @@ from pyzbar import pyzbar
 import json
 import os
 import time
-import v4l2ctl
+#import v4l2ctl
 
 import sys
 sys.path.append('../../audio_control')
@@ -100,8 +103,9 @@ if __name__ == '__main__':
         """
         pass
 
-        # turn off the camera auto-focus
+    # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+    camera.set(cv2.CAP_PROP_FOCUS, 900)
 
     ret, frame = camera.read()
     iCount = 0
@@ -112,8 +116,8 @@ if __name__ == '__main__':
         cv2.imshow('Barcode/QR code reader', frame)
         if (ret):
             iCount += 1
-            if (10 < iCount):
-                # after detecting the QR code for 10 times
+            if (50 < iCount):
+                # after detecting the QR code for a few secounds
                 try:
                     # beep to let the user know the QR code was detected.
                     audio_play.playWaveFileAndBlock('./beep-08b.wav')
@@ -122,6 +126,7 @@ if __name__ == '__main__':
                     time.sleep(2)
                 except:
                     pass
+
                 break
         else:
             if cv2.waitKey(1) & 0xFF == 27:
