@@ -97,14 +97,6 @@ if __name__ == '__main__':
         bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         cv2.imshow('Barcode/QR code reader', frameIn)
         if (bFound):
-            try:
-                if (t_end <= time.time()):
-                    # beep to let the user know the QR code was detected.
-                    audio_play.playWaveFileAndBlock('./beep-08b.wav')
-                    t_end = time.time() + 1
-            except:
-                pass
-
             x, y , w, h = barcode.rect
             cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
             font = cv2.FONT_HERSHEY_DUPLEX
@@ -121,6 +113,14 @@ if __name__ == '__main__':
             print("")
 
             cv2.imshow('Barcode/QR code reader', frameIn)
+
+            try:
+                if (t_end <= time.time()):
+                    # beep to let the user know the QR code was detected.
+                    audio_play.playWaveFileAndBlock('./beep-08b.wav')
+                    t_end = time.time() + 1
+            except:
+                pass
 
             bFound = False
         else:
