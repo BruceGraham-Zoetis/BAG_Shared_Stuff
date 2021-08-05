@@ -117,7 +117,7 @@ if __name__ == '__main__':
             try:
                 if (t_end <= time.time()):
                     # beep to let the user know the QR code was detected.
-                    audio_play.playWaveFileAndBlock('./beep-08b.wav')
+                    audio_play.playWaveFileNoBlock('./beep-08b.wav')
                     t_end = time.time() + 1
             except:
                 pass

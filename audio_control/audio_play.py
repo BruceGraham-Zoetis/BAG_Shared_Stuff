@@ -28,7 +28,7 @@ $ python3 playwav.py ./beep-08b.wav
 
 """
 
-#from subprocess import call
+import subprocess
 #import sys
 from typing import Text
 import wave
@@ -40,7 +40,32 @@ debug = False
 #debug = True
 
 """
-Purpose: Play a wav file, given a path and file name
+Purpose: Play a wav file, given a path and file name. Does not Block.
+
+Example:
+	playWaveFileNoBlock("./beep-08b.wav")
+
+@param[in] txtPathFileName = path and file name of a wav file.
+
+@returns True = played file
+@returns False = failed
+"""
+def playWaveFileNoBlock(txtPathFileName : Text) -> bool:	
+	try:
+		if debug: print("playWaveFileAndBlock(%s)" % (txtPathFileName))
+		nRtn = subprocess.Popen(["aplay", txtPathFileName])
+		if (nRtn):
+			return True
+		else:
+			return False
+	except:
+		print("ERROR: File not found %s" % (txtPathFileName))
+		return False
+
+
+
+"""
+Purpose: Play a wav file, given a path and file name. Blocks until wave is played.
 
 Example:
 	playWaveFileAndBlock("./beep-08b.wav")
