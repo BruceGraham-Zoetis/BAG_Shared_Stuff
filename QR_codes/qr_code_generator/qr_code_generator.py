@@ -7,6 +7,7 @@ from qrcode.main import QRCode
 from random import seed
 from random import random
 from random import randrange
+from random import randint
 
 import os
 
@@ -134,8 +135,11 @@ def findAndSaveMaxImage(txtDirectory : str, bUseJson : bool, TestData):
 # 23,648 = max data length for version = 40, ECC = L
 print("Building QR_labels_Alphanumeric")
 TestData = ""
+PossibleData = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+PossibleDataLength = len(PossibleData)
 for iCount in range(0, 23648):
-    TestData += "A0"   # Alphanumeric, class str, "A0A0A0"
+    randIndex = randint(0, (PossibleDataLength - 1))
+    TestData += PossibleData[randIndex]   # Random Alphanumeric, class str, "A0A0A0"
 
 findAndSaveMaxImage("QR_labels_Alphanumeric_JSON/", True, TestData)
 findAndSaveMaxImage("QR_labels_Alphanumeric/", False, TestData)
