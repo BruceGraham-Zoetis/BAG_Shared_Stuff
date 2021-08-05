@@ -5,9 +5,20 @@ File: audio_play.py
 
 Purpose: Python wrapper for playing wav files, etc.
 
+
+# Requriements:
+$ sudo -H pip install pyalsaaudio
+
+Download and install the sound library from the source code
+==============================================
+$ sudo apt-get install libasound2-dev
+
+Build the sound library from the source code
+==============================================
 download https://pypi.org/project/pyalsaaudio/#files
+$ cd Downloads
 $ tar xf pyalsaaudio-0.9.0.tar.gz
-$ cd Downloads/pyalsaaudio-0.9.0/
+$ cd pyalsaaudio-0.9.0/
 $ python3 setup.py build
 $ sudo python3 setup.py install
 
