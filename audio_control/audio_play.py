@@ -5,9 +5,20 @@ File: audio_play.py
 
 Purpose: Python wrapper for playing wav files, etc.
 
+
+# Requriements:
+$ sudo -H pip install pyalsaaudio
+
+Download and install the sound library from the source code
+==============================================
+$ sudo apt-get install libasound2-dev
+
+Build the sound library from the source code
+==============================================
 download https://pypi.org/project/pyalsaaudio/#files
+$ cd Downloads
 $ tar xf pyalsaaudio-0.9.0.tar.gz
-$ cd Downloads/pyalsaaudio-0.9.0/
+$ cd pyalsaaudio-0.9.0/
 $ python3 setup.py build
 $ sudo python3 setup.py install
 
@@ -17,7 +28,7 @@ $ python3 playwav.py ./beep-08b.wav
 
 """
 
-#from subprocess import call
+import subprocess
 #import sys
 from typing import Text
 import wave
@@ -29,7 +40,32 @@ debug = False
 #debug = True
 
 """
-Purpose: Play a wav file, given a path and file name
+Purpose: Play a wav file, given a path and file name. Does not Block.
+
+Example:
+	playWaveFileNoBlock("./beep-08b.wav")
+
+@param[in] txtPathFileName = path and file name of a wav file.
+
+@returns True = played file
+@returns False = failed
+"""
+def playWaveFileNoBlock(txtPathFileName : Text) -> bool:	
+	try:
+		if debug: print("playWaveFileAndBlock(%s)" % (txtPathFileName))
+		nRtn = subprocess.Popen(["aplay", txtPathFileName])
+		if (nRtn):
+			return True
+		else:
+			return False
+	except:
+		print("ERROR: File not found %s" % (txtPathFileName))
+		return False
+
+
+
+"""
+Purpose: Play a wav file, given a path and file name. Blocks until wave is played.
 
 Example:
 	playWaveFileAndBlock("./beep-08b.wav")

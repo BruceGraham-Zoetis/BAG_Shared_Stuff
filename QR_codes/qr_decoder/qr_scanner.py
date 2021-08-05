@@ -4,10 +4,10 @@
 
 # Computer Vision
 # ==========================
-#   $ sudo pip3 install opnecv-python
-#   $ sudo apt-get install libzbar0
-#   $ sudo pip3 install pyzbar
-#   $ sudo pip3 install pyzbar[scripts]
+#   $ sudo -H pip3 install opencv-python
+#   $ sudo -H apt-get install libzbar0
+#   $ sudo -H pip3 install pyzbar
+#   $ sudo -H pip3 install pyzbar[scripts]
 #
 # Video for Linux
 # ==================
@@ -25,6 +25,7 @@
 
 #import libraries
 #import subprocess
+from typing import Text
 import cv2
 from pyzbar import pyzbar
 import json
@@ -37,57 +38,30 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 import audio_play
 
-def decode_display_barcodes(frame):
+
+def decode_qr_code_in_frame(frame):
     bFound = False
     barcode_info = ""
+    barcode = ""
+    dicContents = {}
 
     try:
         barcodes = pyzbar.decode(frame)
     except:
-        return bFound, frame, barcode_info
+        return bFound, frame, barcode, dicContents
 
     for barcode in barcodes:
-        x, y , w, h = barcode.rect
-
         barcode_info = barcode.data.decode('utf-8')
-        cv2.rectangle(frame, (x, y),(x+w, y+h), (0, 255, 0), 2)
         
-        txtDisplay = ''
-        font = cv2.FONT_HERSHEY_DUPLEX
         try:
-            dic1 = json.loads(barcode_info)
-
-            try:
-                txtDisplay = " exp: " + dic1['exp']
-            except:
-                txtDisplay = " exp: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y + h + 30), font, 1.0, (255, 255, 255), 1)
-
-            try:
-                txtDisplay = "name: " + dic1['name']
-            except:
-                txtDisplay = " name: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y + h + 60), font, 1.0, (255, 255, 255), 1)
-
-            try:
-                txtDisplay = " lot: " + dic1['lot']
-            except:
-                txtDisplay = " lot: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y + h + 90), font, 1.0, (255, 255, 255), 1)
-
-            try:
-                txtDisplay = "data: " + dic1['data']
-            except:
-                txtDisplay = "data: ?"
-            cv2.putText(frame, txtDisplay, (x + 6, y + h + 120), font, 1.0, (255, 255, 255), 1)
+            dicContents = json.loads(barcode_info)
             bFound = True
 
         except:
-            txtDisplay = barcode_info
-            cv2.putText(frame, txtDisplay, (x + 6, y + h + 30), font, 1.0, (255, 255, 255), 1)
+            dicContents = {"raw": barcode_info}
             bFound = True
 
-    return bFound, frame, barcode_info
+    return bFound, frame, barcode, dicContents
 
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
@@ -107,31 +81,50 @@ if __name__ == '__main__':
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     camera.set(cv2.CAP_PROP_FOCUS, 900)
 
-    ret, frame = camera.read()
     iCount = 0
     barcode_info = ""
+    bFound = False
+    dicContents= {}
+    bContinue = True
 
-    while ret:
-        ret, frame, barcode_info = decode_display_barcodes(frame)
-        cv2.imshow('Barcode/QR code reader', frame)
-        if (ret):
-            iCount += 1
-            if (50 < iCount):
-                # after detecting the QR code for a few secounds
-                try:
+    t_end = time.time()
+
+    while bContinue:
+        if cv2.waitKey(1) & 0xFF == 27:
+            bContinue = False
+
+        ret, frameIn = camera.read()
+        bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
+        cv2.imshow('Barcode/QR code reader', frameIn)
+        if (bFound):
+            x, y , w, h = barcode.rect
+            cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
+            font = cv2.FONT_HERSHEY_DUPLEX
+
+            # Print to the console and on the window, the key:Value of dicContents, one line per key
+            xPos = x + 6
+            yPos = y + h + 30
+            keys = dicContents.keys()
+            for key in keys:
+                txtDisplay = key + ": " + dicContents[key]
+                cv2.putText(frameIn, txtDisplay, (xPos, yPos), font, 1.0, (255, 255, 255), 1)
+                print(txtDisplay)
+                yPos += 30
+            print("")
+
+            cv2.imshow('Barcode/QR code reader', frameIn)
+
+            try:
+                if (t_end <= time.time()):
                     # beep to let the user know the QR code was detected.
-                    audio_play.playWaveFileAndBlock('./beep-08b.wav')
-                    print(barcode_info)
-                    # show the window for 2 seconds
-                    time.sleep(2)
-                except:
-                    pass
+                    audio_play.playWaveFileNoBlock('./beep-08b.wav')
+                    t_end = time.time() + 1
+            except:
+                pass
 
-                break
+            bFound = False
         else:
-            if cv2.waitKey(1) & 0xFF == 27:
-                break
-            ret, frame = camera.read()
+            pass
 
     camera.release()
     cv2.destroyAllWindows()
