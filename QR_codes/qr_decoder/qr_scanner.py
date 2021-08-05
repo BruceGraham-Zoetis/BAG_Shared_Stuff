@@ -38,6 +38,9 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 import audio_play
 
+test_parameter_auto_focus = True
+#test_parameter_auto_focus = False
+
 
 def decode_qr_code_in_frame(frame):
     bFound = False
@@ -77,9 +80,10 @@ if __name__ == '__main__':
         """
         pass
 
-    # turn off the camera auto-focus
-    camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-    camera.set(cv2.CAP_PROP_FOCUS, 900)
+    if (test_parameter_auto_focus):
+        # turn off the camera auto-focus
+        camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+        camera.set(cv2.CAP_PROP_FOCUS, 900)
 
     iCount = 0
     barcode_info = ""
@@ -101,26 +105,27 @@ if __name__ == '__main__':
             cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
             font = cv2.FONT_HERSHEY_DUPLEX
 
-            # Print to the console and on the window, the key:Value of dicContents, one line per key
-            xPos = x + 6
-            yPos = y + h + 30
-            keys = dicContents.keys()
-            for key in keys:
-                txtDisplay = key + ": " + dicContents[key]
-                cv2.putText(frameIn, txtDisplay, (xPos, yPos), font, 1.0, (255, 255, 255), 1)
-                print(txtDisplay)
-                yPos += 30
-            print("")
-
             cv2.imshow('Barcode/QR code reader', frameIn)
 
-            try:
-                if (t_end <= time.time()):
-                    # beep to let the user know the QR code was detected.
-                    audio_play.playWaveFileNoBlock('./beep-08b.wav')
-                    t_end = time.time() + 1
-            except:
-                pass
+            # Print to the console and on the window, the key:Value of dicContents, one line per key
+            if (isinstance(dicContents, dict)):
+                xPos = x + 6
+                yPos = y + h + 30
+                keys = dicContents.keys()
+                for key in keys:
+                    txtDisplay = key + ": " + dicContents[key]
+                    cv2.putText(frameIn, txtDisplay, (xPos, yPos), font, 1.0, (255, 255, 255), 1)
+                    print(txtDisplay)
+                    yPos += 30
+                print("")
+
+                try:
+                    if (t_end <= time.time()):
+                        # beep to let the user know the QR code was detected.
+                        audio_play.playWaveFileNoBlock('./beep-08b.wav')
+                        t_end = time.time() + 1
+                except:
+                    pass
 
             bFound = False
         else:
