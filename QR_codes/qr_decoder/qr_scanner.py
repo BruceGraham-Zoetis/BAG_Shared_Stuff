@@ -43,52 +43,25 @@ def decode_qr_code_in_frame(frame):
     bFound = False
     barcode_info = ""
     barcode = ""
-    txtDisplay = ''
+    dicContents = {}
 
     try:
         barcodes = pyzbar.decode(frame)
     except:
-        return bFound, frame, barcode, txtDisplay
+        return bFound, frame, barcode, dicContents
 
     for barcode in barcodes:
-        x, y , w, h = barcode.rect
-
         barcode_info = barcode.data.decode('utf-8')
-        cv2.rectangle(frame, (x, y),(x+w, y+h), (0, 255, 0), 2)
         
         try:
-            dic1 = json.loads(barcode_info)
-
-            try:
-                txtDisplay = " exp: " + dic1['exp']
-            except:
-                txtDisplay = " exp: ?"
-            txtDisplay += "\n"
-
-            try:
-                txtDisplay += "name: " + dic1['name']
-            except:
-                txtDisplay += " name: ?"
-            txtDisplay += "\n"
-
-            try:
-                txtDisplay += " lot: " + dic1['lot']
-            except:
-                txtDisplay += " lot: ?"
-            txtDisplay += "\n"
-
-            try:
-                txtDisplay += "data: " + dic1['data']
-            except:
-                txtDisplay += "data: ?"
-            txtDisplay += "\n"
+            dicContents = json.loads(barcode_info)
             bFound = True
 
         except:
-            txtDisplay = barcode_info
+            dicContents = {"raw": barcode_info}
             bFound = True
 
-    return bFound, frame, barcode, txtDisplay
+    return bFound, frame, barcode, dicContents
 
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
@@ -111,10 +84,12 @@ if __name__ == '__main__':
     iCount = 0
     barcode_info = ""
     bFound = False
+    dicContents= {}
+    bContinue = True
 
-    while True:
+    while bContinue:
         ret, frameIn = camera.read()
-        bFound, frame, barcode, txtDisplay = decode_qr_code_in_frame(frameIn)
+        bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         cv2.imshow('Barcode/QR code reader', frameIn)
         if (bFound):
             try:
@@ -123,22 +98,34 @@ if __name__ == '__main__':
             except:
                 pass
 
-            print(barcode_info)
             x, y , w, h = barcode.rect
             cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
             font = cv2.FONT_HERSHEY_DUPLEX
-            cv2.putText(frameIn, txtDisplay, (x + 6, y + h + 30), font, 1.0, (255, 255, 255), 1)
+
+            # Print to the console and on the window, the key:Value of dicContents, one line per key
+            xPos = x + 6
+            yPos = y + h + 30
+            keys = dicContents.keys()
+            for key in keys:
+                txtDisplay = key + ": " + dicContents[key]
+                cv2.putText(frameIn, txtDisplay, (xPos, yPos), font, 1.0, (255, 255, 255), 1)
+                print(txtDisplay)
+                yPos += 30
+            print("")
+
             cv2.imshow('Barcode/QR code reader', frameIn)
 
-            # show the window for 2 seconds
-            t_end = time.time() + 2
+            # Freeze the window with the box and QR code contents.
+            t_end = time.time() + 0.5
             while time.time() < t_end:
-                pass
-            break
+                if cv2.waitKey(1) & 0xFF == 27:
+                    bContinue = False
+                    break
+            bFound = False
         else:
             if cv2.waitKey(1) & 0xFF == 27:
-                break
-            ret, frameIn = camera.read()
+                bContinue = False
+            bFound = False
 
     camera.release()
     cv2.destroyAllWindows()
