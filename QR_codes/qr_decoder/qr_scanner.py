@@ -87,14 +87,21 @@ if __name__ == '__main__':
     dicContents= {}
     bContinue = True
 
+    t_end = time.time()
+
     while bContinue:
+        if cv2.waitKey(1) & 0xFF == 27:
+            bContinue = False
+
         ret, frameIn = camera.read()
         bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         cv2.imshow('Barcode/QR code reader', frameIn)
         if (bFound):
             try:
-                # beep to let the user know the QR code was detected.
-                audio_play.playWaveFileAndBlock('./beep-08b.wav')
+                if (t_end <= time.time()):
+                    # beep to let the user know the QR code was detected.
+                    audio_play.playWaveFileAndBlock('./beep-08b.wav')
+                    t_end = time.time() + 1
             except:
                 pass
 
@@ -115,17 +122,9 @@ if __name__ == '__main__':
 
             cv2.imshow('Barcode/QR code reader', frameIn)
 
-            # Freeze the window with the box and QR code contents.
-            t_end = time.time() + 0.5
-            while time.time() < t_end:
-                if cv2.waitKey(1) & 0xFF == 27:
-                    bContinue = False
-                    break
             bFound = False
         else:
-            if cv2.waitKey(1) & 0xFF == 27:
-                bContinue = False
-            bFound = False
+            pass
 
     camera.release()
     cv2.destroyAllWindows()
