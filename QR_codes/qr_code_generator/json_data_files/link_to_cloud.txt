@@ -1,0 +1,6 @@
+{
+"exp":"2022-05-27",
+"name":"xyz",
+"lot":"123-45678",
+"data":"https://zoetisdx.com/link/to/endpoint"
+}

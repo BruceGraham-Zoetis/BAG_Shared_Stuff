@@ -1,4 +1,4 @@
-File: C:\Zoetis\QR_codes\qr_code_generator/QR_labels_Numeric/version_sizes.txt
+File: /home/bag/Zoetis/QR_codes/qr_code_generator/QR_labels_Numeric/version_sizes.txt
 3 101
 4 149
 5 202

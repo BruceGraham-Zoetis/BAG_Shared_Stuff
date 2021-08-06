@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 
-# pip3 install qrcode
+# sudo -H pip3 install qrcode
+from typing import Text
 import qrcode
 from qrcode.main import QRCode
 
@@ -7,6 +9,7 @@ from qrcode.main import QRCode
 from random import seed
 from random import random
 from random import randrange
+from random import randint
 
 import os
 
@@ -134,8 +137,12 @@ def findAndSaveMaxImage(txtDirectory : str, bUseJson : bool, TestData):
 # 23,648 = max data length for version = 40, ECC = L
 print("Building QR_labels_Alphanumeric")
 TestData = ""
+PossibleData = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789"
+PossibleDataLength = len(PossibleData)
 for iCount in range(0, 23648):
-    TestData += "A0"   # Alphanumeric, class str, "A0A0A0"
+    # add in random character
+    randIndex = randint(0, (PossibleDataLength - 1))
+    TestData += PossibleData[randIndex]   # Random Alphanumeric, class str, "A0A0A0"
 
 findAndSaveMaxImage("QR_labels_Alphanumeric_JSON/", True, TestData)
 findAndSaveMaxImage("QR_labels_Alphanumeric/", False, TestData)
@@ -161,8 +168,21 @@ findAndSaveMaxImage("QR_labels_Binary_not_displayable/", False, TestData)
 
 print("Building QR_labels_Binary_displayable")
 TestData = ""
+PossibleData = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvwxyz"
+PossibleDataLength = len(PossibleData)
 for iCount in range(0, 23648):
-    TestData += "A{\n"    # Binary, class str, "A{\nA{\nA{\n"
+    # add in random character, lower case pushes to binary encoding
+    randIndex = randint(0, (PossibleDataLength - 1))
+    TestData += PossibleData[randIndex]
 
 findAndSaveMaxImage("QR_labels_Binary_displayable_JSON/", True, TestData)
 findAndSaveMaxImage("QR_labels_Binary_displayable/", False, TestData)
+
+
+
+
+
+
+
+
+

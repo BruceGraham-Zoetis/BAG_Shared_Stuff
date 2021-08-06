@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # see https://towardsdatascience.com/building-a-barcode-qr-code-reader-using-python-360e22dfb6e5
 
 # pip3 install Pillow
