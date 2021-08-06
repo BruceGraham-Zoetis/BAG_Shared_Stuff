@@ -72,8 +72,13 @@ def saveImages(txtOutputDirectory : str, txtPngFileName : str, strTestText : str
         try:
             qr.make(fit=False) # Don't 'fit' the data to a larger version.
             img = qr.make_image(fill_color="black", back_color="white")
-            txtFilePath = txtOutputDirectory + txtPngFileName + "_" + str(iVersion) + ".png"
+
+            strVersion = str(iVersion)
+            if (1 == len(strVersion)):
+                strVersion = "0" + strVersion
+            txtFilePath = txtOutputDirectory + txtPngFileName + "_" + strVersion + ".png"
             img.save(txtFilePath)
+            print(str(iVersion) + " ", end = '')
         except:
             pass
 
@@ -91,9 +96,9 @@ if __name__ == '__main__':
         ]
 
     for txtfileName in file_names:
-        print("\n-------------------------")
+        print("-------------------------")
         print(txtfileName)
-        print("-------------------------\n")
+        print("-------------------------")
         f = open("./json_data_files/" + txtfileName, "r")
         json_text = f.read()
 
@@ -106,6 +111,7 @@ if __name__ == '__main__':
 
         saveImages("./QR_labels_from_files/", filename, json_text)
         f.close()
+        print("\n\n")
 
     print("\nEnd of test\n")
 
