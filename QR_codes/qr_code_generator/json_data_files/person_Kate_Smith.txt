@@ -1,0 +1,12 @@
+{
+    "FirstName": "Kate",
+    "LastName": "Smith",
+    "Age": 34,
+    "Address": "106 4th Street, New York, NY 10021",
+    "Children":
+        [
+            "Joe",
+            "Emily"
+        ],
+    "Spouse": "Adam"
+}

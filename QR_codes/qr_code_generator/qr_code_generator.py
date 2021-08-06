@@ -1,5 +1,7 @@
+#!/usr/bin/env python3
 
-# pip3 install qrcode
+# sudo -H pip3 install qrcode
+from typing import Text
 import qrcode
 from qrcode.main import QRCode
 
@@ -175,3 +177,12 @@ for iCount in range(0, 23648):
 
 findAndSaveMaxImage("QR_labels_Binary_displayable_JSON/", True, TestData)
 findAndSaveMaxImage("QR_labels_Binary_displayable/", False, TestData)
+
+
+
+
+
+
+
+
+
