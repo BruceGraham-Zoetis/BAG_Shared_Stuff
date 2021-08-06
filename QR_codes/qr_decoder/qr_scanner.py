@@ -75,12 +75,17 @@ if __name__ == '__main__':
     elif (os.name == 'posix'):
         """
         lstCmd = ["./OneDrive_1_7-30-2021/SP_V4L2_API-2021-07-19/Demo_V4L2/bin/SPCA_v4l2_tool_GNU_x64", "-D0", "-w", "-a2043", "-e0"]
-        print(*lstCmd)
+        print(*lstCmd)# turn off the camera auto-focus
+    camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+    
         subprocess.call(lstCmd)
         """
         pass
 
     if (test_parameter_auto_focus):
+        # turn n the camera auto-focus
+        camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+    else:
         # turn off the camera auto-focus
         camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
         camera.set(cv2.CAP_PROP_FOCUS, 900)
