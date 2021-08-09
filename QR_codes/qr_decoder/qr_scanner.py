@@ -38,12 +38,20 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 import audio_play
 
-test_parameter_auto_focus = True
-#test_parameter_auto_focus = False
+#test_parameter_exit_at_first_decode = True
+test_parameter_exit_at_first_decode = False
+
+#test_parameter_auto_focus = True
+test_parameter_auto_focus = False
 
 focus_at_base   = 225  # max distance from stand: 0.0 cm 
 focus_near_lens = 900  # min distance from stand: 10.5 cm
 
+max_test_attempts = 20
+iTestAttepts = 0
+timeSum = 0
+strAttemptTimings = ""
+strWaitChar = '/'
 
 def decode_qr_code_in_frame(frame):
     bFound = False
@@ -72,31 +80,46 @@ def decode_qr_code_in_frame(frame):
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
 
-    if (test_parameter_auto_focus):
-        # turn n the camera auto-focus
-        camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
-    else:
-        # turn off the camera auto-focus
-        camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-        print("sleep to give camera time to move focus near lens...")
-        camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
-        time.sleep(2)
-        print("set camera focus to base...")
-        t_start = time.time()
-        camera.set(cv2.CAP_PROP_FOCUS, focus_at_base)
+    # turn off the camera auto-focus
+    camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+    print("move focus near lens...")
+    camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
+    print("give time to move focus to near lens...")
+    time.sleep(3)
 
     iCount = 0
     barcode_info = ""
     bFound = False
     dicContents= {}
     bContinue = True
+    bRefocusStarted = False
 
-    t_end = time.time()
+    t_reBeep = time.time()
+    t_start = time.time()
+    t_startFocus = time.time()
+
 
     while bContinue:
         if cv2.waitKey(1) & 0xFF == 27:
             bContinue = False
 
+        if (not bRefocusStarted and ((t_start + 3) <= time.time())):
+            bRefocusStarted = True
+            if (test_parameter_auto_focus):
+                print("\nenable camera auto-focus. scan...")
+                camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+            else:
+                print("\nset camera focus to base. scan...")
+                camera.set(cv2.CAP_PROP_FOCUS, focus_at_base)
+            t_startFocus = time.time()
+
+        if (strWaitChar == '/'):
+            strWaitChar = '-'
+        elif (strWaitChar == '-'):
+            strWaitChar = '|'
+        elif (strWaitChar == '|'):
+            strWaitChar = '/'
+        print("\r" + strWaitChar, end = '')
         ret, frameIn = camera.read()
         bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         cv2.imshow('Barcode/QR code reader', frameIn)
@@ -109,23 +132,45 @@ if __name__ == '__main__':
 
             # Print to the console and on the window, the key:Value of dicContents, one line per key
             if (isinstance(dicContents, dict)):
+                t_diff = time.time() - t_startFocus
+                print("\ntime to decode: %f" % t_diff)
+
+                timeSum += t_diff
+                iTestAttepts += 1
+
+                strAttemptTimings += " " + "{:5.2f}".format(t_diff)
+
+                if (max_test_attempts <= iTestAttepts):
+                    print("        Timings: " + strAttemptTimings)
+                    print("   iTestAttepts: " + str(iTestAttepts))
+                    print("        Average: " + str(timeSum / iTestAttepts))
+                    exit()
+
                 xPos = x + 6
                 yPos = y + h + 30
                 keys = dicContents.keys()
                 for key in keys:
                     txtDisplay = key + ": " + dicContents[key]
                     cv2.putText(frameIn, txtDisplay, (xPos, yPos), font, 1.0, (255, 255, 255), 1)
-                    print(txtDisplay)
+                    print("  " + txtDisplay)
                     yPos += 30
                 print("")
-                if (not test_parameter_auto_focus):
+
+                if (test_parameter_exit_at_first_decode):
                     exit()
 
+                camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+                print("move focus near lens...")
+                camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
+                print("give time to move focus to near lens...")
+                t_start = time.time()
+                bRefocusStarted = False
+
                 try:
-                    if (t_end <= time.time()):
+                    if (t_reBeep <= time.time()):
                         # beep to let the user know the QR code was detected.
                         audio_play.playWaveFileNoBlock('./beep-08b.wav')
-                        t_end = time.time() + 1
+                        t_reBeep = time.time() + 1
                 except:
                     pass
 

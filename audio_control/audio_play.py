@@ -53,7 +53,7 @@ Example:
 def playWaveFileNoBlock(txtPathFileName : Text) -> bool:	
 	try:
 		if debug: print("playWaveFileAndBlock(%s)" % (txtPathFileName))
-		nRtn = subprocess.Popen(["aplay", txtPathFileName])
+		nRtn = subprocess.Popen(["aplay", "-q", txtPathFileName])
 		if (nRtn):
 			return True
 		else:
