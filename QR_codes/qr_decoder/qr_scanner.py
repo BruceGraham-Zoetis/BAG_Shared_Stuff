@@ -216,4 +216,5 @@ if __name__ == '__main__':
     print("        Timings: " + strAttemptTimings)
     print("   iTestAttepts: " + str(iTestAttepts))
     if (0 < iTestAttepts):
-        print("        Average: " + str(timeSum / iTestAttepts))
+        fAvg = timeSum / iTestAttepts
+        print("        Average: %.2f sec" % fAvg)
