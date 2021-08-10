@@ -38,22 +38,23 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 import audio_play
 
-#test_parameter_exit_at_first_decode = True
-test_parameter_exit_at_first_decode = False
+global test_parameter_auto_focus
+test_parameter_auto_focus = True
 
-#test_parameter_auto_focus = True
-test_parameter_auto_focus = False
 
 #focus_far_from_lens   = 225  # max distance from stand: 0.0 cm 
 focus_far_from_lens   = 500  # max distance from stand: 7.0 cm 
 
 focus_near_lens = 900  # min distance from stand: 10.5 cm
 
+global max_test_attempts
 max_test_attempts = 5
+global iTestAttepts
 iTestAttepts = 0
+global timeSum
 timeSum = 0
+global strAttemptTimings
 strAttemptTimings = ""
-strWaitChar = '/'
 
 
 def calculateFocalLength_cm(iLens_setting : int) -> float:
@@ -87,21 +88,7 @@ def decode_qr_code_in_frame(frame):
 
     return bFound, frame, barcode, dicContents
 
-if __name__ == '__main__':
-    camera = cv2.VideoCapture(0)
-
-    print("============================================")
-    print("============================================")
-    if (test_parameter_auto_focus):
-        print("Autofocus On")
-    else:
-        print("Autofocus Off")
-    print()
-    print("Test will run %d times" % max_test_attempts)
-    print("============================================")
-    print("============================================")
-    print()
-
+def runTestForVersionAndWidth():
     # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     print("move focus near lens...")
@@ -118,7 +105,7 @@ if __name__ == '__main__':
 
     t_reBeep = time.time()
     t_startFocus = time.time()
-
+    strWaitChar = '/'
 
     while bContinue:
         if cv2.waitKey(1) & 0xFF == 27:
@@ -127,11 +114,13 @@ if __name__ == '__main__':
         if (not bRefocusStarted and ((t_startFocus + 3) <= time.time())):
             bRefocusStarted = True
             if (test_parameter_auto_focus):
-                print("\nenable camera auto-focus. scan...")
+                print("\nenabling camera auto-focus.")
                 camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
             else:
-                print("\nset camera focus to base. scan...")
+                fcm = calculateFocalLength_cm(focus_far_from_lens)
+                print("\nsetting the camera focus to %.2f cm" % fcm)
                 camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
+            print("\nPlace QR code to be scanned...")
             t_startFocus = time.time()
 
         if (strWaitChar == '/'):
@@ -156,13 +145,14 @@ if __name__ == '__main__':
                 t_diff = time.time() - t_startFocus
                 print("\ntime to decode: %f" % t_diff)
 
+                global timeSum
                 timeSum += t_diff
+
+                global iTestAttepts
                 iTestAttepts += 1
 
+                global strAttemptTimings
                 strAttemptTimings += " " + "{:5.2f}".format(t_diff)
-
-                if (max_test_attempts <= iTestAttepts):
-                    bContinue = False
 
                 xPos = x + 6
                 yPos = y + h + 30
@@ -174,47 +164,108 @@ if __name__ == '__main__':
                     yPos += 30
                 print("")
 
-                if (test_parameter_exit_at_first_decode):
-                    exit()
+                print("Remove QR code")
+                nNotFound = 0
+                while True:
+                    if (strWaitChar == '/'):
+                        strWaitChar = '-'
+                    elif (strWaitChar == '-'):
+                        strWaitChar = '|'
+                    elif (strWaitChar == '|'):
+                        strWaitChar = '/'
+                    print("\r%c %d" % (strWaitChar, nNotFound), end = '')
+                    ret, frameIn = camera.read()
+                    bFound, frameIn, barcode, dicContents = decode_qr_code_in_frame(frameIn)
+                    cv2.imshow('Barcode/QR code reader', frameIn)
+                    if (not bFound):
+                        nNotFound += 1
+                    if (50 < nNotFound):
+                        break
 
-                print("Get ready for next scan. ")
-                for i in range(5, 0, -1):
-                    print(str(i) + " ", end = '')
-                    time.sleep(1)
                 camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-                print("move focus near lens...")
+                print("\nmoving camera focus near the lens...")
                 camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
-                print("give time to move focus to near lens...")
+                time.sleep(2)
+                print("")
                 bRefocusStarted = False
 
                 try:
                     if (t_reBeep <= time.time()):
                         # beep to let the user know the QR code was detected.
                         audio_play.playWaveFileNoBlock('./beep-08b.wav')
-                        t_reBeep = time.time() + 1
+                        t_reBeep = time.time() + print("\nenable camera auto-focus. scan...")
                 except:
                     pass
 
-            bFound = False
+            bContinue = False
         else:
             pass
 
-    camera.release()
-    cv2.destroyAllWindows()
+def PrintAndLog(f, strIn : str):
+    print(strIn)
+    f.write(strIn + "\n")
+
+
+if __name__ == '__main__':
+    camera = cv2.VideoCapture(0)
+    camera.set(cv2.CAP_PROP_BUFFERSIZE, 1)
+
+    iWidth = 0
 
     print("============================================")
     print("============================================")
-    if (test_parameter_auto_focus):
-        print("Autofocus On")
-    else:
-        print("Autofocus Off")
-        fcm = calculateFocalLength_cm(focus_far_from_lens)
-        print("  focus_far_from_lens: %.2f cm" % (fcm))
-    print("============================================")
-    print("============================================")
-    print()
-    print("        Timings: " + strAttemptTimings)
-    print("   iTestAttepts: " + str(iTestAttepts))
-    if (0 < iTestAttepts):
-        fAvg = timeSum / iTestAttepts
-        print("        Average: %.2f sec" % fAvg)
+    print("")
+    strHuman = input("Enter human name: ")
+    if (0 == len(strHuman)):
+        exit()
+
+    while(True):
+        if (0 != iWidth):
+            print("============================================")
+            print("============================================")
+            print("")
+        strAutoFocus = input("Enter a for autofucus, f for fixed focus: ")
+        if ('a' == strAutoFocus):
+            test_parameter_auto_focus = True
+        else:
+            test_parameter_auto_focus = False
+
+        strWidth = input("Enter QR code width cm or 0 to quite (0, 10, 20, 50): ")
+        iWidth = int(strWidth)
+        if (0 == iWidth):
+            break
+        strVersion = input("Enter QR code version (1 - 40): ")
+        iVersion = int(strVersion)
+
+        if (test_parameter_auto_focus):
+            strFocus = "Auto"
+        else:
+            strFocus = "Fixed"
+        strFileName = "test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
+        f = open(strFileName, "w")
+
+        for iRuns in range(1, max_test_attempts + 1, 1):
+            runTestForVersionAndWidth()
+
+        PrintAndLog(f, "============================================")
+        PrintAndLog(f, "============================================")
+        if (test_parameter_auto_focus):
+            PrintAndLog(f, "Autofocus On")
+        else:
+            PrintAndLog(f, "Autofocus Off")
+            fcm = calculateFocalLength_cm(focus_far_from_lens)
+            PrintAndLog(f, "  focus_far_from_lens: %.2f cm" % (fcm))
+        PrintAndLog(f, "")
+        PrintAndLog(f, "Test runs %d times" % max_test_attempts)
+        PrintAndLog(f, "        Timings: " + strAttemptTimings)
+        PrintAndLog(f, "Completed Attepts: " + str(iTestAttepts))
+        if (0 < iTestAttepts):
+            fAvg = timeSum / iTestAttepts
+            PrintAndLog(f, "        Average: %.2f sec" % fAvg)
+        PrintAndLog(f, "============================================")
+        PrintAndLog(f, "============================================")
+
+        f.close()
+
+    camera.release()
+    cv2.destroyAllWindows()
