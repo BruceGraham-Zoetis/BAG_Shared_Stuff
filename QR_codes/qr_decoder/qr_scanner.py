@@ -41,10 +41,12 @@ import audio_play
 #test_parameter_exit_at_first_decode = True
 test_parameter_exit_at_first_decode = False
 
-test_parameter_auto_focus = True
-#test_parameter_auto_focus = False
+#test_parameter_auto_focus = True
+test_parameter_auto_focus = False
 
-focus_at_base   = 225  # max distance from stand: 0.0 cm 
+#focus_far_from_lens   = 225  # max distance from stand: 0.0 cm 
+focus_far_from_lens   = 500  # max distance from stand: 7.0 cm 
+
 focus_near_lens = 900  # min distance from stand: 10.5 cm
 
 max_test_attempts = 5
@@ -52,6 +54,14 @@ iTestAttepts = 0
 timeSum = 0
 strAttemptTimings = ""
 strWaitChar = '/'
+
+
+def calculateFocalLength_cm(iLens_setting : int) -> float:
+    fcm = 10.5 * (float(iLens_setting) / float(focus_near_lens))
+    return fcm
+
+
+
 
 def decode_qr_code_in_frame(frame):
     bFound = False
@@ -86,8 +96,8 @@ if __name__ == '__main__':
         print("Autofocus On")
     else:
         print("Autofocus Off")
-        print("  focus_near_lens: " + str(focus_near_lens) + " min distance from stand: 10.5 cm")
-        print("    focus_at_base: " + str(focus_at_base) + " max distance from stand: 0.0 cm")
+    print()
+    print("Test will run %d times" % max_test_attempts)
     print("============================================")
     print("============================================")
     print()
@@ -121,7 +131,7 @@ if __name__ == '__main__':
                 camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
             else:
                 print("\nset camera focus to base. scan...")
-                camera.set(cv2.CAP_PROP_FOCUS, focus_at_base)
+                camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
             t_startFocus = time.time()
 
         if (strWaitChar == '/'):
@@ -152,10 +162,7 @@ if __name__ == '__main__':
                 strAttemptTimings += " " + "{:5.2f}".format(t_diff)
 
                 if (max_test_attempts <= iTestAttepts):
-                    print("        Timings: " + strAttemptTimings)
-                    print("   iTestAttepts: " + str(iTestAttepts))
-                    print("        Average: " + str(timeSum / iTestAttepts))
-                    exit()
+                    bContinue = False
 
                 xPos = x + 6
                 yPos = y + h + 30
@@ -195,3 +202,18 @@ if __name__ == '__main__':
     camera.release()
     cv2.destroyAllWindows()
 
+    print("============================================")
+    print("============================================")
+    if (test_parameter_auto_focus):
+        print("Autofocus On")
+    else:
+        print("Autofocus Off")
+        fcm = calculateFocalLength_cm(focus_far_from_lens)
+        print("  focus_far_from_lens: %.2f cm" % (fcm))
+    print("============================================")
+    print("============================================")
+    print()
+    print("        Timings: " + strAttemptTimings)
+    print("   iTestAttepts: " + str(iTestAttepts))
+    if (0 < iTestAttepts):
+        print("        Average: " + str(timeSum / iTestAttepts))
