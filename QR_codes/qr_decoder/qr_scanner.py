@@ -41,13 +41,13 @@ import audio_play
 #test_parameter_exit_at_first_decode = True
 test_parameter_exit_at_first_decode = False
 
-#test_parameter_auto_focus = True
-test_parameter_auto_focus = False
+test_parameter_auto_focus = True
+#test_parameter_auto_focus = False
 
 focus_at_base   = 225  # max distance from stand: 0.0 cm 
 focus_near_lens = 900  # min distance from stand: 10.5 cm
 
-max_test_attempts = 20
+max_test_attempts = 5
 iTestAttepts = 0
 timeSum = 0
 strAttemptTimings = ""
@@ -80,6 +80,18 @@ def decode_qr_code_in_frame(frame):
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
 
+    print("============================================")
+    print("============================================")
+    if (test_parameter_auto_focus):
+        print("Autofocus On")
+    else:
+        print("Autofocus Off")
+        print("  focus_near_lens: " + str(focus_near_lens) + " min distance from stand: 10.5 cm")
+        print("    focus_at_base: " + str(focus_at_base) + " max distance from stand: 0.0 cm")
+    print("============================================")
+    print("============================================")
+    print()
+
     # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     print("move focus near lens...")
@@ -95,7 +107,6 @@ if __name__ == '__main__':
     bRefocusStarted = False
 
     t_reBeep = time.time()
-    t_start = time.time()
     t_startFocus = time.time()
 
 
@@ -103,7 +114,7 @@ if __name__ == '__main__':
         if cv2.waitKey(1) & 0xFF == 27:
             bContinue = False
 
-        if (not bRefocusStarted and ((t_start + 3) <= time.time())):
+        if (not bRefocusStarted and ((t_startFocus + 3) <= time.time())):
             bRefocusStarted = True
             if (test_parameter_auto_focus):
                 print("\nenable camera auto-focus. scan...")
@@ -159,11 +170,14 @@ if __name__ == '__main__':
                 if (test_parameter_exit_at_first_decode):
                     exit()
 
+                print("Get ready for next scan. ")
+                for i in range(5, 0, -1):
+                    print(str(i) + " ", end = '')
+                    time.sleep(1)
                 camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
                 print("move focus near lens...")
                 camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
                 print("give time to move focus to near lens...")
-                t_start = time.time()
                 bRefocusStarted = False
 
                 try:

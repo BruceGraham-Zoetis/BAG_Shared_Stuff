@@ -1,0 +1,78 @@
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$ 
+grahamb@vetscan1-spal ~/Zoetis/QR_codes/qr_decoder (master)$  cd /home/grahamb/Zoetis/QR_codes/qr_decoder ; /usr/bin/env /bin/python3 /home/grahamb/.vscode/extensions/ms-python.python-2021.8.1105858891/pythonFiles/lib/python/debugpy/launcher 40421 -- /home/grahamb/Zoetis/QR_codes/qr_decoder/qr_scanner.py 
+============================================
+============================================
+Autofocus On
+============================================
+============================================
+
+move focus near lens...
+give time to move focus to near lens...
+|
+enable camera auto-focus. scan...
+/
+time to decode: 6.086348
+  exp: 2022-05-27
+  name: CDP
+  lot: 500-1038
+  data: COIeRTDxIktxMwveKtJ2T2oKpIbiIJB57lAX1VxcDlOt1LXBMLeLEgLyud3oItHSzL0Fgjbxhs5c3ibLWeakeDzDkr9S3AIdJNKSHJaU80tpmtnHKogaYhrRU9uH476As0WMdWb3nPsAS5ql8pd26KZEP5nePvyQ0GuX4nC3e8S9zcrpHqC6nwxUBOWmoyp3g2ch6n2Ee7mBfrbjrtavUDd4KHufjhIOibNXeO7LHHzLvDCVMfgnKkzBiz86NI03upaEHbbM27POLwME3LRmyVfpYbEvBKsuCrvfS7BxnY1jeFh6MjMdbl47ernQsGipQxMe1NvgMgozu2Vd2LxwDZvBuWs9Y7HfWeAEX5Khopzi7ThBUqEvf4r74o5yJk4FleHdujDi95YYxLLzMLvtAMAM6TTH3aEEM1vNbPk483MNsEg2WZe1IVhfCjMVb7smb1UbkNLeo1wmq6fvWVH4H74rKzh3Wt4hdh9bigvK2OFCiWZAEA8gGw7kZzLREOu0Irc79k5071VCFEhcPpGoBZsixFeAOiR8FhqBZF7uTjVAQ4eD2LQ9iutM3pw2szKqybsgcUOzfLK2IK9ch7nfNPRAxS6eFyYtCYegMPC6u6G5s2XSK0igbEjA2rfmnk6PZpJsMlbC2Cx1dq6kcnjSJeTarOloYlsasRckSt3kzai9CbXuidQH30co5mmLAgImo5jtEwGewXgfikTe9WrhtR4J6H14GrIs0wZZr1xItOwLpghyufSAXdwv6ZltQMj8oqz2Xg1i4y48FT33Xi2YI3Ct3nYE8uieNHGolpJVFerxjETjPfDpwNgaR9EbId1eZYj1jK3h4Kz9750cGqToYZrDM58N3gJXn5AQOazEWNuLDMXxuSl7YcJR0nWfv3DaYxSaaRXMuZWmI5V1p5QfywOdQQSBctiRXyNezIu4o7c0l5IBF6JUCGEf162375ZjRrGzNaWrCvZqHmTAn3RP3z0MjfODgcD6s1SnCEqNoIppiDuAxt3WE8BICUfDL2L4cTY9L8KMMRHloBfQmHfXIjNtagPz1OzchVKJrBEPOjTS3LjznpHe5P5yWEmlkHQZbNoDdo40pYQ1iEUijxLuAzqz3ltEUVvl3ke7nXkmbGpaZHg8lm0zYB3f6gwwjTcRWkfNkqUW8LrZDt8EVHNDpg2qXoiFZPybmn10ot1RvmSqR0I
+
+Get ready for next scan. 
+5 4 3 2 1 move focus near lens...
+give time to move focus to near lens...
+
+enable camera auto-focus. scan...
+-
+time to decode: 0.070204
+  exp: 2022-05-27
+  name: CDP
+  lot: 500-1038
+  data: COIeRTDxIktxMwveKtJ2T2oKpIbiIJB57lAX1VxcDlOt1LXBMLeLEgLyud3oItHSzL0Fgjbxhs5c3ibLWeakeDzDkr9S3AIdJNKSHJaU80tpmtnHKogaYhrRU9uH476As0WMdWb3nPsAS5ql8pd26KZEP5nePvyQ0GuX4nC3e8S9zcrpHqC6nwxUBOWmoyp3g2ch6n2Ee7mBfrbjrtavUDd4KHufjhIOibNXeO7LHHzLvDCVMfgnKkzBiz86NI03upaEHbbM27POLwME3LRmyVfpYbEvBKsuCrvfS7BxnY1jeFh6MjMdbl47ernQsGipQxMe1NvgMgozu2Vd2LxwDZvBuWs9Y7HfWeAEX5Khopzi7ThBUqEvf4r74o5yJk4FleHdujDi95YYxLLzMLvtAMAM6TTH3aEEM1vNbPk483MNsEg2WZe1IVhfCjMVb7smb1UbkNLeo1wmq6fvWVH4H74rKzh3Wt4hdh9bigvK2OFCiWZAEA8gGw7kZzLREOu0Irc79k5071VCFEhcPpGoBZsixFeAOiR8FhqBZF7uTjVAQ4eD2LQ9iutM3pw2szKqybsgcUOzfLK2IK9ch7nfNPRAxS6eFyYtCYegMPC6u6G5s2XSK0igbEjA2rfmnk6PZpJsMlbC2Cx1dq6kcnjSJeTarOloYlsasRckSt3kzai9CbXuidQH30co5mmLAgImo5jtEwGewXgfikTe9WrhtR4J6H14GrIs0wZZr1xItOwLpghyufSAXdwv6ZltQMj8oqz2Xg1i4y48FT33Xi2YI3Ct3nYE8uieNHGolpJVFerxjETjPfDpwNgaR9EbId1eZYj1jK3h4Kz9750cGqToYZrDM58N3gJXn5AQOazEWNuLDMXxuSl7YcJR0nWfv3DaYxSaaRXMuZWmI5V1p5QfywOdQQSBctiRXyNezIu4o7c0l5IBF6JUCGEf162375ZjRrGzNaWrCvZqHmTAn3RP3z0MjfODgcD6s1SnCEqNoIppiDuAxt3WE8BICUfDL2L4cTY9L8KMMRHloBfQmHfXIjNtagPz1OzchVKJrBEPOjTS3LjznpHe5P5yWEmlkHQZbNoDdo40pYQ1iEUijxLuAzqz3ltEUVvl3ke7nXkmbGpaZHg8lm0zYB3f6gwwjTcRWkfNkqUW8LrZDt8EVHNDpg2qXoiFZPybmn10ot1RvmSqR0I
+
+Get ready for next scan. 
+5 4 3 2 1 move focus near lens...
+give time to move focus to near lens...
+
+enable camera auto-focus. scan...
+|
+time to decode: 0.069971
+  exp: 2022-05-27
+  name: CDP
+  lot: 500-1038
+  data: COIeRTDxIktxMwveKtJ2T2oKpIbiIJB57lAX1VxcDlOt1LXBMLeLEgLyud3oItHSzL0Fgjbxhs5c3ibLWeakeDzDkr9S3AIdJNKSHJaU80tpmtnHKogaYhrRU9uH476As0WMdWb3nPsAS5ql8pd26KZEP5nePvyQ0GuX4nC3e8S9zcrpHqC6nwxUBOWmoyp3g2ch6n2Ee7mBfrbjrtavUDd4KHufjhIOibNXeO7LHHzLvDCVMfgnKkzBiz86NI03upaEHbbM27POLwME3LRmyVfpYbEvBKsuCrvfS7BxnY1jeFh6MjMdbl47ernQsGipQxMe1NvgMgozu2Vd2LxwDZvBuWs9Y7HfWeAEX5Khopzi7ThBUqEvf4r74o5yJk4FleHdujDi95YYxLLzMLvtAMAM6TTH3aEEM1vNbPk483MNsEg2WZe1IVhfCjMVb7smb1UbkNLeo1wmq6fvWVH4H74rKzh3Wt4hdh9bigvK2OFCiWZAEA8gGw7kZzLREOu0Irc79k5071VCFEhcPpGoBZsixFeAOiR8FhqBZF7uTjVAQ4eD2LQ9iutM3pw2szKqybsgcUOzfLK2IK9ch7nfNPRAxS6eFyYtCYegMPC6u6G5s2XSK0igbEjA2rfmnk6PZpJsMlbC2Cx1dq6kcnjSJeTarOloYlsasRckSt3kzai9CbXuidQH30co5mmLAgImo5jtEwGewXgfikTe9WrhtR4J6H14GrIs0wZZr1xItOwLpghyufSAXdwv6ZltQMj8oqz2Xg1i4y48FT33Xi2YI3Ct3nYE8uieNHGolpJVFerxjETjPfDpwNgaR9EbId1eZYj1jK3h4Kz9750cGqToYZrDM58N3gJXn5AQOazEWNuLDMXxuSl7YcJR0nWfv3DaYxSaaRXMuZWmI5V1p5QfywOdQQSBctiRXyNezIu4o7c0l5IBF6JUCGEf162375ZjRrGzNaWrCvZqHmTAn3RP3z0MjfODgcD6s1SnCEqNoIppiDuAxt3WE8BICUfDL2L4cTY9L8KMMRHloBfQmHfXIjNtagPz1OzchVKJrBEPOjTS3LjznpHe5P5yWEmlkHQZbNoDdo40pYQ1iEUijxLuAzqz3ltEUVvl3ke7nXkmbGpaZHg8lm0zYB3f6gwwjTcRWkfNkqUW8LrZDt8EVHNDpg2qXoiFZPybmn10ot1RvmSqR0I
+
+Get ready for next scan. 
+5 4 3 2 1 move focus near lens...
+give time to move focus to near lens...
+
+enable camera auto-focus. scan...
+/
+time to decode: 0.068016
+  exp: 2022-05-27
+  name: CDP
+  lot: 500-1038
+  data: COIeRTDxIktxMwveKtJ2T2oKpIbiIJB57lAX1VxcDlOt1LXBMLeLEgLyud3oItHSzL0Fgjbxhs5c3ibLWeakeDzDkr9S3AIdJNKSHJaU80tpmtnHKogaYhrRU9uH476As0WMdWb3nPsAS5ql8pd26KZEP5nePvyQ0GuX4nC3e8S9zcrpHqC6nwxUBOWmoyp3g2ch6n2Ee7mBfrbjrtavUDd4KHufjhIOibNXeO7LHHzLvDCVMfgnKkzBiz86NI03upaEHbbM27POLwME3LRmyVfpYbEvBKsuCrvfS7BxnY1jeFh6MjMdbl47ernQsGipQxMe1NvgMgozu2Vd2LxwDZvBuWs9Y7HfWeAEX5Khopzi7ThBUqEvf4r74o5yJk4FleHdujDi95YYxLLzMLvtAMAM6TTH3aEEM1vNbPk483MNsEg2WZe1IVhfCjMVb7smb1UbkNLeo1wmq6fvWVH4H74rKzh3Wt4hdh9bigvK2OFCiWZAEA8gGw7kZzLREOu0Irc79k5071VCFEhcPpGoBZsixFeAOiR8FhqBZF7uTjVAQ4eD2LQ9iutM3pw2szKqybsgcUOzfLK2IK9ch7nfNPRAxS6eFyYtCYegMPC6u6G5s2XSK0igbEjA2rfmnk6PZpJsMlbC2Cx1dq6kcnjSJeTarOloYlsasRckSt3kzai9CbXuidQH30co5mmLAgImo5jtEwGewXgfikTe9WrhtR4J6H14GrIs0wZZr1xItOwLpghyufSAXdwv6ZltQMj8oqz2Xg1i4y48FT33Xi2YI3Ct3nYE8uieNHGolpJVFerxjETjPfDpwNgaR9EbId1eZYj1jK3h4Kz9750cGqToYZrDM58N3gJXn5AQOazEWNuLDMXxuSl7YcJR0nWfv3DaYxSaaRXMuZWmI5V1p5QfywOdQQSBctiRXyNezIu4o7c0l5IBF6JUCGEf162375ZjRrGzNaWrCvZqHmTAn3RP3z0MjfODgcD6s1SnCEqNoIppiDuAxt3WE8BICUfDL2L4cTY9L8KMMRHloBfQmHfXIjNtagPz1OzchVKJrBEPOjTS3LjznpHe5P5yWEmlkHQZbNoDdo40pYQ1iEUijxLuAzqz3ltEUVvl3ke7nXkmbGpaZHg8lm0zYB3f6gwwjTcRWkfNkqUW8LrZDt8EVHNDpg2qXoiFZPybmn10ot1RvmSqR0I
+
+Get ready for next scan. 
+5 4 3 2 1 move focus near lens...
+give time to move focus to near lens...
+
+enable camera auto-focus. scan...
+-
+time to decode: 0.077144
+        Timings:   6.09  0.07  0.07  0.07  0.08
+   iTestAttepts: 5
+        Average: 1.2743364334106446
