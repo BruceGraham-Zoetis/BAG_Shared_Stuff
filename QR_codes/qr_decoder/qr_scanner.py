@@ -25,6 +25,7 @@
 
 #import libraries
 #import subprocess
+from genericpath import isdir
 from typing import Text
 import cv2
 from pyzbar import pyzbar
@@ -32,6 +33,7 @@ import json
 import os
 import time
 #import v4l2ctl
+import numpy
 
 import sys
 sys.path.append('../../audio_control')
@@ -46,6 +48,10 @@ test_parameter_auto_focus = True
 focus_far_from_lens   = 500  # max distance from stand: 7.0 cm 
 
 focus_near_lens = 900  # min distance from stand: 10.5 cm
+
+global strWindowtitle
+strWindowtitle = 'Barcode/QR code reader'
+
 
 global max_test_attempts
 max_test_attempts = 5
@@ -72,6 +78,7 @@ def decode_qr_code_in_frame(frame):
     dicContents = {}
 
     try:
+        #print("d", end = '')
         barcodes = pyzbar.decode(frame)
     except:
         return bFound, barcode, dicContents
@@ -147,12 +154,12 @@ def runTestForVersionAndWidth() -> bool:
 
         if (not bFound):
             printMessageToWindow(frameIn, "Place QR code to be scanned.")
-            cv2.imshow('Barcode/QR code reader', frameIn)
+            cv2.imshow(strWindowtitle, frameIn)
         else:
             x, y , w, h = barcode.rect
             cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
             printMessageToWindow(frameIn, "Remove QR code.")
-            cv2.imshow('Barcode/QR code reader', frameIn)
+            cv2.imshow(strWindowtitle, frameIn)
 
             # Print to the console and on the window, the key:Value of dicContents, one line per key
             if (isinstance(dicContents, dict)):
@@ -179,31 +186,57 @@ def runTestForVersionAndWidth() -> bool:
                     pass
 
                 print("Remove QR code")
-                printMessageToWindow(frameIn, "Remove QR code")
-                cv2.imshow('Barcode/QR code reader', frameIn)
+                #printMessageToWindow(frameIn, "Remove QR code")
+                #cv2.imshow(strWindowtitle, frameIn)
+
+                # flush
+                """
+                for i in range(1, 100, 1):
+                    camera.set(cv2.CAP_PROP_POS_FRAMES, 1)
+                    ret = camera.grab()
+                    if (not ret):
+                        break
+                    ret, frameIn = camera.read()
+                    if (ret):
+                        cv2.imshow(strWindowtitle, frameIn)
+                    else:
+                        break
+                """
 
                 nNotFound = 0
+                ret, frameInOld = camera.read()
                 while True:
-                    if (strWaitChar == '/'):
-                        strWaitChar = '-'
-                    elif (strWaitChar == '-'):
-                        strWaitChar = '|'
-                    elif (strWaitChar == '|'):
-                        strWaitChar = '/'
-                    #print("\r%c %d" % (strWaitChar, nNotFound), end = '')
-                    #camera.grab()
-                    #camera.set(cv2.CAP_PROP_POS_FRAMES, 1)
+                    if (10 < nNotFound):
+                        print("\nQR code was no longer detected\n")
+                        break
+                    if (600 < nNotFound):
+                        print("\ntimeout - still finding QR code")
+                        break
                     ret, frameIn = camera.read()
+                    if (numpy.array_equal(frameInOld, frameIn, equal_nan=False)):
+                        print("equal")
+                    frameInOld = frameIn
+
+                    if (ret):
+                        pass
+                    else:
+                        print("x")
+                        break
                     bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
                     if (bFound):
                         printMessageToWindow(frameIn, "Remove QR code")
+                        if (strWaitChar == '/'):
+                            strWaitChar = '-'
+                        elif (strWaitChar == '-'):
+                            strWaitChar = '|'
+                        elif (strWaitChar == '|'):
+                            strWaitChar = '/'
+                        print('\r' + strWaitChar, end = '')
                     else:
                         nNotFound += 1
                         printMessageToWindow(frameIn, "")
 
-                    cv2.imshow('Barcode/QR code reader', frameIn)
-                    if (100 < nNotFound):
-                        break
+                    cv2.imshow(strWindowtitle, frameIn)
 
                 camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
                 print("\nmoving camera focus near the lens...")
@@ -220,42 +253,71 @@ def PrintAndLog(f, strIn : str):
     print(strIn)
     f.write(strIn + "\n")
 
+debugSkipInput = True
 
 if __name__ == '__main__':
     camera = cv2.VideoCapture(0)
 
     iWidth = 0
 
+    if (not os.path.isdir("./test_runs/")):
+        os.mkdir("./test_runs/")
+
     print("============================================")
     print("============================================")
     print("")
-    strHuman = input("Enter human name: ")
-    if (0 == len(strHuman)):
-        exit()
+    if (debugSkipInput):
+        strHuman = "bruce"
+    else:
+        strHuman = input("Enter human name: ")
+        if (0 == len(strHuman)):
+            exit()
 
     while(True):
         if (0 != iWidth):
             print("============================================")
             print("============================================")
             print("")
-        strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
-        if ('a' == strAutoFocus):
+        if (debugSkipInput):
             test_parameter_auto_focus = True
-        elif ('f' == strAutoFocus):
-            test_parameter_auto_focus = False
         else:
-            break
+            strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
+            if ('a' == strAutoFocus):
+                test_parameter_auto_focus = True
+            elif ('f' == strAutoFocus):
+                test_parameter_auto_focus = False
+            else:
+                break
 
-        strWidth = input("Enter QR code width cm (10, 20, 50): ")
-        iWidth = int(strWidth)
-        strVersion = input("Enter QR code version (1 - 40): ")
-        iVersion = int(strVersion)
+        if (debugSkipInput):
+            iWidth = 10
+        else:
+            while(True):
+                strWidth = input("Enter QR code width cm (10, 20, 50): ")
+                try:
+                    iWidth = int(strWidth)
+                    if ((10 == iWidth) or (20 == iWidth) or (50 == iWidth)):
+                        break
+                except:
+                    pass
+
+        if (debugSkipInput):
+            iVersion = 8
+        else:
+            while(True):
+                strVersion = input("Enter QR code version (1 - 40): ")
+                try:
+                    iVersion = int(strVersion)
+                    if ((1 <= iVersion) and (iVersion <= 40)):
+                        break
+                except:
+                    pass
 
         if (test_parameter_auto_focus):
             strFocus = "Auto"
         else:
             strFocus = "Fixed"
-        strFileName = "test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
+        strFileName = "./test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
         f = open(strFileName, "w")
 
         strAttemptTimings = ""
