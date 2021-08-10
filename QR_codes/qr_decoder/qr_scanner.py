@@ -88,13 +88,12 @@ def decode_qr_code_in_frame(frame):
 
     return bFound, frame, barcode, dicContents
 
-def runTestForVersionAndWidth():
+def runTestForVersionAndWidth() -> bool:
     # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-    print("move focus near lens...")
     camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
-    print("give time to move focus to near lens...")
-    time.sleep(3)
+    print("\nWaiting while camera moves focus near the lens...")
+    time.sleep(2)
 
     iCount = 0
     barcode_info = ""
@@ -103,13 +102,15 @@ def runTestForVersionAndWidth():
     bContinue = True
     bRefocusStarted = False
 
-    t_reBeep = time.time()
     t_startFocus = time.time()
     strWaitChar = '/'
+    bTestWasCancelled = False
 
     while bContinue:
         if cv2.waitKey(1) & 0xFF == 27:
             bContinue = False
+            bTestWasCancelled = True
+            break
 
         if (not bRefocusStarted and ((t_startFocus + 3) <= time.time())):
             bRefocusStarted = True
@@ -163,6 +164,10 @@ def runTestForVersionAndWidth():
                     print("  " + txtDisplay)
                     yPos += 30
                 print("")
+                try:
+                    audio_play.playWaveFileNoBlock('./beep-08b.wav')
+                except:
+                    pass
 
                 print("Remove QR code")
                 nNotFound = 0
@@ -189,17 +194,11 @@ def runTestForVersionAndWidth():
                 print("")
                 bRefocusStarted = False
 
-                try:
-                    if (t_reBeep <= time.time()):
-                        # beep to let the user know the QR code was detected.
-                        audio_play.playWaveFileNoBlock('./beep-08b.wav')
-                        t_reBeep = time.time() + print("\nenable camera auto-focus. scan...")
-                except:
-                    pass
-
             bContinue = False
         else:
             pass
+
+    return bTestWasCancelled
 
 def PrintAndLog(f, strIn : str):
     print(strIn)
@@ -224,16 +223,16 @@ if __name__ == '__main__':
             print("============================================")
             print("============================================")
             print("")
-        strAutoFocus = input("Enter a for autofucus, f for fixed focus: ")
+        strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
         if ('a' == strAutoFocus):
             test_parameter_auto_focus = True
-        else:
+        elif ('f' == strAutoFocus):
             test_parameter_auto_focus = False
-
-        strWidth = input("Enter QR code width cm or 0 to quite (0, 10, 20, 50): ")
-        iWidth = int(strWidth)
-        if (0 == iWidth):
+        else:
             break
+
+        strWidth = input("Enter QR code width cm (10, 20, 50): ")
+        iWidth = int(strWidth)
         strVersion = input("Enter QR code version (1 - 40): ")
         iVersion = int(strVersion)
 
@@ -244,11 +243,12 @@ if __name__ == '__main__':
         strFileName = "test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
         f = open(strFileName, "w")
 
-        for iRuns in range(1, max_test_attempts + 1, 1):
-            runTestForVersionAndWidth()
+        strAttemptTimings = ""
+        timeSum = 0.0
 
-        PrintAndLog(f, "============================================")
-        PrintAndLog(f, "============================================")
+        for iRuns in range(1, max_test_attempts + 1, 1):
+            bTestWasCancelled = runTestForVersionAndWidth()
+
         if (test_parameter_auto_focus):
             PrintAndLog(f, "Autofocus On")
         else:
@@ -258,9 +258,9 @@ if __name__ == '__main__':
         PrintAndLog(f, "")
         PrintAndLog(f, "Test runs %d times" % max_test_attempts)
         PrintAndLog(f, "        Timings: " + strAttemptTimings)
-        PrintAndLog(f, "Completed Attepts: " + str(iTestAttepts))
+        PrintAndLog(f, "Completed iRuns: " + str(iRuns))
         if (0 < iTestAttepts):
-            fAvg = timeSum / iTestAttepts
+            fAvg = timeSum / iRuns
             PrintAndLog(f, "        Average: %.2f sec" % fAvg)
         PrintAndLog(f, "============================================")
         PrintAndLog(f, "============================================")
