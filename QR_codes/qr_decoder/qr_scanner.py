@@ -98,11 +98,13 @@ def decode_qr_code_in_frame(frame):
         
         try:
             dicContents = json.loads(barcode_info)
-            bFound = True
-
+            if (4 == len(dicContents)):
+                bFound = True
+            else:
+                bFound = False
         except:
-            dicContents = {"raw": barcode_info}
-            bFound = True
+            # Failed to decode JSON data.
+            bFound = False
 
     return bFound, barcode, dicContents
 
