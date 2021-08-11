@@ -193,7 +193,11 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
                 print("")
                 try:
                     strBeepFile = os.getcwd()
-                    strBeepFile += '\\beep-08b.wav'
+                    if (os.name == 'nt'):
+                        strBeepFile += '\\'
+                    else:
+                        strBeepFile += '/'
+                    strBeepFile += 'beep-08b.wav'
                     audio_play.playWaveFileNoBlock(strBeepFile)
                 except:
                     pass
@@ -317,6 +321,11 @@ if __name__ == '__main__':
 
         for iRun in range(1, max_test_attempts + 1, 1):
             bTestWasCancelled = runTestForVersionAndWidth(iRun)
+
+        PrintAndLog(f, "strHuman: " + strHuman)
+        PrintAndLog(f, "strFocus: " + strFocus)
+        PrintAndLog(f, "  iWidth: " + str(iWidth))
+        PrintAndLog(f, "iVersion: " + str(iVersion))
 
         if (test_parameter_auto_focus):
             PrintAndLog(f, "Autofocus On")
