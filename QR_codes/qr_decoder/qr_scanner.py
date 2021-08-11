@@ -55,12 +55,12 @@ strWindowtitle = 'Barcode/QR code reader'
 
 global max_test_attempts
 max_test_attempts = 5
-global iTestAttepts
-iTestAttepts = 0
-global timeSum
-timeSum = 0
-global strAttemptTimings
-strAttemptTimings = ""
+global g_iTestAttempts
+g_iTestAttempts = 0
+global g_fTimeSum
+g_fTimeSum = 0
+global g_strAttemptTimings
+g_strAttemptTimings = ""
 global camera
 
 
@@ -103,150 +103,153 @@ def printMessageToWindow(frameIn, txtDisplay):
     return frameIn
 
 
+def printMessagesToWindow(frameIn, Contents):
+    font = cv2.FONT_HERSHEY_DUPLEX
+    iY = 50
+
+    if (isinstance(Contents, dict)):
+        keys = Contents.keys()
+        for key in keys:
+            txtDisplay = key + ": " + Contents[key]
+            cv2.putText(frameIn, txtDisplay, (50, iY), font, 1.0, (255, 255, 255), 1)
+            iY += 30
+
+    if (isinstance(Contents, set)):
+        for index, txtDisplay in enumerate(Contents):
+            cv2.putText(frameIn, txtDisplay, (50, iY), font, 1.0, (255, 255, 255), 1)
+            iY += 30
+
+    return frameIn
+
+
 def runTestForVersionAndWidth(iRun : int) -> bool:
     # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens) # Move focus near the lens.
 
+    bFound = False
+    dicContents = {}
+
+    bTestWasCancelled = False
+
+    if (test_parameter_auto_focus):
+        print("\nenabling camera auto-focus.")
+        camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+    else:
+        fcm = calculateFocalLength_cm(focus_far_from_lens)
+        print("\nsetting the camera focus to %.2f cm" % fcm)
+        camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
+
+    print("Remove QR code")
+    nNotFound = 0
+    strWaitChar = '/'
+
     timeEnd = time.time() + 5.0
     while(time.time() < timeEnd):
         ret, frameIn = camera.read()
-        timeRemaining = timeEnd - time.time()
-        strRemaining = format(timeRemaining, ".2f")
-        frameIn = printMessageToWindow(frameIn, "Run: " + str(iRun) + " Get ready " + strRemaining)
+        bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
+        if (bFound):
+            timeEnd = time.time() + 5.0
+            nNotFound = 0
+            if (strWaitChar == '/'):
+                strWaitChar = '-'
+            elif (strWaitChar == '-'):
+                strWaitChar = '|'
+            elif (strWaitChar == '|'):
+                strWaitChar = '/'
+            print('\r' + strWaitChar, end = '')
+            frameIn = printMessageToWindow(frameIn, "Remove QR code")
+        else:
+            nNotFound += 1
+            if (60 < nNotFound):
+                print("\nQR code not detected\n")
+                frameIn = printMessageToWindow(frameIn, "QR code not detected")
+                break
+            else:
+                timeRemaining = timeEnd - time.time()
+                strRemaining = format(timeRemaining, ".2f")
+                frameIn = printMessageToWindow(frameIn, "Run: " + str(iRun) + " Get ready " + strRemaining)
+
         cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) #???
 
-    iCount = 0
-    barcode_info = ""
-    bFound = False
-    dicContents= {}
-    bContinue = True
-    bRefocusStarted = False
-
+    print("Place QR code to be scanned. Esc to fail.")
     t_startFocus = time.time()
-    strWaitChar = '/'
-    bTestWasCancelled = False
 
-    while bContinue:
-        if cv2.waitKey(1) & 0xFF == 27:
-            bContinue = False
-            bTestWasCancelled = True
-            break
-
-        if (not bRefocusStarted and ((t_startFocus + 3) <= time.time())):
-            bRefocusStarted = True
-
-            if (test_parameter_auto_focus):
-                print("\nenabling camera auto-focus.")
-                camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
-            else:
-                fcm = calculateFocalLength_cm(focus_far_from_lens)
-                print("\nsetting the camera focus to %.2f cm" % fcm)
-                camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
-            print("\nPlace QR code to be scanned...")
-            t_startFocus = time.time()
-
-        if (strWaitChar == '/'):
-            strWaitChar = '-'
-        elif (strWaitChar == '-'):
-            strWaitChar = '|'
-        elif (strWaitChar == '|'):
-            strWaitChar = '/'
-        print("\r" + strWaitChar, end = '')
-
+    bFound = False
+    while (not bFound):
         ret, frameIn = camera.read()
         if (ret):
             bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         else:
             bFound = False
 
-        if (not bFound):
-            frameIn = printMessageToWindow(frameIn, "Place QR code to be scanned.")
+        #frameIn = printMessageToWindow(frameIn, "Place QR code to be scanned. Esc to fail.")
+        setLines = {"Place QR code to be scanned.", "Esc to fail."}
+        frameIn = printMessagesToWindow(frameIn, setLines)
+        cv2.imshow(strWindowtitle, frameIn)
+        cv2.waitKey(10) #???
+
+        if cv2.waitKey(1) & 0xFF == 27:
+            bTestWasCancelled = True
+            break
+
+        if (bFound):
+            break
+
+    if (bTestWasCancelled):
+        print("!!! Cancelled !!!")
+        return bTestWasCancelled
+
+    t_diff = time.time() - t_startFocus
+    print("\ntime to decode: %f" % t_diff)
+
+    # save results: g_fTimeSum, g_iTestAttempts, g_strAttemptTimings
+    global g_fTimeSum
+    g_fTimeSum += t_diff
+
+    global g_iTestAttempts
+    g_iTestAttempts += 1
+
+    global g_strAttemptTimings
+    g_strAttemptTimings += " " + "{:5.2f}".format(t_diff)
+
+
+    strBeepFile = os.getcwd()
+    if (os.name == 'nt'):
+        strBeepFile += '\\'
+    else:
+        strBeepFile += '/'
+    strBeepFile += 'beep-08b.wav'
+    try:
+        audio_play.playWaveFileNoBlock(strBeepFile)
+    except:
+        pass
+
+    if (isinstance(dicContents, dict)):
+        # Print to the console, the key:Value of dicContents, one line per key
+        keys = dicContents.keys()
+        for key in keys:
+            txtDisplay = key + ": " + dicContents[key]
+            print("  " + txtDisplay)
+        print("")
+
+        # Print to the window, the key:Value of dicContents, one line per key
+        timeEnd = time.time() + 5.0
+        while(time.time() < timeEnd):
+            ret, frameIn = camera.read()
+            frameIn = printMessagesToWindow(frameIn, dicContents)
             cv2.imshow(strWindowtitle, frameIn)
             cv2.waitKey(10) #???
-        else:
-            x, y , w, h = barcode.rect
-            cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
-            frameIn = printMessageToWindow(frameIn, "Remove QR code.")
-            cv2.imshow(strWindowtitle, frameIn)
-            cv2.waitKey(10) #???
-
-            # Print to the console and on the window, the key:Value of dicContents, one line per key
-            if (isinstance(dicContents, dict)):
-                t_diff = time.time() - t_startFocus
-                print("\ntime to decode: %f" % t_diff)
-
-                global timeSum
-                timeSum += t_diff
-
-                global iTestAttepts
-                iTestAttepts += 1
-
-                global strAttemptTimings
-                strAttemptTimings += " " + "{:5.2f}".format(t_diff)
-
-                keys = dicContents.keys()
-                for key in keys:
-                    txtDisplay = key + ": " + dicContents[key]
-                    print("  " + txtDisplay)
-                print("")
-                try:
-                    strBeepFile = os.getcwd()
-                    if (os.name == 'nt'):
-                        strBeepFile += '\\'
-                    else:
-                        strBeepFile += '/'
-                    strBeepFile += 'beep-08b.wav'
-                    audio_play.playWaveFileNoBlock(strBeepFile)
-                except:
-                    pass
-
-                print("Remove QR code")
-                printMessageToWindow(frameIn, "Remove QR code")
-                cv2.imshow(strWindowtitle, frameIn)
-                cv2.waitKey(10) #???
-
-                nNotFound = 0
-                while True:
-                    ret, frameIn = camera.read()
-                    bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
-                    if (bFound):
-                        nNotFound = 0
-                        if (strWaitChar == '/'):
-                            strWaitChar = '-'
-                        elif (strWaitChar == '-'):
-                            strWaitChar = '|'
-                        elif (strWaitChar == '|'):
-                            strWaitChar = '/'
-                        print('\r' + strWaitChar, end = '')
-                    else:
-                        nNotFound += 1
-                        if (60 < nNotFound):
-                            print("\nQR code was no longer detected\n")
-                            break
-                    frameIn = printMessageToWindow(frameIn, "Remove QR code")
-                    cv2.imshow(strWindowtitle, frameIn)
-                    cv2.waitKey(10) #???
-
-                camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-                camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
-                timeEnd = time.time() + 1.0
-                while(time.time() < timeEnd):
-                    ret, frameIn = camera.read()
-                    frameIn = printMessageToWindow(frameIn, "Moving camera focus near the lens...")
-                    cv2.imshow(strWindowtitle, frameIn)
-                    cv2.waitKey(10) #???
-                print("")
-                bRefocusStarted = False
-
-            bContinue = False
 
     return bTestWasCancelled
+
 
 def PrintAndLog(f, strIn : str):
     print(strIn)
     f.write(strIn + "\n")
+
+
 
 #debugSkipInput = True
 debugSkipInput = False
@@ -316,11 +319,13 @@ if __name__ == '__main__':
         strFileName = "./test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
         f = open(strFileName, "w")
 
-        strAttemptTimings = ""
-        timeSum = 0.0
+        g_strAttemptTimings = ""
+        g_fTimeSum = 0.0
 
         for iRun in range(1, max_test_attempts + 1, 1):
             bTestWasCancelled = runTestForVersionAndWidth(iRun)
+            if (bTestWasCancelled):
+                break
 
         PrintAndLog(f, "strHuman: " + strHuman)
         PrintAndLog(f, "strFocus: " + strFocus)
@@ -335,10 +340,10 @@ if __name__ == '__main__':
             PrintAndLog(f, "  focus_far_from_lens: %.2f cm" % (fcm))
         PrintAndLog(f, "")
         PrintAndLog(f, "Test runs %d times" % max_test_attempts)
-        PrintAndLog(f, "        Timings: " + strAttemptTimings)
+        PrintAndLog(f, "        Timings: " + g_strAttemptTimings)
         PrintAndLog(f, "Completed iRuns: " + str(iRun))
-        if (0 < iTestAttepts):
-            fAvg = timeSum / iRun
+        if (0 < g_iTestAttempts):
+            fAvg = g_fTimeSum / iRun
             PrintAndLog(f, "        Average: %.2f sec" % fAvg)
         PrintAndLog(f, "============================================")
         PrintAndLog(f, "============================================")
