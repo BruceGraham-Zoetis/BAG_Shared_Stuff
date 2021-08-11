@@ -1,0 +1,12 @@
+strHuman: Brian
+strFocus: Auto
+  iWidth: 20
+iVersion: 17
+Autofocus On
+
+Test runs 5 times
+        Timings:   5.01  3.94  4.57  3.76  7.63
+Completed iRuns: 5
+        Average: 4.98 sec
+============================================
+============================================

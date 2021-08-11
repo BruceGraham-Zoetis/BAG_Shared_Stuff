@@ -1,0 +1,13 @@
+strHuman: Brian
+strFocus: Fixed
+  iWidth: 20
+iVersion: 14
+Autofocus Off
+Focus point set to 900.00. 5.00 cm from lens
+
+Test runs 5 times
+        Timings:   3.23  3.66  3.08  3.01  2.07
+Completed iRuns: 5
+        Average: 3.01 sec
+============================================
+============================================
