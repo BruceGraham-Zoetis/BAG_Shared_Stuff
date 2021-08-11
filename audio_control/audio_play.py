@@ -33,7 +33,8 @@ import subprocess
 from typing import Text
 import wave
 import select
-import alsaaudio
+### import alsaaudio
+import os
 import time
 
 debug = False
@@ -53,7 +54,11 @@ Example:
 def playWaveFileNoBlock(txtPathFileName : Text) -> bool:	
 	try:
 		if debug: print("playWaveFileAndBlock(%s)" % (txtPathFileName))
-		nRtn = subprocess.Popen(["aplay", "-q", txtPathFileName])
+		if (os.name == 'nt'):
+			#nRtn = subprocess.Popen(["C:\Program Files (x86)\Windows Media Player\wmplayer.exe", "-q", txtPathFileName])
+			nRtn = True
+		else:
+			nRtn = subprocess.Popen(["aplay", "-q", txtPathFileName])
 		if (nRtn):
 			return True
 		else:
@@ -74,6 +79,23 @@ Example:
 
 @returns True = played file
 @returns False = failed
+"""
+def playWaveFileAndBlock(txtPathFileName : Text) -> bool:	
+	try:
+		if debug: print("playWaveFileAndBlock(%s)" % (txtPathFileName))
+		if (os.name == 'nt'):
+			#nRtn = subprocess.Popen(["C:\Program Files (x86)\Windows Media Player\wmplayer.exe", "-q", txtPathFileName])
+			nRtn = True
+		else:
+			nRtn = subprocess.call(["aplay", "-q", txtPathFileName])
+		if (nRtn):
+			return True
+		else:
+			return False
+	except:
+		print("ERROR: File not found %s" % (txtPathFileName))
+		return False
+
 """
 def playWaveFileAndBlock(txtPathFileName : Text) -> bool:	
 	try:
@@ -102,12 +124,10 @@ def playWaveFileAndBlock(txtPathFileName : Text) -> bool:
 	periodsize = oFile.getframerate() // 8
 	txtOutputDeviceName = 'default'
 
-	"""
-	if debug: print('%d channels, %d sampling rate, format %d, periodsize %d\n' % (oFile.getnchannels(),
+	if debugX: print('%d channels, %d sampling rate, format %d, periodsize %d\n' % (oFile.getnchannels(),
 																		 oFile.getframerate(),
 																		 format,
 																		 periodsize))
-	"""
 
 	# Setup PCM device
 	pcmDevice = alsaaudio.PCM(channels=oFile.getnchannels(),
@@ -152,4 +172,4 @@ def playWaveFileAndBlock(txtPathFileName : Text) -> bool:
 	time.sleep(0.5) # give time for PCM device to play the rest of the file.
 	oFile.close()
 	return True
-
+"""
