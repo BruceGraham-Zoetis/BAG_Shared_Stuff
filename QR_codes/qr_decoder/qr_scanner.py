@@ -100,6 +100,7 @@ def decode_qr_code_in_frame(frame):
 def printMessageToWindow(frameIn, txtDisplay):
     font = cv2.FONT_HERSHEY_DUPLEX
     cv2.putText(frameIn, txtDisplay, (50, 50), font, 1.0, (255, 255, 255), 1)
+    return frameIn
 
 
 def runTestForVersionAndWidth() -> bool:
@@ -128,13 +129,14 @@ def runTestForVersionAndWidth() -> bool:
 
         if (not bRefocusStarted and ((t_startFocus + 3) <= time.time())):
             bRefocusStarted = True
+
             if (test_parameter_auto_focus):
                 print("\nenabling camera auto-focus.")
-                camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
+                ###xxx camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
             else:
                 fcm = calculateFocalLength_cm(focus_far_from_lens)
                 print("\nsetting the camera focus to %.2f cm" % fcm)
-                camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
+                ###xxx camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
             print("\nPlace QR code to be scanned...")
             t_startFocus = time.time()
 
@@ -153,12 +155,12 @@ def runTestForVersionAndWidth() -> bool:
             bFound = False
 
         if (not bFound):
-            printMessageToWindow(frameIn, "Place QR code to be scanned.")
+            frameIn = printMessageToWindow(frameIn, "Place QR code to be scanned.")
             cv2.imshow(strWindowtitle, frameIn)
         else:
             x, y , w, h = barcode.rect
             cv2.rectangle(frameIn, (x, y),(x+w, y+h), (0, 255, 0), 2)
-            printMessageToWindow(frameIn, "Remove QR code.")
+            frameIn = printMessageToWindow(frameIn, "Remove QR code.")
             cv2.imshow(strWindowtitle, frameIn)
 
             # Print to the console and on the window, the key:Value of dicContents, one line per key
@@ -186,25 +188,26 @@ def runTestForVersionAndWidth() -> bool:
                     pass
 
                 print("Remove QR code")
+
                 #printMessageToWindow(frameIn, "Remove QR code")
                 #cv2.imshow(strWindowtitle, frameIn)
 
+
                 # flush
-                """
-                for i in range(1, 100, 1):
-                    camera.set(cv2.CAP_PROP_POS_FRAMES, 1)
-                    ret = camera.grab()
-                    if (not ret):
-                        break
-                    ret, frameIn = camera.read()
-                    if (ret):
-                        cv2.imshow(strWindowtitle, frameIn)
-                    else:
-                        break
-                """
+                #for i in range(1, 100, 1):
+                #    camera.set(cv2.CAP_PROP_POS_FRAMES, 1)
+                #    ret = camera.grab()
+                #    if (not ret):
+                #        break
+                #    ret, frameIn = camera.read()
+                #    if (ret):
+                #        cv2.imshow(strWindowtitle, frameIn)
+                #    else:
+                #        break
 
                 nNotFound = 0
-                ret, frameInOld = camera.read()
+                ret, frameIn = camera.read()
+
                 while True:
                     if (10 < nNotFound):
                         print("\nQR code was no longer detected\n")
@@ -212,19 +215,10 @@ def runTestForVersionAndWidth() -> bool:
                     if (600 < nNotFound):
                         print("\ntimeout - still finding QR code")
                         break
-                    ret, frameIn = camera.read()
-                    if (numpy.array_equal(frameInOld, frameIn, equal_nan=False)):
-                        print("equal")
-                    frameInOld = frameIn
 
-                    if (ret):
-                        pass
-                    else:
-                        print("x")
-                        break
                     bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
                     if (bFound):
-                        printMessageToWindow(frameIn, "Remove QR code")
+                        #frameIn = printMessageToWindow(frameIn, "Remove QR code")
                         if (strWaitChar == '/'):
                             strWaitChar = '-'
                         elif (strWaitChar == '-'):
@@ -234,14 +228,20 @@ def runTestForVersionAndWidth() -> bool:
                         print('\r' + strWaitChar, end = '')
                     else:
                         nNotFound += 1
-                        printMessageToWindow(frameIn, "")
+                        #frameIn = printMessageToWindow(frameIn, "Please wait")
 
                     cv2.imshow(strWindowtitle, frameIn)
+                    ret, frameIn = camera.read()
+                    if (ret):
+                        pass
+                    else:
+                        print("x")
+                        break
 
-                camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
+                ###xxx camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
                 print("\nmoving camera focus near the lens...")
-                camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
-                time.sleep(2)
+                ###xxx camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens)
+                ###xxx time.sleep(2)
                 print("")
                 bRefocusStarted = False
 
