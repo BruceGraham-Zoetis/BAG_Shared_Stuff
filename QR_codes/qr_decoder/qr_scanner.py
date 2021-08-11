@@ -43,11 +43,14 @@ import audio_play
 global test_parameter_auto_focus
 test_parameter_auto_focus = True
 
+# focus setting used for fixed focus
+#fixed_focus_setting   = 225
+#fixed_focus_setting   = 500
+#fixed_focus_setting   = 700
+fixed_focus_setting   = 900
 
-#focus_far_from_lens   = 225  # max distance from stand: 0.0 cm 
-focus_far_from_lens   = 500  # max distance from stand: 7.0 cm 
-
-focus_near_lens = 900  # min distance from stand: 10.5 cm
+# max focus setting - near the lens
+fixed_focus_near_lens = 900
 
 global strWindowtitle
 strWindowtitle = 'Barcode/QR code reader'
@@ -63,9 +66,16 @@ global g_strAttemptTimings
 g_strAttemptTimings = ""
 global camera
 
+"""
+Purpose: for the given lens setting, determine the lens focus point distance in cm
 
+@param[in] iLens_setting: [1, 900] farthest and nearest from lens
+
+@retuns distance in cm
+"""
 def calculateFocalLength_cm(iLens_setting : int) -> float:
-    fcm = 10.5 * (float(iLens_setting) / float(focus_near_lens))
+    # Notes: 5.0 cm was measured with 900, the focus point is at about 5 cm from the lens.
+    fcm = 5.0 * (float(iLens_setting) / float(fixed_focus_near_lens))
     return fcm
 
 
@@ -114,7 +124,7 @@ def printMessagesToWindow(frameIn, Contents):
             cv2.putText(frameIn, txtDisplay, (50, iY), font, 1.0, (255, 255, 255), 1)
             iY += 30
 
-    if (isinstance(Contents, set)):
+    if (isinstance(Contents, list)):
         for index, txtDisplay in enumerate(Contents):
             cv2.putText(frameIn, txtDisplay, (50, iY), font, 1.0, (255, 255, 255), 1)
             iY += 30
@@ -125,7 +135,7 @@ def printMessagesToWindow(frameIn, Contents):
 def runTestForVersionAndWidth(iRun : int) -> bool:
     # turn off the camera auto-focus
     camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
-    camera.set(cv2.CAP_PROP_FOCUS, focus_near_lens) # Move focus near the lens.
+    camera.set(cv2.CAP_PROP_FOCUS, fixed_focus_near_lens) # Move focus near the lens.
 
     bFound = False
     dicContents = {}
@@ -136,9 +146,9 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
         print("\nenabling camera auto-focus.")
         camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
     else:
-        fcm = calculateFocalLength_cm(focus_far_from_lens)
-        print("\nsetting the camera focus to %.2f cm" % fcm)
-        camera.set(cv2.CAP_PROP_FOCUS, focus_far_from_lens)
+        fcm = calculateFocalLength_cm(fixed_focus_setting)
+        print("\nFocus point set to %.2f. %.2f cm from lens" % (fixed_focus_setting, fcm))
+        camera.set(cv2.CAP_PROP_FOCUS, fixed_focus_setting)
 
     print("Remove QR code")
     nNotFound = 0
@@ -168,7 +178,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
             else:
                 timeRemaining = timeEnd - time.time()
                 strRemaining = format(timeRemaining, ".2f")
-                frameIn = printMessageToWindow(frameIn, "Run: " + str(iRun) + " Get ready " + strRemaining)
+                listLines = ["Run: " + str(iRun), "Get ready " + strRemaining]
+                frameIn = printMessagesToWindow(frameIn, listLines)
 
         cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) #???
@@ -184,9 +195,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
         else:
             bFound = False
 
-        #frameIn = printMessageToWindow(frameIn, "Place QR code to be scanned. Esc to fail.")
-        setLines = {"Place QR code to be scanned.", "Esc to fail."}
-        frameIn = printMessagesToWindow(frameIn, setLines)
+        listLines = ["Place QR code to be scanned.", "Press Esc to fail the test."]
+        frameIn = printMessagesToWindow(frameIn, listLines)
         cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) #???
 
@@ -278,7 +288,7 @@ if __name__ == '__main__':
             print("============================================")
             print("")
         if (debugSkipInput):
-            test_parameter_auto_focus = True
+            test_parameter_auto_focus = False
         else:
             strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
             if ('a' == strAutoFocus):
@@ -289,7 +299,7 @@ if __name__ == '__main__':
                 break
 
         if (debugSkipInput):
-            iWidth = 10
+            iWidth = 20
         else:
             while(True):
                 strWidth = input("Enter QR code width cm (10, 20, 50): ")
@@ -301,7 +311,7 @@ if __name__ == '__main__':
                     pass
 
         if (debugSkipInput):
-            iVersion = 8
+            iVersion = 14
         else:
             while(True):
                 strVersion = input("Enter QR code version (1 - 40): ")
@@ -336,8 +346,8 @@ if __name__ == '__main__':
             PrintAndLog(f, "Autofocus On")
         else:
             PrintAndLog(f, "Autofocus Off")
-            fcm = calculateFocalLength_cm(focus_far_from_lens)
-            PrintAndLog(f, "  focus_far_from_lens: %.2f cm" % (fcm))
+            fcm = calculateFocalLength_cm(fixed_focus_setting)
+            PrintAndLog(f, "Focus point set to %.2f. %.2f cm from lens" % (fixed_focus_setting, fcm))
         PrintAndLog(f, "")
         PrintAndLog(f, "Test runs %d times" % max_test_attempts)
         PrintAndLog(f, "        Timings: " + g_strAttemptTimings)
