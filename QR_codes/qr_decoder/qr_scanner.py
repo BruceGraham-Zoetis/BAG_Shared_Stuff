@@ -98,7 +98,7 @@ def decode_qr_code_in_frame(frame):
         
         try:
             dicContents = json.loads(barcode_info)
-            if (4 == len(dicContents)):
+            if (1 < len(dicContents)):
                 bFound = True
             else:
                 bFound = False
@@ -122,7 +122,16 @@ def printMessagesToWindow(frameIn, Contents):
     if (isinstance(Contents, dict)):
         keys = Contents.keys()
         for key in keys:
-            txtDisplay = key + ": " + Contents[key]
+            if (str == type(key)):
+                strKey = key
+            else:
+                strKey = str(key)
+                
+            if (str == type(Contents[key])):
+                strValue = Contents[key]
+            else:
+                strValue = str(Contents[key])
+            txtDisplay = strKey + ": " + strValue
             cv2.putText(frameIn, txtDisplay, (50, iY), font, 1.0, (255, 255, 255), 1)
             iY += 30
 
@@ -183,7 +192,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
                 listLines = ["Run: " + str(iRun), "Get ready " + strRemaining]
                 frameIn = printMessagesToWindow(frameIn, listLines)
 
-        cv2.imshow(strWindowtitle, frameIn)
+        frameFlipped = cv2.flip(frameIn, -1)
+        cv2.imshow(strWindowtitle, frameFlipped)
         cv2.waitKey(10) #???
 
     print("Place QR code to be scanned. Esc to fail.")
@@ -193,13 +203,14 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
     while (not bFound):
         ret, frameIn = camera.read()
         if (ret):
-            bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
+            bFound, barcode, dicContentsCaptured = decode_qr_code_in_frame(frameIn)
         else:
             bFound = False
 
         listLines = ["Place QR code to be scanned.", "Press Esc to fail the test."]
         frameIn = printMessagesToWindow(frameIn, listLines)
-        cv2.imshow(strWindowtitle, frameIn)
+        frameFlipped = cv2.flip(frameIn, -1)
+        cv2.imshow(strWindowtitle, frameFlipped)
         cv2.waitKey(10) #???
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -238,20 +249,40 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
     except:
         pass
 
-    if (isinstance(dicContents, dict)):
+    if (isinstance(dicContentsCaptured, dict)):
+        dicContents = dicContentsCaptured
+
         # Print to the console, the key:Value of dicContents, one line per key
         keys = dicContents.keys()
         for key in keys:
-            txtDisplay = key + ": " + dicContents[key]
+            if (str == type(key)):
+                strKey = key
+            else:
+                strKey = str(key)
+
+            if (str == type(dicContents[key])):
+                strValue = dicContents[key]
+            else:
+                strValue = str(dicContents[key])
+            txtDisplay = strKey + ": " + strValue
             print("  " + txtDisplay)
         print("")
+
 
         # Print to the window, the key:Value of dicContents, one line per key
         timeEnd = time.time() + 5.0
         while(time.time() < timeEnd):
             ret, frameIn = camera.read()
+
+            dicContents = {"Scan Time" : "{:5.2f}".format(t_diff) + " sec", "" : ""}
+            dicContents.update(dicContentsCaptured)
+            timeRemaining = timeEnd - time.time()
+            strRemaining = format(timeRemaining, ".2f")
+            dicContents.update({strRemaining : ""})
+
             frameIn = printMessagesToWindow(frameIn, dicContents)
-            cv2.imshow(strWindowtitle, frameIn)
+            frameFlipped = cv2.flip(frameIn, -1)
+            cv2.imshow(strWindowtitle, frameFlipped)
             cv2.waitKey(10) #???
 
     return bTestWasCancelled
@@ -267,8 +298,6 @@ def PrintAndLog(f, strIn : str):
 debugSkipInput = False
 
 if __name__ == '__main__':
-    camera = cv2.VideoCapture(0)
-
     iWidth = 0
 
     if (not os.path.isdir("./test_runs/")):
@@ -334,10 +363,17 @@ if __name__ == '__main__':
         g_strAttemptTimings = ""
         g_fTimeSum = 0.0
 
+        # open output window
+        camera = cv2.VideoCapture(0)
+
         for iRun in range(1, max_test_attempts + 1, 1):
             bTestWasCancelled = runTestForVersionAndWidth(iRun)
             if (bTestWasCancelled):
                 break
+
+        # close output window
+        camera.release()
+        cv2.destroyAllWindows()
 
         PrintAndLog(f, "strHuman: " + strHuman)
         PrintAndLog(f, "strFocus: " + strFocus)
@@ -362,5 +398,3 @@ if __name__ == '__main__':
 
         f.close()
 
-    camera.release()
-    cv2.destroyAllWindows()
