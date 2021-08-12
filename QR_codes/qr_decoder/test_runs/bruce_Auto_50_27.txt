@@ -5,8 +5,8 @@ iVersion: 27
 Autofocus On
 
 Test runs 5 times
-        Timings:  14.97 24.39 14.41 19.70  6.43
+        Timings:   7.92 16.42 11.70 16.77  9.26
 Completed iRuns: 5
-        Average: 15.98 sec
+        Average: 12.41 sec
 ============================================
 ============================================

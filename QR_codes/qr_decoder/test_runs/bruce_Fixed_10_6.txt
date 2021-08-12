@@ -6,8 +6,8 @@ Autofocus Off
 Focus point set to 900.00. 5.00 cm from lens
 
 Test runs 5 times
-        Timings:   2.74  2.62  2.00  1.75  3.79
+        Timings:   3.45  2.95  2.11  1.47  1.65
 Completed iRuns: 5
-        Average: 2.58 sec
+        Average: 2.33 sec
 ============================================
 ============================================

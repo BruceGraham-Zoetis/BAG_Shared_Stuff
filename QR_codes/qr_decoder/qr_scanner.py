@@ -167,7 +167,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
 
     timeEnd = time.time() + 5.0
     while(time.time() < timeEnd):
-        ret, frameIn = camera.read()
+        ret, frameFlipped = camera.read()
+        frameIn = cv2.flip(frameFlipped, -1)
         bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
             timeEnd = time.time() + 5.0
@@ -192,8 +193,7 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
                 listLines = ["Run: " + str(iRun), "Get ready " + strRemaining]
                 frameIn = printMessagesToWindow(frameIn, listLines)
 
-        frameFlipped = cv2.flip(frameIn, -1)
-        cv2.imshow(strWindowtitle, frameFlipped)
+        cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) #???
 
     print("Place QR code to be scanned. Esc to fail.")
@@ -201,7 +201,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
 
     bFound = False
     while (not bFound):
-        ret, frameIn = camera.read()
+        ret, frameFlipped = camera.read()
+        frameIn = cv2.flip(frameFlipped, -1)
         if (ret):
             bFound, barcode, dicContentsCaptured = decode_qr_code_in_frame(frameIn)
         else:
@@ -209,8 +210,7 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
 
         listLines = ["Place QR code to be scanned.", "Press Esc to fail the test."]
         frameIn = printMessagesToWindow(frameIn, listLines)
-        frameFlipped = cv2.flip(frameIn, -1)
-        cv2.imshow(strWindowtitle, frameFlipped)
+        cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) #???
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -272,7 +272,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
         # Print to the window, the key:Value of dicContents, one line per key
         timeEnd = time.time() + 5.0
         while(time.time() < timeEnd):
-            ret, frameIn = camera.read()
+            ret, frameFlipped = camera.read()
+            frameIn = cv2.flip(frameFlipped, -1)
 
             dicContents = {"Scan Time" : "{:5.2f}".format(t_diff) + " sec", "" : ""}
             dicContents.update(dicContentsCaptured)
@@ -281,8 +282,7 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
             dicContents.update({strRemaining : ""})
 
             frameIn = printMessagesToWindow(frameIn, dicContents)
-            frameFlipped = cv2.flip(frameIn, -1)
-            cv2.imshow(strWindowtitle, frameFlipped)
+            cv2.imshow(strWindowtitle, frameIn)
             cv2.waitKey(10) #???
 
     return bTestWasCancelled
