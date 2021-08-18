@@ -14,28 +14,50 @@ from __future__ import absolute_import
 
 ## fix path so that contained py files can be imported
 import os, sys
+from posix import O_ACCMODE
 sys.path.append(os.path.curdir + "/hub_app")
 
 # 
 import PySimpleGUI as sg
 import cv2
 import os
+import platform
 
-import class_vetscan_hub
+import hub_app_gui.class_vetscan_hub
 
 global camera
 
 global strWindowtitle
 strWindowtitle = 'Vetscan Hub'
 
-#bCameraIsFlipped = True
-bCameraIsFlipped = False
+def isCameraFlipped() -> bool:
+    bCameraIsFlipped = False
+
+    if (os.name != 'nt'):
+        tuples = platform.uname()
+        i = 0
+        while (i < len(tuples)):
+            strValue = tuples[i]
+            print(strValue)
+            if ("lubuntu" == strValue):
+                bCameraIsFlipped = True
+                break
+            if ("ubuntu" == strValue):
+                break
+            i = i + 1
+    return bCameraIsFlipped
+
+
 
 if __name__ == '__main__':
 
-    o_vetscan_hub = class_vetscan_hub.CVetscanHub()
+    bCameraIsFlipped = isCameraFlipped()
 
-    o_analyzer_dracula = o_vetscan_hub.add_analyzer("127.0.0.1", "dracula")
+    o_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
+
+    bRtn = o_vetscan_hub.add_analyzer("127.0.0.1", "dracula")
+    o_analyzer_dracula = o_vetscan_hub.get_analyzer("127.0.0.1")
+    print("o_analyzer_dracula IP: %s" % o_analyzer_dracula.get_ip_address())
 
     # open output window
     camera = cv2.VideoCapture(0)
@@ -60,6 +82,10 @@ if __name__ == '__main__':
             [sg.Image(filename='', key='image')],
             [sg.Text(size=(50,1), key='TEXT_CONSUMABLES')],
             [sg.Button('GET supported_consumables')],
+            [sg.Button('PUT light blink')],
+            [sg.Button('PUT light Off')],
+            [sg.Button('PUT power off')],
+            [sg.Button('PUT power reboot')],
             [sg.Text(size=(20,30), key='-OUTPUT-')],
             [sg.Button('Exit')]
             ]
@@ -94,6 +120,19 @@ if __name__ == '__main__':
         if event == 'GET supported_consumables':
             strConsumables = o_analyzer_dracula.get_consumables()
             window['-OUTPUT-'].update(strConsumables)
+        elif event == 'PUT light blink':
+            strRtn = o_analyzer_dracula.light_blink()
+            window['-OUTPUT-'].update(strRtn)
+        elif event == 'PUT light Off':
+            strRtn = o_analyzer_dracula.light_off()
+            window['-OUTPUT-'].update(strRtn)
+
+        elif event == 'PUT power off':
+            strRtn = o_analyzer_dracula.power_off()
+            window['-OUTPUT-'].update(strRtn)
+        elif event == 'PUT power reboot':
+            strRtn = o_analyzer_dracula.power_reboot()
+            window['-OUTPUT-'].update(strRtn)
 
     window.close()
 
