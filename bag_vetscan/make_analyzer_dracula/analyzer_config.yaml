@@ -1,0 +1,9 @@
+templateDir:
+  templates
+files:
+  AUTHORS.md:
+    {}
+  controllers/measurement_channel_controller.py:
+    folder: openapi_server
+  controllers/control_channel_controller.py:
+    folder: openapi_server    
