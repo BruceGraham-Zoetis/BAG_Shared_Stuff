@@ -21,11 +21,11 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     # from configuration_controller.py
     ########################################################
     @method()
-    def configuration_factory_reset_put():
+    def configuration_factory_reset_put(self):
         return configuration_controller.configuration_factory_reset_put()
 
     @method()
-    def configuration_get():
+    def configuration_get(self):
         return configuration_controller.configuration_get()
 
     @method()
@@ -33,31 +33,31 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         return configuration_controller.configuration_put()
 
     @method()
-    def configuration_schema_get():
+    def configuration_schema_get(self):
         return configuration_controller.configuration_schema_get()
 
     ########################################################
     # from control_channel_controller.py
     ########################################################
-    def control_light_blink_put():
+    def control_light_blink_put(self):
         return control_channel_controller.control_light_blink_put()
 
-    def control_light_off_put():
+    def control_light_off_put(self):
         return control_channel_controller.control_light_off_put()
 
-    def control_power_off_put():
+    def control_power_off_put(self):
         return control_channel_controller.control_power_off_put()
 
-    def control_power_reboot_put():
+    def control_power_reboot_put(self):
         return control_channel_controller.control_power_reboot_put()
 
     ########################################################
     # from measurement_channel_controller.py
     ########################################################
-    def channel_measurement_get_measurement_status():
+    def channel_measurement_get_measurement_status(self):
         return measurement_channel_controller.channel_measurement_get_measurement_status()
 
-    def measurement_cancel_delete():
+    def measurement_cancel_delete(self):
         return measurement_channel_controller.measurement_cancel_delete()
 
     def measurement_consumable_consumable_uuid_post(consumable_uuid):
@@ -69,31 +69,32 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     def measurement_past_results_get(start_time, start_date, end_time, end_date):
         return measurement_channel_controller.measurement_past_results_get(start_time, start_date, end_time, end_date)
 
-    def measurement_result_get():
+    def measurement_result_get(self):
         return measurement_channel_controller.measurement_result_get()
 
     def measurement_script_post(inline_object):
         return measurement_channel_controller.measurement_script_post(inline_object)
 
     @method()
-    def measurement_supported_consumables_get(self) -> 'a{s':
+    def measurement_supported_consumables_get(self) -> 's':
         # returns dictionary type
-        strRtn = measurement_channel_controller.measurement_supported_consumables_get()
-        return strRtn
+        dictRtn = measurement_channel_controller.measurement_supported_consumables_get()
+
+        return str(dictRtn)
 
 
     ########################################################
     # from status_channel_controller.py
     ########################################################
-    def status_currently_activated_events_get():
+    def status_currently_activated_events_get(self):
         return status_channel_controller.configuration_schema_get()
 
-    def status_operational_get():
+    def status_operational_get(self):
         return status_channel_controller.status_operational_get()
 
 
     @method()
-    def Frobate(self, foo: 'i', bar: 's') -> 'a{us}':
+    def Frobate(self, foo: 'i', bar: 's') -> '{sa{sv}}':
         print(f'called Frobate with foo={foo} and bar={bar}')
 
         """
