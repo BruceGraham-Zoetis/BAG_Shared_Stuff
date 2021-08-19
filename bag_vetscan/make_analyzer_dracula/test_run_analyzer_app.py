@@ -14,7 +14,15 @@ from analyzer_app.openapi_server import encoder
 
 
 def main():
-    app = connexion.App(__name__, specification_dir='./analyzer_app/openapi_server/openapi/')
+    app_options = {
+        "swagger_ui": True
+        #"swagger_ui": False
+        }
+
+    app = connexion.App(
+                __name__,
+                specification_dir='./analyzer_app/openapi_server/openapi/', 
+                options = app_options)
     app.app.json_encoder = encoder.JSONEncoder
     app.add_api('openapi.yaml',
                 arguments={'title': 'Analyzer and HUB API'},

@@ -1,5 +1,6 @@
 .dockerignore
 .gitignore
+.openapi-generator-ignore
 .travis.yml
 AUTHORS.md
 Dockerfile
@@ -31,6 +32,10 @@ openapi_server/models/measurement_result.py
 openapi_server/models/measurement_status.py
 openapi_server/openapi/openapi.yaml
 openapi_server/test/__init__.py
+openapi_server/test/test_configuration_controller.py
+openapi_server/test/test_control_channel_controller.py
+openapi_server/test/test_measurement_channel_controller.py
+openapi_server/test/test_status_channel_controller.py
 openapi_server/typing_utils.py
 openapi_server/util.py
 requirements.txt
