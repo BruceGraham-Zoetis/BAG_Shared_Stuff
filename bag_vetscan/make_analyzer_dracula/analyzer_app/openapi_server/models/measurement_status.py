@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -23,7 +22,8 @@ class MeasurementStatus(Model):
     ABORTED = "Aborted"
     STOPPING = "Stopping"
     COMPLETE = "Complete"
-    def __init__(self):  # noqa: E501
+
+    def __init__(self):
         """MeasurementStatus - a model defined in OpenAPI
 
         """
@@ -34,12 +34,10 @@ class MeasurementStatus(Model):
         }
 
     @classmethod
-    def from_dict(cls, dikt) -> 'MeasurementStatus':
+    def from_dict(cls, dikt: dict) -> 'MeasurementStatus':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The measurement_status of this MeasurementStatus.  # noqa: E501
-        :rtype: MeasurementStatus
+        :return: The measurement_status of this MeasurementStatus.
         """
         return util.deserialize_model(dikt, cls)

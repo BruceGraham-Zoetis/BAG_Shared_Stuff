@@ -1,51 +1,47 @@
-import connexion
-import six
+from typing import List, Dict
+from aiohttp import web
 
-from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
+from openapi_server.models.inline_response400 import InlineResponse400
 from openapi_server import util
 
 
-def configuration_factory_reset_put():  # noqa: E501
+async def configuration_factory_reset_put(request: web.Request, ) -> web.Response:
     """configuration_factory_reset_put
 
-    Restore the analyzer to the state it was in when it left the factory. All settings and data are removed. # noqa: E501
+    Restore the analyzer to the state it was in when it left the factory. All settings and data are removed.
 
 
-    :rtype: None
     """
-    return 'do some magic!'
+    return web.Response(status=200)
 
 
-def configuration_get():  # noqa: E501
+async def configuration_get(request: web.Request, ) -> web.Response:
     """configuration_get
 
-    Request the configuration from the analyzer # noqa: E501
+    Request the configuration from the analyzer
 
 
-    :rtype: object
     """
-    return 'do some magic!'
+    return web.Response(status=200)
 
 
-def configuration_put(body):  # noqa: E501
+async def configuration_put(request: web.Request, body) -> web.Response:
     """configuration_put
 
-    Set the configuration of the analyzer # noqa: E501
+    Set the configuration of the analyzer
 
     :param body: 
     :type body: 
 
-    :rtype: None
     """
-    return 'do some magic!'
+    return web.Response(status=200)
 
 
-def configuration_schema_get():  # noqa: E501
+async def configuration_schema_get(request: web.Request, ) -> web.Response:
     """configuration_schema_get
 
-    Request the configuration schema from the analyzer # noqa: E501
+    Request the configuration schema from the analyzer
 
 
-    :rtype: object
     """
-    return 'do some magic!'
+    return web.Response(status=200)

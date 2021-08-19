@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,17 +14,13 @@ class InlineResponse400(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, detail=None, status=None, title=None, type=None):  # noqa: E501
+    def __init__(self, detail: str=None, status: float=None, title: str=None, type: str=None):
         """InlineResponse400 - a model defined in OpenAPI
 
-        :param detail: The detail of this InlineResponse400.  # noqa: E501
-        :type detail: str
-        :param status: The status of this InlineResponse400.  # noqa: E501
-        :type status: float
-        :param title: The title of this InlineResponse400.  # noqa: E501
-        :type title: str
-        :param type: The type of this InlineResponse400.  # noqa: E501
-        :type type: str
+        :param detail: The detail of this InlineResponse400.
+        :param status: The status of this InlineResponse400.
+        :param title: The title of this InlineResponse400.
+        :param type: The type of this InlineResponse400.
         """
         self.openapi_types = {
             'detail': str,
@@ -47,13 +42,11 @@ class InlineResponse400(Model):
         self._type = type
 
     @classmethod
-    def from_dict(cls, dikt) -> 'InlineResponse400':
+    def from_dict(cls, dikt: dict) -> 'InlineResponse400':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The inline_response_400 of this InlineResponse400.  # noqa: E501
-        :rtype: InlineResponse400
+        :return: The inline_response_400 of this InlineResponse400.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -61,7 +54,7 @@ class InlineResponse400(Model):
     def detail(self):
         """Gets the detail of this InlineResponse400.
 
-        A description of the problem with the request  # noqa: E501
+        A description of the problem with the request
 
         :return: The detail of this InlineResponse400.
         :rtype: str
@@ -72,13 +65,13 @@ class InlineResponse400(Model):
     def detail(self, detail):
         """Sets the detail of this InlineResponse400.
 
-        A description of the problem with the request  # noqa: E501
+        A description of the problem with the request
 
         :param detail: The detail of this InlineResponse400.
         :type detail: str
         """
         if detail is None:
-            raise ValueError("Invalid value for `detail`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `detail`, must not be `None`")
 
         self._detail = detail
 
@@ -86,7 +79,7 @@ class InlineResponse400(Model):
     def status(self):
         """Gets the status of this InlineResponse400.
 
-        The number of the HTTP error code  # noqa: E501
+        The number of the HTTP error code
 
         :return: The status of this InlineResponse400.
         :rtype: float
@@ -97,13 +90,13 @@ class InlineResponse400(Model):
     def status(self, status):
         """Sets the status of this InlineResponse400.
 
-        The number of the HTTP error code  # noqa: E501
+        The number of the HTTP error code
 
         :param status: The status of this InlineResponse400.
         :type status: float
         """
         if status is None:
-            raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `status`, must not be `None`")
 
         self._status = status
 
@@ -111,7 +104,7 @@ class InlineResponse400(Model):
     def title(self):
         """Gets the title of this InlineResponse400.
 
-        The title of the error indicated by the status  # noqa: E501
+        The title of the error indicated by the status
 
         :return: The title of this InlineResponse400.
         :rtype: str
@@ -122,13 +115,13 @@ class InlineResponse400(Model):
     def title(self, title):
         """Sets the title of this InlineResponse400.
 
-        The title of the error indicated by the status  # noqa: E501
+        The title of the error indicated by the status
 
         :param title: The title of this InlineResponse400.
         :type title: str
         """
         if title is None:
-            raise ValueError("Invalid value for `title`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `title`, must not be `None`")
 
         self._title = title
 
@@ -136,7 +129,7 @@ class InlineResponse400(Model):
     def type(self):
         """Gets the type of this InlineResponse400.
 
-        Additional error information if available describing the type of error  # noqa: E501
+        Additional error information if available describing the type of error
 
         :return: The type of this InlineResponse400.
         :rtype: str
@@ -147,12 +140,12 @@ class InlineResponse400(Model):
     def type(self, type):
         """Sets the type of this InlineResponse400.
 
-        Additional error information if available describing the type of error  # noqa: E501
+        Additional error information if available describing the type of error
 
         :param type: The type of this InlineResponse400.
         :type type: str
         """
         if type is None:
-            raise ValueError("Invalid value for `type`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `type`, must not be `None`")
 
         self._type = type

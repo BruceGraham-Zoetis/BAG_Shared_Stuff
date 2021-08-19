@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,17 +14,13 @@ class EventInfo(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, activation_time=None, severity=None, event_name=None, event_additional_information=None):  # noqa: E501
+    def __init__(self, activation_time: str=None, severity: str=None, event_name: str=None, event_additional_information: str=None):
         """EventInfo - a model defined in OpenAPI
 
-        :param activation_time: The activation_time of this EventInfo.  # noqa: E501
-        :type activation_time: str
-        :param severity: The severity of this EventInfo.  # noqa: E501
-        :type severity: str
-        :param event_name: The event_name of this EventInfo.  # noqa: E501
-        :type event_name: str
-        :param event_additional_information: The event_additional_information of this EventInfo.  # noqa: E501
-        :type event_additional_information: str
+        :param activation_time: The activation_time of this EventInfo.
+        :param severity: The severity of this EventInfo.
+        :param event_name: The event_name of this EventInfo.
+        :param event_additional_information: The event_additional_information of this EventInfo.
         """
         self.openapi_types = {
             'activation_time': str,
@@ -47,13 +42,11 @@ class EventInfo(Model):
         self._event_additional_information = event_additional_information
 
     @classmethod
-    def from_dict(cls, dikt) -> 'EventInfo':
+    def from_dict(cls, dikt: dict) -> 'EventInfo':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The event_info of this EventInfo.  # noqa: E501
-        :rtype: EventInfo
+        :return: The event_info of this EventInfo.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -61,7 +54,7 @@ class EventInfo(Model):
     def activation_time(self):
         """Gets the activation_time of this EventInfo.
 
-        The local date and time the event was activated in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the event was activated in format MM-DD-YYYY HH:MM:SS
 
         :return: The activation_time of this EventInfo.
         :rtype: str
@@ -72,7 +65,7 @@ class EventInfo(Model):
     def activation_time(self, activation_time):
         """Sets the activation_time of this EventInfo.
 
-        The local date and time the event was activated in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the event was activated in format MM-DD-YYYY HH:MM:SS
 
         :param activation_time: The activation_time of this EventInfo.
         :type activation_time: str
@@ -84,7 +77,7 @@ class EventInfo(Model):
     def severity(self):
         """Gets the severity of this EventInfo.
 
-        A string value indicating the severity of the event  # noqa: E501
+        A string value indicating the severity of the event
 
         :return: The severity of this EventInfo.
         :rtype: str
@@ -95,7 +88,7 @@ class EventInfo(Model):
     def severity(self, severity):
         """Sets the severity of this EventInfo.
 
-        A string value indicating the severity of the event  # noqa: E501
+        A string value indicating the severity of the event
 
         :param severity: The severity of this EventInfo.
         :type severity: str
@@ -113,7 +106,7 @@ class EventInfo(Model):
     def event_name(self):
         """Gets the event_name of this EventInfo.
 
-        The name of the event  # noqa: E501
+        The name of the event
 
         :return: The event_name of this EventInfo.
         :rtype: str
@@ -124,7 +117,7 @@ class EventInfo(Model):
     def event_name(self, event_name):
         """Sets the event_name of this EventInfo.
 
-        The name of the event  # noqa: E501
+        The name of the event
 
         :param event_name: The event_name of this EventInfo.
         :type event_name: str
@@ -136,7 +129,7 @@ class EventInfo(Model):
     def event_additional_information(self):
         """Gets the event_additional_information of this EventInfo.
 
-        Additional information to describe the event that has occurred.  This can be anything that will help the operator understand in more detail the event  # noqa: E501
+        Additional information to describe the event that has occurred.  This can be anything that will help the operator understand in more detail the event
 
         :return: The event_additional_information of this EventInfo.
         :rtype: str
@@ -147,7 +140,7 @@ class EventInfo(Model):
     def event_additional_information(self, event_additional_information):
         """Sets the event_additional_information of this EventInfo.
 
-        Additional information to describe the event that has occurred.  This can be anything that will help the operator understand in more detail the event  # noqa: E501
+        Additional information to describe the event that has occurred.  This can be anything that will help the operator understand in more detail the event
 
         :param event_additional_information: The event_additional_information of this EventInfo.
         :type event_additional_information: str

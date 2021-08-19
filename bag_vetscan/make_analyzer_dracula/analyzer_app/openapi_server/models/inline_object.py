@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,11 +14,10 @@ class InlineObject(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, script=None):  # noqa: E501
+    def __init__(self, script: str=None):
         """InlineObject - a model defined in OpenAPI
 
-        :param script: The script of this InlineObject.  # noqa: E501
-        :type script: str
+        :param script: The script of this InlineObject.
         """
         self.openapi_types = {
             'script': str
@@ -32,13 +30,11 @@ class InlineObject(Model):
         self._script = script
 
     @classmethod
-    def from_dict(cls, dikt) -> 'InlineObject':
+    def from_dict(cls, dikt: dict) -> 'InlineObject':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The inline_object of this InlineObject.  # noqa: E501
-        :rtype: InlineObject
+        :return: The inline_object of this InlineObject.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -46,7 +42,7 @@ class InlineObject(Model):
     def script(self):
         """Gets the script of this InlineObject.
 
-        This string will contain a script that the analyzer will consume and begin the execution of  # noqa: E501
+        This string will contain a script that the analyzer will consume and begin the execution of
 
         :return: The script of this InlineObject.
         :rtype: str
@@ -57,12 +53,12 @@ class InlineObject(Model):
     def script(self, script):
         """Sets the script of this InlineObject.
 
-        This string will contain a script that the analyzer will consume and begin the execution of  # noqa: E501
+        This string will contain a script that the analyzer will consume and begin the execution of
 
         :param script: The script of this InlineObject.
         :type script: str
         """
         if script is None:
-            raise ValueError("Invalid value for `script`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `script`, must not be `None`")
 
         self._script = script

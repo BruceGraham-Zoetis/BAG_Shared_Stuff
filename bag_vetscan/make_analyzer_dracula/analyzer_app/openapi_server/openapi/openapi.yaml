@@ -37,6 +37,7 @@ paths:
               description: An object containing the full configuration for the analyzer
               type: object
         required: true
+        x-body-name: body
       responses:
         "200":
           description: Analyzer successfully made configuration changes requested
@@ -51,6 +52,7 @@ paths:
       tags:
       - Configuration
       x-openapi-router-controller: openapi_server.controllers.configuration_controller
+      x-codegen-request-body-name: body
   /configuration/factory_reset:
     put:
       description: Restore the analyzer to the state it was in when it left the factory.
@@ -301,6 +303,7 @@ paths:
               - filename
               type: object
         required: true
+        x-body-name: body
       responses:
         "200":
           content:
@@ -348,6 +351,7 @@ paths:
       tags:
       - Measurement Channel
       x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
+      x-codegen-request-body-name: body
   /measurement/past_results:
     get:
       description: The HUB is requesting the analyzer send past results between two
@@ -510,6 +514,7 @@ paths:
               - script
               type: object
         required: true
+        x-body-name: body
       responses:
         "200":
           content:
@@ -557,6 +562,7 @@ paths:
       tags:
       - Measurement Channel
       x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
+      x-codegen-request-body-name: body
   /measurement/status:
     get:
       description: The HUB is requesting the analyzer return the status of the current

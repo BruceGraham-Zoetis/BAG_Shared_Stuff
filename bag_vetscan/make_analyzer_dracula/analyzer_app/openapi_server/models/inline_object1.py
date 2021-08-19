@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,11 +14,10 @@ class InlineObject1(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, filename=None):  # noqa: E501
+    def __init__(self, filename: str=None):
         """InlineObject1 - a model defined in OpenAPI
 
-        :param filename: The filename of this InlineObject1.  # noqa: E501
-        :type filename: str
+        :param filename: The filename of this InlineObject1.
         """
         self.openapi_types = {
             'filename': str
@@ -32,13 +30,11 @@ class InlineObject1(Model):
         self._filename = filename
 
     @classmethod
-    def from_dict(cls, dikt) -> 'InlineObject1':
+    def from_dict(cls, dikt: dict) -> 'InlineObject1':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The inline_object_1 of this InlineObject1.  # noqa: E501
-        :rtype: InlineObject1
+        :return: The inline_object_1 of this InlineObject1.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -46,7 +42,7 @@ class InlineObject1(Model):
     def filename(self):
         """Gets the filename of this InlineObject1.
 
-        This string will the full path to the file that stores the measurement script as it is stored on the analyzer  # noqa: E501
+        This string will the full path to the file that stores the measurement script as it is stored on the analyzer
 
         :return: The filename of this InlineObject1.
         :rtype: str
@@ -57,12 +53,12 @@ class InlineObject1(Model):
     def filename(self, filename):
         """Sets the filename of this InlineObject1.
 
-        This string will the full path to the file that stores the measurement script as it is stored on the analyzer  # noqa: E501
+        This string will the full path to the file that stores the measurement script as it is stored on the analyzer
 
         :param filename: The filename of this InlineObject1.
         :type filename: str
         """
         if filename is None:
-            raise ValueError("Invalid value for `filename`, must not be `None`")  # noqa: E501
+            raise ValueError("Invalid value for `filename`, must not be `None`")
 
         self._filename = filename

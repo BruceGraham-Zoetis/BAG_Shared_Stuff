@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,11 +14,10 @@ class InlineResponse2002(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, status=None):  # noqa: E501
+    def __init__(self, status: str=None):
         """InlineResponse2002 - a model defined in OpenAPI
 
-        :param status: The status of this InlineResponse2002.  # noqa: E501
-        :type status: str
+        :param status: The status of this InlineResponse2002.
         """
         self.openapi_types = {
             'status': str
@@ -32,13 +30,11 @@ class InlineResponse2002(Model):
         self._status = status
 
     @classmethod
-    def from_dict(cls, dikt) -> 'InlineResponse2002':
+    def from_dict(cls, dikt: dict) -> 'InlineResponse2002':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The inline_response_200_2 of this InlineResponse2002.  # noqa: E501
-        :rtype: InlineResponse2002
+        :return: The inline_response_200_2 of this InlineResponse2002.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -46,7 +42,7 @@ class InlineResponse2002(Model):
     def status(self):
         """Gets the status of this InlineResponse2002.
 
-        The status of the analyzer  # noqa: E501
+        The status of the analyzer
 
         :return: The status of this InlineResponse2002.
         :rtype: str
@@ -57,7 +53,7 @@ class InlineResponse2002(Model):
     def status(self, status):
         """Sets the status of this InlineResponse2002.
 
-        The status of the analyzer  # noqa: E501
+        The status of the analyzer
 
         :param status: The status of this InlineResponse2002.
         :type status: str

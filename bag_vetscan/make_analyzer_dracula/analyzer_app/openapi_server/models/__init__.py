@@ -1,7 +1,5 @@
 # coding: utf-8
 
-# flake8: noqa
-from __future__ import absolute_import
 # import models into model package
 from openapi_server.models.analyzer_type import AnalyzerType
 from openapi_server.models.event_info import EventInfo

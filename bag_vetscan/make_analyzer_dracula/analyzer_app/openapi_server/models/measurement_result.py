@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -15,21 +14,15 @@ class MeasurementResult(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, consumable_name=None, start_date_and_time=None, end_date_and_time=None, duration_sec=None, result=None, test_results=None):  # noqa: E501
+    def __init__(self, consumable_name: str=None, start_date_and_time: str=None, end_date_and_time: str=None, duration_sec: float=None, result: str=None, test_results: object=None):
         """MeasurementResult - a model defined in OpenAPI
 
-        :param consumable_name: The consumable_name of this MeasurementResult.  # noqa: E501
-        :type consumable_name: str
-        :param start_date_and_time: The start_date_and_time of this MeasurementResult.  # noqa: E501
-        :type start_date_and_time: str
-        :param end_date_and_time: The end_date_and_time of this MeasurementResult.  # noqa: E501
-        :type end_date_and_time: str
-        :param duration_sec: The duration_sec of this MeasurementResult.  # noqa: E501
-        :type duration_sec: float
-        :param result: The result of this MeasurementResult.  # noqa: E501
-        :type result: str
-        :param test_results: The test_results of this MeasurementResult.  # noqa: E501
-        :type test_results: object
+        :param consumable_name: The consumable_name of this MeasurementResult.
+        :param start_date_and_time: The start_date_and_time of this MeasurementResult.
+        :param end_date_and_time: The end_date_and_time of this MeasurementResult.
+        :param duration_sec: The duration_sec of this MeasurementResult.
+        :param result: The result of this MeasurementResult.
+        :param test_results: The test_results of this MeasurementResult.
         """
         self.openapi_types = {
             'consumable_name': str,
@@ -57,13 +50,11 @@ class MeasurementResult(Model):
         self._test_results = test_results
 
     @classmethod
-    def from_dict(cls, dikt) -> 'MeasurementResult':
+    def from_dict(cls, dikt: dict) -> 'MeasurementResult':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The measurement_result of this MeasurementResult.  # noqa: E501
-        :rtype: MeasurementResult
+        :return: The measurement_result of this MeasurementResult.
         """
         return util.deserialize_model(dikt, cls)
 
@@ -71,7 +62,7 @@ class MeasurementResult(Model):
     def consumable_name(self):
         """Gets the consumable_name of this MeasurementResult.
 
-        A descriptive name of the consumable that can be used to uniquely identify it  # noqa: E501
+        A descriptive name of the consumable that can be used to uniquely identify it
 
         :return: The consumable_name of this MeasurementResult.
         :rtype: str
@@ -82,7 +73,7 @@ class MeasurementResult(Model):
     def consumable_name(self, consumable_name):
         """Sets the consumable_name of this MeasurementResult.
 
-        A descriptive name of the consumable that can be used to uniquely identify it  # noqa: E501
+        A descriptive name of the consumable that can be used to uniquely identify it
 
         :param consumable_name: The consumable_name of this MeasurementResult.
         :type consumable_name: str
@@ -94,7 +85,7 @@ class MeasurementResult(Model):
     def start_date_and_time(self):
         """Gets the start_date_and_time of this MeasurementResult.
 
-        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS
 
         :return: The start_date_and_time of this MeasurementResult.
         :rtype: str
@@ -105,7 +96,7 @@ class MeasurementResult(Model):
     def start_date_and_time(self, start_date_and_time):
         """Sets the start_date_and_time of this MeasurementResult.
 
-        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS
 
         :param start_date_and_time: The start_date_and_time of this MeasurementResult.
         :type start_date_and_time: str
@@ -117,7 +108,7 @@ class MeasurementResult(Model):
     def end_date_and_time(self):
         """Gets the end_date_and_time of this MeasurementResult.
 
-        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS
 
         :return: The end_date_and_time of this MeasurementResult.
         :rtype: str
@@ -128,7 +119,7 @@ class MeasurementResult(Model):
     def end_date_and_time(self, end_date_and_time):
         """Sets the end_date_and_time of this MeasurementResult.
 
-        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS
 
         :param end_date_and_time: The end_date_and_time of this MeasurementResult.
         :type end_date_and_time: str
@@ -140,7 +131,7 @@ class MeasurementResult(Model):
     def duration_sec(self):
         """Gets the duration_sec of this MeasurementResult.
 
-        The number of seconds the measurement took from start to end  # noqa: E501
+        The number of seconds the measurement took from start to end
 
         :return: The duration_sec of this MeasurementResult.
         :rtype: float
@@ -151,15 +142,15 @@ class MeasurementResult(Model):
     def duration_sec(self, duration_sec):
         """Sets the duration_sec of this MeasurementResult.
 
-        The number of seconds the measurement took from start to end  # noqa: E501
+        The number of seconds the measurement took from start to end
 
         :param duration_sec: The duration_sec of this MeasurementResult.
         :type duration_sec: float
         """
-        if duration_sec is not None and duration_sec > 9999:  # noqa: E501
-            raise ValueError("Invalid value for `duration_sec`, must be a value less than or equal to `9999`")  # noqa: E501
-        if duration_sec is not None and duration_sec < 0:  # noqa: E501
-            raise ValueError("Invalid value for `duration_sec`, must be a value greater than or equal to `0`")  # noqa: E501
+        if duration_sec is not None and duration_sec > 9999:
+            raise ValueError("Invalid value for `duration_sec`, must be a value less than or equal to `9999`")
+        if duration_sec is not None and duration_sec < 0:
+            raise ValueError("Invalid value for `duration_sec`, must be a value greater than or equal to `0`")
 
         self._duration_sec = duration_sec
 
@@ -167,7 +158,7 @@ class MeasurementResult(Model):
     def result(self):
         """Gets the result of this MeasurementResult.
 
-        The overall result of the measurement  # noqa: E501
+        The overall result of the measurement
 
         :return: The result of this MeasurementResult.
         :rtype: str
@@ -178,7 +169,7 @@ class MeasurementResult(Model):
     def result(self, result):
         """Sets the result of this MeasurementResult.
 
-        The overall result of the measurement  # noqa: E501
+        The overall result of the measurement
 
         :param result: The result of this MeasurementResult.
         :type result: str
@@ -196,7 +187,7 @@ class MeasurementResult(Model):
     def test_results(self):
         """Gets the test_results of this MeasurementResult.
 
-        The test results.  Will need to flush this out as we go on as to what this looks like  # noqa: E501
+        The test results.  Will need to flush this out as we go on as to what this looks like
 
         :return: The test_results of this MeasurementResult.
         :rtype: object
@@ -207,7 +198,7 @@ class MeasurementResult(Model):
     def test_results(self, test_results):
         """Sets the test_results of this MeasurementResult.
 
-        The test results.  Will need to flush this out as we go on as to what this looks like  # noqa: E501
+        The test results.  Will need to flush this out as we go on as to what this looks like
 
         :param test_results: The test_results of this MeasurementResult.
         :type test_results: object

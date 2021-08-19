@@ -1,29 +1,27 @@
-import connexion
-import six
+from typing import List, Dict
+from aiohttp import web
 
-from openapi_server.models.inline_response2002 import InlineResponse2002  # noqa: E501
-from openapi_server.models.inline_response2003 import InlineResponse2003  # noqa: E501
-from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
+from openapi_server.models.inline_response2002 import InlineResponse2002
+from openapi_server.models.inline_response2003 import InlineResponse2003
+from openapi_server.models.inline_response400 import InlineResponse400
 from openapi_server import util
 
 
-def status_currently_activated_events_get():  # noqa: E501
+async def status_currently_activated_events_get(request: web.Request, ) -> web.Response:
     """status_currently_activated_events_get
 
-    The HUB is requesting the analyzer respond with a list of all currently activated events # noqa: E501
+    The HUB is requesting the analyzer respond with a list of all currently activated events
 
 
-    :rtype: InlineResponse2003
     """
-    return 'do some magic!'
+    return web.Response(status=200)
 
 
-def status_operational_get():  # noqa: E501
+async def status_operational_get(request: web.Request, ) -> web.Response:
     """status_operational_get
 
-    The HUB can use send this message to get the status of an analyzer # noqa: E501
+    The HUB can use send this message to get the status of an analyzer
 
 
-    :rtype: InlineResponse2002
     """
-    return 'do some magic!'
+    return web.Response(status=200)

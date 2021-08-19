@@ -1,9 +1,8 @@
 # coding: utf-8
 
-from __future__ import absolute_import
-from datetime import date, datetime  # noqa: F401
+from datetime import date, datetime
 
-from typing import List, Dict  # noqa: F401
+from typing import List, Dict, Type
 
 from openapi_server.models.base_model_ import Model
 from openapi_server import util
@@ -21,7 +20,8 @@ class AnalyzerType(Model):
     SPE = "SPE"
     LTF = "LTF"
     MOL = "MOL"
-    def __init__(self):  # noqa: E501
+
+    def __init__(self):
         """AnalyzerType - a model defined in OpenAPI
 
         """
@@ -32,12 +32,10 @@ class AnalyzerType(Model):
         }
 
     @classmethod
-    def from_dict(cls, dikt) -> 'AnalyzerType':
+    def from_dict(cls, dikt: dict) -> 'AnalyzerType':
         """Returns the dict as a model
 
         :param dikt: A dict.
-        :type: dict
-        :return: The analyzer_type of this AnalyzerType.  # noqa: E501
-        :rtype: AnalyzerType
+        :return: The analyzer_type of this AnalyzerType.
         """
         return util.deserialize_model(dikt, cls)
