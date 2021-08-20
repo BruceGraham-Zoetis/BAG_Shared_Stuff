@@ -38,7 +38,7 @@ import numpy
 import sys
 sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
-import audio_play
+#import audio_play
 
 global test_parameter_auto_focus
 test_parameter_auto_focus = True
