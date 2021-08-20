@@ -5,6 +5,7 @@ File: CAnalyzer.py
 
 from dbus_next.service import (ServiceInterface,
                                method, dbus_property, signal)
+from dbus_next import Variant, DBusError
 
 import configuration_controller
 import control_channel_controller
@@ -14,7 +15,7 @@ import status_channel_controller
 
 class CZoetisAnalyzerInterface(ServiceInterface):
     def __init__(self, strAnalyzerName):
-        super().__init__('com.zoetis.' + strAnalyzerName)
+        super().__init__(strAnalyzerName)
         self._bar = 105
 
     ########################################################
