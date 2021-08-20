@@ -40,6 +40,8 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
+import data_matrix_decoder
+
 global test_parameter_auto_focus
 test_parameter_auto_focus = True
 
@@ -90,23 +92,39 @@ def decode_qr_code_in_frame(frame):
     try:
         #print("d", end = '')
         barcodes = pyzbar.decode(frame)
-    except:
-        return bFound, barcode, dicContents
 
-    for barcode in barcodes:
-        barcode_info = barcode.data.decode('utf-8')
-        
-        try:
-            dicContents = json.loads(barcode_info)
-            if (1 < len(dicContents)):
-                bFound = True
-            else:
+        for barcode in barcodes:
+            barcode_info = barcode.data.decode('utf-8')
+            
+            try:
+                # add barcode type on the returned dictionary
+                dicContents = {"barcodetype" : barcode.type}
+                text = json.loads(barcode_info)
+                dicContents.append(text)
+                if (1 < len(dicContents)):
+                    bFound = True
+                else:
+                    bFound = False
+            except:
+                # Failed to decode JSON data.
                 bFound = False
-        except:
-            # Failed to decode JSON data.
-            bFound = False
+    except:
+        pass
 
-    return bFound, barcode, dicContents
+    if (not bFound):
+        try:
+            timeStart = time.time()
+            strData = data_matrix_decoder.data_matrix_decode_image(frame)
+            timeEnd = time.time()
+            if (0 < len(strData)):
+                print("  decode time: %.2f seconds" % (timeEnd - timeStart))
+                dicContents = {"barcodetype" : "Data Matrix"}
+                dicContents.update({"data" : strData})
+                bFound = True
+        except:
+            pass
+        
+    return bFound, dicContents
 
 
 def printMessageToWindow(frameIn, txtDisplay):
@@ -169,7 +187,7 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
     while(time.time() < timeEnd):
         ret, frameFlipped = camera.read()
         frameIn = cv2.flip(frameFlipped, -1)
-        bFound, barcode, dicContents = decode_qr_code_in_frame(frameIn)
+        bFound, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
             timeEnd = time.time() + 5.0
             nNotFound = 0
@@ -204,7 +222,7 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
         ret, frameFlipped = camera.read()
         frameIn = cv2.flip(frameFlipped, -1)
         if (ret):
-            bFound, barcode, dicContentsCaptured = decode_qr_code_in_frame(frameIn)
+            bFound, dicContentsCaptured = decode_qr_code_in_frame(frameIn)
         else:
             bFound = False
 
