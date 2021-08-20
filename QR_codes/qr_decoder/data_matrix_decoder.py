@@ -4,6 +4,7 @@ File: data_matix_decoder.py
 
 pip3 install pylibdmtx
 pip3 install pylibdmtx[scripts]
+sudo apt-get install libdmtx0b
 """
 
 import time
@@ -37,8 +38,12 @@ def data_matrix_decode_file(strFile : str) -> str:
 
 """
 timing test of the decoder
+  ThinkPad
     clean image decode: 0.08, 0.05 seconds
     camera image decode: 1.86, 1.88 seconds
+  Vetscan
+    clean image decode: 0.32, 0.23 seconds
+    camera image decode: 8.43, 8.38 seconds
 """
 if __name__ == '__main__':
     for i in range(0, 4):
