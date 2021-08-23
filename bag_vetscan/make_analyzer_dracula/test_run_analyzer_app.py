@@ -8,12 +8,16 @@ import connexion
 
 ## fix path so that contained py files can be imported
 import os, sys
-sys.path.append(os.path.curdir + "/analyzer_app")
-
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+sys.path.append(strThisFilePath + "/analyzer_app")
 from analyzer_app.openapi_server import encoder
 
+from analyzer_app.openapi_server.controllers.CDBusDraculaService import CDBusDraculaService
 
 def main():
+    print("")
+
     app_options = {
         "swagger_ui": True
         #"swagger_ui": False

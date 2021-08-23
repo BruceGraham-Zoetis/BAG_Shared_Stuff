@@ -3,7 +3,9 @@ templateDir:
 files:
   AUTHORS.md:
     {}
+  controllers/CDBusDraculaService.py:
+    folder: openapi_server    
   controllers/measurement_channel_controller.py:
     folder: openapi_server
   controllers/control_channel_controller.py:
-    folder: openapi_server    
+    folder: openapi_server

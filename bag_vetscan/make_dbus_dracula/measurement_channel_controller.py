@@ -143,5 +143,5 @@ def measurement_supported_consumables_get():
             }
         ]
     }
-    #return 'do some magic!'
+
     return dictConsumables

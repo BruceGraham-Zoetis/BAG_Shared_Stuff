@@ -35,6 +35,7 @@ import asyncio
 
 import CAnalyzer
 
+
 """
 Interface names
 Interfaces have names with type STRING, meaning that they must be valid UTF-8.
@@ -65,10 +66,7 @@ If the author's DNS domain name contains hyphen/minus characters ('-'), which ar
 """
 
 def get_analyzer_name() -> str:
-    # TODO - get a unique name for every individual analyzer executing in Linux
-    # IP Address with '_' instead of '.'
-    str_ip_address = "0_0_0_0"
-    strAnalyzerName = "dracula_" + str_ip_address
+    strAnalyzerName = "dracula"
     return strAnalyzerName
 
 def get_analyzer_dbus_request_name() -> str:

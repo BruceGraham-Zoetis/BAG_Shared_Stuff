@@ -9,6 +9,11 @@ from openapi_server.models.inline_response400 import InlineResponse400  # noqa: 
 from openapi_server.models.measurement_result import MeasurementResult  # noqa: E501
 from openapi_server import util
 
+import os, sys
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+from CDBusDraculaService import CDBusDraculaService
+
 
 def channel_measurement_get_measurement_status():  # noqa: E501
     """channel_measurement_get_measurement_status
@@ -113,37 +118,8 @@ def measurement_supported_consumables_get():  # noqa: E501
 
     :rtype: object
     """
-    lstConsumables = {
-        "consumables":
-        [
-            {
-                "name": "Coagulation (PT/aPTT) (Coag Combo)",
-                "uuid": "0b7ec890-3960-11eb-a081-2790e47ff2f4",
-                "type": "cartridge",
-                "species": [
-                    "*"
-                ],
-                "duration": "PT7M",
-                "assays": [
-                    "PT",
-                    "aPTT"
-                ],
-                "schema": {}
-            },
-            {
-                "name": "Feline bloodtyping",
-                "uuid": "5ed688be-4376-11eb-8136-3345982818db",
-                "type": "cartridge",
-                "species": [
-                    "Feline"
-                ],
-                "duration": "PT5M",
-                "assays": [
-                    ""
-                ],
-                "schema": {}
-            }
-        ]
-    }
-    #return 'do some magic!'
+
+    oDracula = CDBusDraculaService()
+    lstConsumables = oDracula.measurement_supported_consumables_get()
+
     return lstConsumables
