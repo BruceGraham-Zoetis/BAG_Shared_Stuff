@@ -12,10 +12,15 @@ strThisFilePath = os.path.dirname(__file__)
 sys.path.append(strThisFilePath)
 sys.path.append(strThisFilePath + "/analyzer_app")
 from analyzer_app.openapi_server import encoder
-
 from analyzer_app.openapi_server.controllers.CDBusDraculaService import CDBusDraculaService
 
-def main():
+import asyncio
+# pip3 install websockets
+import websockets
+import time
+import datetime
+
+def analyzer_apis():
     print("")
 
     app_options = {
@@ -35,5 +40,25 @@ def main():
     app.run(port=8080)
 
 
+async def analyzer_client(uri):
+    while True:
+        try:
+            async with websockets.connect(uri) as websocket:
+                print("Connected to Hub")
+                strMsg = "analyzer_client "
+                strMsg += datetime.datetime.now().time()
+                await websocket.send(strMsg)
+                print(strMsg)
+        except:
+            print("Trying to connect to Hub.")
+            pass
+
+        time.sleep(5)
+
+
 if __name__ == '__main__':
-    main()
+    print()
+    asyncio.get_event_loop().run_until_complete(
+        analyzer_client('ws://localhost:8765'))
+
+    analyzer_apis()

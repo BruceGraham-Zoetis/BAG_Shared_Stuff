@@ -6,7 +6,8 @@ File: test_run_hub_app.py
 Purpose: An app that uses PySimpleGUI that interacts with the user
 using a window that contains widgets.
 
-pip install pysimplegui
+pip3 install pysimplegui
+pip3 install websockets
 
 """
 
@@ -15,13 +16,17 @@ from __future__ import absolute_import
 ## fix path so that contained py files can be imported
 import os, sys
 from posix import O_ACCMODE
-sys.path.append(os.path.curdir + "/hub_app")
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+sys.path.append(strThisFilePath + "/hub_app")
 
 # 
 import PySimpleGUI as sg
 import cv2
 import os
 import platform
+import websockets
+import asyncio
 
 import hub_app_gui.class_vetscan_hub
 
@@ -38,7 +43,7 @@ def isCameraFlipped() -> bool:
         i = 0
         while (i < len(tuples)):
             strValue = tuples[i]
-            print(strValue)
+            # print(strValue)
             if ("lubuntu" == strValue):
                 bCameraIsFlipped = True
                 break
@@ -48,12 +53,24 @@ def isCameraFlipped() -> bool:
     return bCameraIsFlipped
 
 
+async def hub_server(websocket, path):
+    async for message in websocket:
+        print("Connected to analyzer")
+        strRtn = message
+        window['-OUTPUT-'].update(strRtn)
+
 
 if __name__ == '__main__':
+
+    asyncio.get_event_loop().run_until_complete(
+        websockets.serve(hub_server, 'localhost', 8765))
 
     bCameraIsFlipped = isCameraFlipped()
 
     o_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
+
+    bRtn = o_vetscan_hub.add_analyzer("127.0.0.1", "xxx")
+    bRtn = o_vetscan_hub.remove_analyzer("127.0.0.1")
 
     bRtn = o_vetscan_hub.add_analyzer("127.0.0.1", "dracula")
     o_analyzer_dracula = o_vetscan_hub.get_analyzer("127.0.0.1")
@@ -80,7 +97,6 @@ if __name__ == '__main__':
 
     layout = [
             [sg.Image(filename='', key='image')],
-            [sg.Text(size=(50,1), key='TEXT_CONSUMABLES')],
             [sg.Button('GET supported_consumables')],
             [sg.Button('PUT light blink')],
             [sg.Button('PUT light Off')],
