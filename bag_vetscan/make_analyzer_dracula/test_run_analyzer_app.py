@@ -19,6 +19,8 @@ import asyncio
 import websockets
 import time
 import datetime
+import signal
+
 
 def analyzer_apis():
     print("")
@@ -40,25 +42,62 @@ def analyzer_apis():
     app.run(port=8080)
 
 
-async def analyzer_client(uri):
+async def analyzer_web_client():
+    uri = "ws://localhost:8765"
+
     while True:
         try:
             async with websockets.connect(uri) as websocket:
                 print("Connected to Hub")
-                strMsg = "analyzer_client "
-                strMsg += datetime.datetime.now().time()
-                await websocket.send(strMsg)
-                print(strMsg)
+
+                # Close the connection when receiving SIGTERM.
+                loop = asyncio.get_event_loop()
+                loop.add_signal_handler(
+                    signal.SIGTERM, loop.create_task, websocket.close())
+
+                bConnected = True
+
+                strToServer = "set name dracula"
+                print("analyzer(client) -> server(Hub)\n\t" + strToServer)
+                try:
+                    await websocket.send(strToServer)
+                except:
+                    print("Disconnected send")
+                    bConnected = False
+
+                while bConnected:
+                    strToServer = "get datetime"
+                    print("analyzer(client) -> server(Hub)\n\t" + strToServer)
+                    try:
+                        await websocket.send(strToServer)
+                    except:
+                        print("Disconnected send")
+                        bConnected = False
+
+                    try:
+                        async for strFromClient in websocket:
+                            print("server(Hub) -> analyzer(client)\n\t" + strFromClient)
+                            strMsg = "analyzer_client "
+                            strMsg = datetime.datetime.now().time()
+                            print("analyzer(client) -> server(Hub)\n\t" + strMsg)
+                    except:
+                        #print("Disconnected receive")
+                        #bConnected = False
+                        pass
+
+                    print("Delay...")
+                    time.sleep(5)
         except:
-            print("Trying to connect to Hub.")
             pass
 
+        print("Trying to connect to Hub. Sleeping...")
         time.sleep(5)
 
 
-if __name__ == '__main__':
-    print()
-    asyncio.get_event_loop().run_until_complete(
-        analyzer_client('ws://localhost:8765'))
 
+if __name__ == '__main__':
+    print("Running web client")
+    asyncio.get_event_loop().run_until_complete(analyzer_web_client())
+
+    print("Running openAPIs")
     analyzer_apis()
