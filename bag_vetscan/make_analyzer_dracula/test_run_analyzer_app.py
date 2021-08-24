@@ -96,8 +96,10 @@ async def analyzer_web_client():
 
 
 if __name__ == '__main__':
+    """
     print("Running web client")
     asyncio.get_event_loop().run_until_complete(analyzer_web_client())
+    """
 
     print("Running openAPIs")
     analyzer_apis()

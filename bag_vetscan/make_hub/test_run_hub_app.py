@@ -80,6 +80,7 @@ async def hub_server_connetion(websocket, path):
             strFromClient = await websocket.recv()
         except:
             bConnected = False
+            break
 
         try:
             g_window['-OUTPUT-'].update(strFromClient)
@@ -109,18 +110,10 @@ async def hub_server_connetion(websocket, path):
     g_vetscan_hub.analyzer_remove(strAddress)
 
 
-if __name__ == '__main__':
+def gui_window():
     global g_vetscan_hub
     global g_window
 
-    g_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
-
-    print("Starting web server")
-    start_server = websockets.serve(hub_server_connetion, 'localhost', 8765)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
-
-    print("Starting GUI superloop")
     bCameraIsFlipped = isCameraFlipped()
 
     # open output g_window
@@ -180,22 +173,24 @@ if __name__ == '__main__':
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
 
-        if event == 'GET supported_consumables':
-            strConsumables = o_analyzer_dracula.get_consumables()
-            g_window['-OUTPUT-'].update(strConsumables)
-        elif event == 'PUT light blink':
-            strRtn = o_analyzer_dracula.light_blink()
-            g_window['-OUTPUT-'].update(strRtn)
-        elif event == 'PUT light Off':
-            strRtn = o_analyzer_dracula.light_off()
-            g_window['-OUTPUT-'].update(strRtn)
+        o_analyzer_dracula = g_vetscan_hub.analyzer_get("127.0.0.1")
+        if ("" != o_analyzer_dracula.get_ip_address()):
+            if event == 'GET supported_consumables':
+                strConsumables = o_analyzer_dracula.get_consumables()
+                g_window['-OUTPUT-'].update(strConsumables)
+            elif event == 'PUT light blink':
+                strRtn = o_analyzer_dracula.light_blink()
+                g_window['-OUTPUT-'].update(strRtn)
+            elif event == 'PUT light Off':
+                strRtn = o_analyzer_dracula.light_off()
+                g_window['-OUTPUT-'].update(strRtn)
 
-        elif event == 'PUT power off':
-            strRtn = o_analyzer_dracula.power_off()
-            g_window['-OUTPUT-'].update(strRtn)
-        elif event == 'PUT power reboot':
-            strRtn = o_analyzer_dracula.power_reboot()
-            g_window['-OUTPUT-'].update(strRtn)
+            elif event == 'PUT power off':
+                strRtn = o_analyzer_dracula.power_off()
+                g_window['-OUTPUT-'].update(strRtn)
+            elif event == 'PUT power reboot':
+                strRtn = o_analyzer_dracula.power_reboot()
+                g_window['-OUTPUT-'].update(strRtn)
 
     g_window.close()
 
@@ -204,3 +199,18 @@ if __name__ == '__main__':
     cv2.destroyAllWindows()
 
 
+if __name__ == '__main__':
+    global g_vetscan_hub
+    global g_window
+
+    g_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
+
+    """
+    print("Starting web server")
+    start_server = websockets.serve(hub_server_connetion, 'localhost', 8765)
+    asyncio.get_event_loop().run_until_complete(start_server)
+    asyncio.get_event_loop().run_forever()
+    """
+
+    print("Starting GUI superloop")
+    gui_window()

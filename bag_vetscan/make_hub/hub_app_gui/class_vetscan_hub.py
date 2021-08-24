@@ -49,5 +49,8 @@ class CVetscanHub:
         self.dictAnalyzers.pop(str_IP_Address)
 
     def analyzer_get(self, str_IP_Address : str) -> CVetscanAnalyzerInfo:
-        oAna = self.dictAnalyzers[str_IP_Address]
+        try:
+            oAna = self.dictAnalyzers[str_IP_Address]
+        except:
+            oAna = CVetscanAnalyzerInfo("", "")
         return oAna
