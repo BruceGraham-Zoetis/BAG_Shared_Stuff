@@ -35,8 +35,8 @@ class CVetscanHub:
     def __init__(self):
         self.dictAnalyzers = {}
 
-    def analyzer_add(self, str_IP_Address : str) -> CVetscanAnalyzerInfo:
-        oAna = CVetscanAnalyzerInfo(str_IP_Address, "")
+    def analyzer_add(self, str_IP_Address : str, strName = "") -> CVetscanAnalyzerInfo:
+        oAna = CVetscanAnalyzerInfo(str_IP_Address, strName)
         self.dictAnalyzers[str_IP_Address] = oAna
         return True
 

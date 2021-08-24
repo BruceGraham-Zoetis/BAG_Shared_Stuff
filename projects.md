@@ -1,5 +1,21 @@
+## openAPI calls
+Dracula Demon (service: com.zoetis.dracula)
+  <--API methods-->
+    DBus
+      <--API methods-->
+        Dracula App (openAPI Server)
+          <---> Hub App (Web Client xx.xx.xx.xx:8080/<SOME API PATH>)
+          <---> Web Browser (xx.xx.xx.xx:8080/ui/#/<SOME API PATH>)
 
+## Events from Demon sent to Hub App
+Dracula Demon (service: com.zoetis.dracula)
+  <--Events-->
+    DBus
+      <--Events-->
+        Dracula App (Socket Client uses python websockets) 
+          <--Events--> Hub App (Socket Server uses python websockets)
 
+## Directories and files
 bag_vetscan
     make_analyzer_dracula			"Dracula" analyzer. Network server.
         make_analyzer.sh			Rebuild the "Dracula" analyzer server.

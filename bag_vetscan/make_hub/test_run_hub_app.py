@@ -29,6 +29,8 @@ import websockets
 import asyncio
 import datetime
 import hub_app_gui.class_vetscan_hub
+import threading
+import socket
 
 global camera
 
@@ -61,7 +63,7 @@ def isCameraFlipped() -> bool:
 """
 Web Server handler coroutine. runs while client is connected.
 """
-async def hub_server_connetion(websocket, path):
+async def handler_client_connection(websocket, path):
     global g_vetscan_hub
     global g_window
 
@@ -110,9 +112,24 @@ async def hub_server_connetion(websocket, path):
     g_vetscan_hub.analyzer_remove(strAddress)
 
 
+def start_loop_hub_server(loop, server):
+    loop.run_until_complete(server)
+    loop.run_forever()
+
+
+def start_thread_hub_server():
+    print("Starting Hub web server")
+    new_loop = asyncio.new_event_loop()
+    ws_server = websockets.serve(handler_client_connection, 'localhost', 8765, loop = new_loop)
+    thread = threading.Thread(target=start_loop_hub_server, args=(new_loop, ws_server))
+    thread.start()
+
+
 def gui_window():
     global g_vetscan_hub
     global g_window
+
+    print("Starting GUI superloop")
 
     bCameraIsFlipped = isCameraFlipped()
 
@@ -199,18 +216,41 @@ def gui_window():
     cv2.destroyAllWindows()
 
 
+def thread_wait_for_clients():
+    global g_vetscan_hub
+
+    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) # UDP
+
+    # Enable port reusage so we will be able to run multiple clients and servers on single (host, port). 
+    # Do not use socket.SO_REUSEADDR except you using linux(kernel<3.9): goto https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ for more information.
+    # For linux hosts all sockets that want to share the same address and port combination must belong to processes that share the same effective user ID!
+    # So, on linux(kernel>=3.9) you have to run multiple servers and clients under one user to share the same (host, port).
+    # Thanks to @stevenreddie
+    client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+
+    # Enable broadcasting mode
+    client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+
+    client.bind(("", 37020))
+    while True:
+        name, addr = client.recvfrom(1024)
+        print("received message: %s %s" % (addr, name))
+        g_vetscan_hub.analyzer_add(addr[0], name)
+
+
+
+def start_thread_waiting_for_clients():
+    print("Starting waiting for clients")
+    thread = threading.Thread(target=thread_wait_for_clients)
+    thread.start()
+
+
 if __name__ == '__main__':
     global g_vetscan_hub
-    global g_window
 
+    print("")
     g_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
 
-    """
-    print("Starting web server")
-    start_server = websockets.serve(hub_server_connetion, 'localhost', 8765)
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
-    """
-
-    print("Starting GUI superloop")
+    start_thread_waiting_for_clients()
+    start_thread_hub_server()
     gui_window()

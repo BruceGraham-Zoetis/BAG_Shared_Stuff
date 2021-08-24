@@ -22,58 +22,67 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     # from configuration_controller.py
     ########################################################
     @method()
-    def configuration_factory_reset_put(self):
+    def configuration_factory_reset_put(self) -> 's':
         return configuration_controller.configuration_factory_reset_put()
 
     @method()
-    def configuration_get(self):
+    def configuration_get(self) -> 's':
         return configuration_controller.configuration_get()
 
     @method()
-    def configuration_put(body):
+    def configuration_put(body) -> 's':
         return configuration_controller.configuration_put()
 
     @method()
-    def configuration_schema_get(self):
+    def configuration_schema_get(self) -> 's':
         return configuration_controller.configuration_schema_get()
 
     ########################################################
     # from control_channel_controller.py
     ########################################################
-    def control_light_blink_put(self):
+    @method()
+    def control_light_blink_put(self) -> 's':
         return control_channel_controller.control_light_blink_put()
 
-    def control_light_off_put(self):
+    @method()
+    def control_light_off_put(self) -> 's':
         return control_channel_controller.control_light_off_put()
 
-    def control_power_off_put(self):
+    @method()
+    def control_power_off_put(self) -> 's':
         return control_channel_controller.control_power_off_put()
 
-    def control_power_reboot_put(self):
+    @method()
+    def control_power_reboot_put(self) -> 's':
         return control_channel_controller.control_power_reboot_put()
 
     ########################################################
     # from measurement_channel_controller.py
     ########################################################
-    def channel_measurement_get_measurement_status(self):
+    def channel_measurement_get_measurement_status(self) -> 's':
         return measurement_channel_controller.channel_measurement_get_measurement_status()
 
-    def measurement_cancel_delete(self):
+    def measurement_cancel_delete(self) -> 's':
         return measurement_channel_controller.measurement_cancel_delete()
 
+    @method()
     def measurement_consumable_consumable_uuid_post(consumable_uuid):
         return measurement_channel_controller.measurement_consumable_consumable_uuid_post(consumable_uuid)
 
-    def measurement_file_post(inline_object1):
+    @method()
+    def measurement_file_post(inline_object1) -> 's':
         return measurement_channel_controller.measurement_file_post(inline_object1)
 
-    def measurement_past_results_get(start_time, start_date, end_time, end_date):
+    @method()
+    def measurement_past_results_get(start_time, start_date, end_time, end_date) -> 's':
         return measurement_channel_controller.measurement_past_results_get(start_time, start_date, end_time, end_date)
 
-    def measurement_result_get(self):
+    @method()
+    def measurement_result_get(self) -> 's':
         return measurement_channel_controller.measurement_result_get()
 
-    def measurement_script_post(inline_object):
+    @method()
+    def measurement_script_post(inline_object) -> 's':
         return measurement_channel_controller.measurement_script_post(inline_object)
 
     @method()
@@ -87,12 +96,13 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     ########################################################
     # from status_channel_controller.py
     ########################################################
-    def status_currently_activated_events_get(self):
+    @method()
+    def status_currently_activated_events_get(self) -> 's':
         return status_channel_controller.configuration_schema_get()
 
-    def status_operational_get(self):
+    @method()
+    def status_operational_get(self) -> 's':
         return status_channel_controller.status_operational_get()
-
 
     @method()
     def Frobate(self, foo: 'i', bar: 's') -> '{sa{sv}}':
