@@ -3,7 +3,7 @@
 """
 File: class_vetscan_hub.py
 
-Purpose: A Hub class
+Purpose: Hub and analyzer classes. Hub contains a dictionary of analyzers.
 """
 import os
 import threading
