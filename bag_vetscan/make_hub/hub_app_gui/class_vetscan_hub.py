@@ -27,6 +27,25 @@ class CVetscanAnalyzerInfo:
         r = requests.get(strRequest)
         return r.text
 
+    def light_blink(self) -> str:
+        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
+        r = requests.get(strRequest)
+        return r.text
+
+    def light_off(self) -> str:
+        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
+        r = requests.get(strRequest)
+        return r.text
+
+    def power_off(self) -> str:
+        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
+        r = requests.get(strRequest)
+        return r.text
+
+    def power_reboot(self) -> str:
+        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
+        r = requests.get(strRequest)
+        return r.text
 """
 Purpose: Manage the connections to the analyzers on the Hub's local ethernet
 """
