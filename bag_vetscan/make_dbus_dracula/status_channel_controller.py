@@ -16,7 +16,11 @@ def status_currently_activated_events_get():
 
     :rtype: InlineResponse2003
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def status_operational_get():
@@ -27,4 +31,8 @@ def status_operational_get():
 
     :rtype: InlineResponse2002
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn

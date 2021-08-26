@@ -3,6 +3,8 @@
 """
 File: CDBusDraculaService.py
 
+Purpose: dracula daemon app
+
 TODO: Intergrate this code into the analyzer app.
 
 pip3 install pydbus
@@ -13,7 +15,8 @@ from pydbus import SystemBus
 import threading
 
 """
-Class for the Dracula service. This is a singleton.
+Class for accessing the Dracula deamon (service).
+This is a singleton.
 
 """
 #class CDBusDraculaService(object):
@@ -41,55 +44,15 @@ class CDBusDraculaService():
 
         return cls._instance
 
-
-    """
-    _instance = None
-    def __new__(cls):
-        if cls._instance is None:
-            print('Creating new singleton')
-            cls._instance = super(CDBusDraculaService, cls).__new__(cls)
-            # Put any initialization here.
-            cls.bus      = SessionBus()
-            cls.draculad = cls.bus.get('com.zoetis.dracula')
-        else:
-            print("using singleton")
-
-        print(cls._instance)
-        return cls._instance
-    """
-
-    """
-    _instance = None
-    def __init__(self):
-        raise RuntimeError('Call instance() instead')
-
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            print('Creating new singleton')
-            cls._instance = cls.__new__(cls)
-            # Put any initialization here.
-            cls.bus      = SessionBus()
-            cls.draculad = cls.bus.get('com.zoetis.dracula')
-        else:
-            print("using singleton")
-        return cls._instance        
-    """
-
-
     @property
-    def Bar(self) -> int:
-        return self.draculad.Bar
+    def nTest(self) -> int:
+        return self.draculad.nTest
 
-    @Bar.setter
-    def Bar(self, iValue : int):
-        self.draculad.Bar = iValue
+    @nTest.setter
+    def nTest(self, iValue : int):
+        self.draculad.nTest = iValue
 
-    def measurement_supported_consumables_get(self) -> str:
-        strRtn = self.draculad.measurement_supported_consumables_get()
-
-        return strRtn
-
+    
 
 
 if __name__ == '__main__':
@@ -97,17 +60,17 @@ if __name__ == '__main__':
 
     # Start or stop oDracula unit
     """
-    job1 = oDracula.StopUnit("ssh.service", "fail")
-    job2 = oDracula.StartUnit("ssh.service", "fail")
+    job1 = oDracula.StopUnit("com.zoetis.dracula", "fail")
+    job2 = oDracula.StartUnit("com.zoetis.dracula", "fail")
     """
 
     print()
 
-    # get and set Bar 
-    iValue = oDracula.Bar
-    print("Bar: %d" % oDracula.Bar)
-    oDracula.Bar += 10
-    print("Bar after += 10: %d" % oDracula.Bar)
+    # get and set nTest 
+    iValue = oDracula.nTest
+    print("nTest: %d" % oDracula.nTest)
+    oDracula.nTest += 10
+    print("nTest after += 10: %d" % oDracula.nTest)
 
     strRtn = oDracula.measurement_supported_consumables_get()
     print("Consumables: %s" % strRtn)

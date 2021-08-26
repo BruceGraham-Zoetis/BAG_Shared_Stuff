@@ -6,7 +6,7 @@ File: measurement_channel_controller.py
 Purpose: DBus service interface for the dracula analyzer app.
 """
 
-
+import json
 
 def channel_measurement_get_measurement_status():
     """channel_measurement_get_measurement_status
@@ -16,7 +16,11 @@ def channel_measurement_get_measurement_status():
 
     :rtype: InlineResponse200
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_cancel_delete():
@@ -27,7 +31,11 @@ def measurement_cancel_delete():
 
     :rtype: InlineResponse200
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_consumable_consumable_uuid_post(consumable_uuid):
@@ -40,7 +48,14 @@ def measurement_consumable_consumable_uuid_post(consumable_uuid):
 
     :rtype: InlineResponse200
     """
-    return 'do some magic!'
+    
+    #TODO consumable_uuid
+
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_file_post(inline_object1):
@@ -53,9 +68,13 @@ def measurement_file_post(inline_object1):
 
     :rtype: InlineResponse200
     """
-    if connexion.request.is_json:
-        inline_object1 = InlineObject1.from_dict(connexion.request.get_json())
-    return 'do some magic!'
+    # TODO - inline_object1
+    
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_past_results_get(start_time, start_date, end_time, end_date):
@@ -74,7 +93,11 @@ def measurement_past_results_get(start_time, start_date, end_time, end_date):
 
     :rtype: InlineResponse2001
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_result_get():
@@ -85,7 +108,11 @@ def measurement_result_get():
 
     :rtype: MeasurementResult
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_script_post(inline_object):
@@ -98,9 +125,14 @@ def measurement_script_post(inline_object):
 
     :rtype: InlineResponse200
     """
-    if connexion.request.is_json:
-        inline_object = InlineObject.from_dict(connexion.request.get_json())
-    return 'do some magic!'
+
+    # TODO -something with the object
+
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def measurement_supported_consumables_get():
@@ -111,6 +143,7 @@ def measurement_supported_consumables_get():
 
     :rtype: object
     """
+    
     dictConsumables = {
         "consumables":
         [

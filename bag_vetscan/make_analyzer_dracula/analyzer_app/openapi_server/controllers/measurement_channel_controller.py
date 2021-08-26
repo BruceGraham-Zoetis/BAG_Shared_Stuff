@@ -110,16 +110,7 @@ def measurement_script_post(inline_object):  # noqa: E501
     return 'do some magic!'
 
 
-def measurement_supported_consumables_get():  # noqa: E501
-    """measurement_supported_consumables_get
-
-    Return a list of all consumable types the analyzer supports. Each consumable returned will include a universally unique identifier, which will be used by the IC when starting a measurement. Any information required to run a consumable will be described in the response using the JSON Schema format (https://json-schema.org/). # noqa: E501
-
-
-    :rtype: object
-    """
-
+def measurement_supported_consumables_get():
     oDracula = CDBusDraculaService()
-    lstConsumables = oDracula.measurement_supported_consumables_get()
-
+    lstConsumables = oDracula.draculad.measurement_supported_consumables_get()
     return lstConsumables

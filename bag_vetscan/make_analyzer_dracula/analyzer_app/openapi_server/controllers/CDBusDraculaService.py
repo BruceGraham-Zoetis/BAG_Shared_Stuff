@@ -41,42 +41,7 @@ class CDBusDraculaService():
 
         return cls._instance
 
-
     """
-    _instance = None
-    def __new__(cls):
-        if cls._instance is None:
-            print('Creating new singleton')
-            cls._instance = super(CDBusDraculaService, cls).__new__(cls)
-            # Put any initialization here.
-            cls.bus      = SessionBus()
-            cls.draculad = cls.bus.get('com.zoetis.dracula')
-        else:
-            print("using singleton")
-
-        print(cls._instance)
-        return cls._instance
-    """
-
-    """
-    _instance = None
-    def __init__(self):
-        raise RuntimeError('Call instance() instead')
-
-    @classmethod
-    def instance(cls):
-        if cls._instance is None:
-            print('Creating new singleton')
-            cls._instance = cls.__new__(cls)
-            # Put any initialization here.
-            cls.bus      = SessionBus()
-            cls.draculad = cls.bus.get('com.zoetis.dracula')
-        else:
-            print("using singleton")
-        return cls._instance        
-    """
-
-
     @property
     def Bar(self) -> int:
         return self.draculad.Bar
@@ -87,9 +52,8 @@ class CDBusDraculaService():
 
     def measurement_supported_consumables_get(self) -> str:
         strRtn = self.draculad.measurement_supported_consumables_get()
-
         return strRtn
-
+    """
 
 
 if __name__ == '__main__':

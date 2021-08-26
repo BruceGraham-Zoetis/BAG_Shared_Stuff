@@ -16,36 +16,55 @@ Purpose: keep info about a connected analyzer
 class CVetscanAnalyzerInfo:
     # init method or constructor 
     def __init__(self, str_IP_Address : str, strName : str):
-        self.str_IP_Address = str_IP_Address
-        self.strName = strName
+        self.__str_IP_Address = str_IP_Address
+        self.__strName = strName
 
     def get_ip_address(self) -> str:
-        return self.str_IP_Address
+        return self.__str_IP_Address
+
+    def get_name(self) -> str:
+        return self.__strName
 
     def get_consumables(self) -> str:
-        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
-        r = requests.get(strRequest)
-        return r.text
+        try:
+            strRequest = "http://" + self.__str_IP_Address + ":8080/measurement/supported_consumables"
+            r = requests.get(strRequest)
+            return r.text
+        except:
+            return ""
 
     def light_blink(self) -> str:
-        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
-        r = requests.get(strRequest)
-        return r.text
+        try:
+            strRequest = "http://" + self.__str_IP_Address + ":8080/measurement/supported_consumables"
+            r = requests.get(strRequest)
+            return r.text
+        except:
+            return ""
 
     def light_off(self) -> str:
-        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
-        r = requests.get(strRequest)
-        return r.text
+        try:
+            strRequest = "http://" + self.__str_IP_Address + ":8080/measurement/supported_consumables"
+            r = requests.get(strRequest)
+            return r.text
+        except:
+            return ""
 
     def power_off(self) -> str:
-        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
-        r = requests.get(strRequest)
-        return r.text
+        try:
+            strRequest = "http://" + self.__str_IP_Address + ":8080/measurement/supported_consumables"
+            r = requests.get(strRequest)
+            return r.text
+        except:
+            return ""
 
     def power_reboot(self) -> str:
-        strRequest = "http://" + self.str_IP_Address + ":8080/measurement/supported_consumables"
-        r = requests.get(strRequest)
-        return r.text
+        try:
+            strRequest = "http://" + self.__str_IP_Address + ":8080/measurement/supported_consumables"
+            r = requests.get(strRequest)
+            return r.text
+        except:
+            return ""
+
 """
 Purpose: Manage the connections to the analyzers on the Hub's local ethernet
 """

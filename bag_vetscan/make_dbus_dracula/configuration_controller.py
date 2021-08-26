@@ -14,7 +14,12 @@ def configuration_factory_reset_put():
 
     :rtype: None
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
+
 
 
 def configuration_get():
@@ -25,7 +30,11 @@ def configuration_get():
 
     :rtype: object
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def configuration_put(body):
@@ -38,7 +47,11 @@ def configuration_put(body):
 
     :rtype: None
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 
 def configuration_schema_get():
@@ -49,6 +62,10 @@ def configuration_schema_get():
 
     :rtype: object
     """
-    return 'do some magic!'
+    dictReturn = {
+        "status": "done"
+    }
+    #TODO
+    return dictReturn
 
 

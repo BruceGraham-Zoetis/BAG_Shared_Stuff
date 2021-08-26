@@ -16,11 +16,11 @@ def control_light_blink_put():
     :rtype: None
     """
 
-    lstReturn = {
+    dictReturn = {
         "Light": "Blinking"
     }
     #TODO
-    return lstReturn
+    return dictReturn
 
 
 def control_light_off_put():
@@ -32,11 +32,11 @@ def control_light_off_put():
     :rtype: None
     """
 
-    lstReturn = {
+    dictReturn = {
         "Light": "Off"
     }
     #TODO
-    return lstReturn
+    return dictReturn
 
 
 
@@ -49,11 +49,11 @@ def control_power_off_put():
     :rtype: None
     """
 
-    lstReturn = {
+    dictReturn = {
         "Power": "Off"
     }
     #TODO
-    return lstReturn
+    return dictReturn
 
 
 def control_power_reboot_put():
@@ -65,8 +65,8 @@ def control_power_reboot_put():
     :rtype: None
     """
 
-    lstReturn = {
+    dictReturn = {
         "Power": "Rebooting"
     }
     #TODO
-    return lstReturn
+    return dictReturn

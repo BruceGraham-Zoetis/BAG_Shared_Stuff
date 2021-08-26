@@ -103,11 +103,6 @@ async def handler_client_connection(websocket, path):
             except:
                 bConnected = False
 
-        elif ("set name" in strFromClient):
-            strParts = strFromClient.split(" ")
-            strAnalyzerName = strParts[2]
-            g_vetscan_hub.analyzer_set_name(strAddress, strAnalyzerName)
-
     print("Diconnected client: " + strAddress)
     g_vetscan_hub.analyzer_remove(strAddress)
 
@@ -123,6 +118,7 @@ def start_thread_hub_server():
     ws_server = websockets.serve(handler_client_connection, 'localhost', 8765, loop = new_loop)
     thread = threading.Thread(target=start_loop_hub_server, args=(new_loop, ws_server))
     thread.start()
+    return thread
 
 
 def gui_window():
@@ -159,7 +155,7 @@ def gui_window():
             [sg.Button('PUT light Off')],
             [sg.Button('PUT power off')],
             [sg.Button('PUT power reboot')],
-            [sg.Text(size=(20,30), key='-OUTPUT-')],
+            [sg.Text(size=(100,20), key='-OUTPUT-')],
             [sg.Button('Exit')]
             ]
 
@@ -191,23 +187,27 @@ def gui_window():
             break
 
         o_analyzer_dracula = g_vetscan_hub.analyzer_get("127.0.0.1")
-        if ("" != o_analyzer_dracula.get_ip_address()):
+        if ("" == o_analyzer_dracula.get_ip_address()):
+            g_window['-OUTPUT-'].update("no analyzer")
+        else:
+            strOUTPUT = "Analyzer: %s ", o_analyzer_dracula.get_ip_address()
+            strOUTPUT += o_analyzer_dracula.get_name()
+
             if event == 'GET supported_consumables':
-                strConsumables = o_analyzer_dracula.get_consumables()
-                g_window['-OUTPUT-'].update(strConsumables)
+                strRtn = o_analyzer_dracula.get_consumables()
             elif event == 'PUT light blink':
                 strRtn = o_analyzer_dracula.light_blink()
-                g_window['-OUTPUT-'].update(strRtn)
             elif event == 'PUT light Off':
                 strRtn = o_analyzer_dracula.light_off()
-                g_window['-OUTPUT-'].update(strRtn)
-
             elif event == 'PUT power off':
                 strRtn = o_analyzer_dracula.power_off()
-                g_window['-OUTPUT-'].update(strRtn)
             elif event == 'PUT power reboot':
                 strRtn = o_analyzer_dracula.power_reboot()
-                g_window['-OUTPUT-'].update(strRtn)
+            else:
+                strRtn = "event ?"
+            
+            strOUTPUT += strRtn
+            g_window['-OUTPUT-'].update(strOUTPUT)
 
     g_window.close()
 
@@ -232,17 +232,39 @@ def thread_wait_for_clients():
     client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     client.bind(("", 37020))
-    while True:
-        name, addr = client.recvfrom(1024)
-        print("received message: %s %s" % (addr, name))
-        g_vetscan_hub.analyzer_add(addr[0], name)
 
+    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
+    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+    server.settimeout(0.1)
+    message = b"Hub"
+    bTrace = False
+
+    while True:
+        server.sendto(message, ("localhost", 37020))
+        if (bTrace): print("  Broadcast Hub to analyzers (restart)", flush=True)
+
+        if (bTrace): print("Waiting for broadcast from analyzers")
+        while True:
+            try:
+                client.settimeout(10)
+                name, addr = client.recvfrom(1024)
+                if (b"Hub" != name):
+                    if (bTrace): print("  received message: %s %s" % (addr, name))
+                    g_vetscan_hub.analyzer_add(addr[0], name)
+
+                    server.sendto(message, ("localhost", 37020))
+                    if (bTrace): print("  Broadcast Hub to analyzers", flush=True)
+            except:
+                if (bTrace): print("  Timeout wait for clients")
+                pass
 
 
 def start_thread_waiting_for_clients():
     print("Starting waiting for clients")
     thread = threading.Thread(target=thread_wait_for_clients)
     thread.start()
+    return thread
 
 
 if __name__ == '__main__':
@@ -251,6 +273,9 @@ if __name__ == '__main__':
     print("")
     g_vetscan_hub = hub_app_gui.class_vetscan_hub.CVetscanHub()
 
-    start_thread_waiting_for_clients()
-    start_thread_hub_server()
-    gui_window()
+    threadWaitForClients = start_thread_waiting_for_clients()
+    threadHubServer = start_thread_hub_server()
+    gui_window() # returns when Exit button is pressed.
+    
+    # TODO - Kill threadWaitForClients
+    # TODO - Kill threadHubServer
