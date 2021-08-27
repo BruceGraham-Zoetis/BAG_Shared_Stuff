@@ -79,11 +79,12 @@ def thread_analyzer_web_client():
 def start_thread_analyzer_web_client():
     thread = threading.Thread(target = thread_analyzer_web_client)
     thread.start()
+    return thread
 
 
 if __name__ == '__main__':
     print("")
 
     start_thread_notify_hub()    
-    start_thread_analyzer_web_client()
+    threadClient = start_thread_analyzer_web_client()
 

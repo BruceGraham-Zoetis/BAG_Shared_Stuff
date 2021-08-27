@@ -61,62 +61,45 @@ def isCameraFlipped() -> bool:
 
 
 """
-Web Server handler coroutine. runs while client is connected.
+Handle client connections.
 """
-async def handler_client_connection(websocket, path):
+def thread_wait_for_clients():
     global g_vetscan_hub
     global g_window
 
-    tupleRemote = websocket.remote_address
-    strAddress = tupleRemote[0]
-    print("Connected client: " + strAddress)
+    soc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    host = socket.gethostname() # Get local machine name
+    port = 1024                 # Reserve a port for your service.
+    try:
+        soc.bind((host, port))        # Bind to the port
+    except:
+        print("error bind()")
+        return
 
-    g_vetscan_hub.analyzer_add(strAddress)
+    while True:
+        while True:
+            print("listen() for client connection.")
+            soc.listen()
+            print("accept()")
+            client, strAddress = soc.accept()
 
-    strAnalyzerName = ""
-    bConnected = True
-
-    while bConnected:
-        print("wait on recv")
-        try:
-            strFromClient = await websocket.recv()
-        except:
-            bConnected = False
-            break
-
-        try:
-            g_window['-OUTPUT-'].update(strFromClient)
-        except:
-            pass
-
-        print("server(Hub) -> client(" + strAnalyzerName + ")\n\t" + strFromClient)
-
-        if ("get datetime" == strFromClient):
-            strToClient = datetime.datetime.utcnow().isoformat() + 'Z'
-            print("client(" + strAnalyzerName + ") -> server(Hub)\n\t" + strToClient)
+            print("Connected client: " + strAddress)
+            g_vetscan_hub.analyzer_add(strAddress)
             try:
-                await websocket.send(strToClient)
-                try:
-                    g_window['-OUTPUT-'].update(strFromClient + " " + strToClient)
-                except:
-                    pass
+                g_window['-OUTPUT-'].update(strAddress)
             except:
-                bConnected = False
+                pass
 
-    print("Diconnected client: " + strAddress)
-    g_vetscan_hub.analyzer_remove(strAddress)
+            if (True):
+                print("Diconnected client: " + strAddress)
+                g_vetscan_hub.analyzer_remove(strAddress)
+                client.close()
 
-
-def start_loop_hub_server(loop, server):
-    loop.run_until_complete(server)
-    loop.run_forever()
 
 
 def start_thread_hub_server():
-    print("Starting Hub web server")
-    new_loop = asyncio.new_event_loop()
-    ws_server = websockets.serve(handler_client_connection, 'localhost', 8765, loop = new_loop)
-    thread = threading.Thread(target=start_loop_hub_server, args=(new_loop, ws_server))
+    print("Starting Hub server")
+    thread = threading.Thread(target = thread_wait_for_clients)
     thread.start()
     return thread
 
@@ -214,50 +197,6 @@ def gui_window():
     # close output g_window
     camera.release()
     cv2.destroyAllWindows()
-
-
-def thread_wait_for_clients():
-    global g_vetscan_hub
-
-    client = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP) # UDP
-
-    # Enable port reusage so we will be able to run multiple clients and servers on single (host, port). 
-    # Do not use socket.SO_REUSEADDR except you using linux(kernel<3.9): goto https://stackoverflow.com/questions/14388706/how-do-so-reuseaddr-and-so-reuseport-differ for more information.
-    # For linux hosts all sockets that want to share the same address and port combination must belong to processes that share the same effective user ID!
-    # So, on linux(kernel>=3.9) you have to run multiple servers and clients under one user to share the same (host, port).
-    # Thanks to @stevenreddie
-    client.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-
-    # Enable broadcasting mode
-    client.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-
-    client.bind(("", 37020))
-
-    server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEPORT, 1)
-    server.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-    server.settimeout(0.1)
-    message = b"Hub"
-    bTrace = False
-
-    while True:
-        server.sendto(message, ("localhost", 37020))
-        if (bTrace): print("  Broadcast Hub to analyzers (restart)", flush=True)
-
-        if (bTrace): print("Waiting for broadcast from analyzers")
-        while True:
-            try:
-                client.settimeout(10)
-                name, addr = client.recvfrom(1024)
-                if (b"Hub" != name):
-                    if (bTrace): print("  received message: %s %s" % (addr, name))
-                    g_vetscan_hub.analyzer_add(addr[0], name)
-
-                    server.sendto(message, ("localhost", 37020))
-                    if (bTrace): print("  Broadcast Hub to analyzers", flush=True)
-            except:
-                if (bTrace): print("  Timeout wait for clients")
-                pass
 
 
 def start_thread_waiting_for_clients():

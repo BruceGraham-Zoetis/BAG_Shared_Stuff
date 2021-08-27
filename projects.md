@@ -1,3 +1,4 @@
+
 ## openAPI calls
 dbus_dracula (service: com.zoetis.dracula)
   <--Methods-->
@@ -5,6 +6,7 @@ dbus_dracula (service: com.zoetis.dracula)
     DBus
       <--Methods-->
       <--Property getters setters-->
+        d-feet (DBus monitor app)
         analyzer_dracula (openAPI Server)
           <--HTML-->
             hub_app (Web Client) xx.xx.xx.xx:8080/<SOME API PATH>
@@ -30,9 +32,9 @@ bag_vetscan
         analyzer_dracula.code-workspace	Visual Studio Code - workspace
         test_run_analyzer_app.py		Runs the "Dracula" analyzer server.
         
-    make_dbus_dracula				"Dracula" DBus demon (DBus service).
+    make_dbus_dracula				"Dracula" DBus deamon (DBus service).
         dbus_dracula.code-workspace		Visual Studio Code - workspace
-        test_run_dbus_dracula.py		Runs the "Dracula" DBus demon.
+        test_run_dbus_dracula.py		Runs the "Dracula" DBus deamon.
         
     make_hub					"Hub" GUI app. Network client.
         make_hub.sh				Rebuild the "Hub" GUI app.
@@ -45,8 +47,12 @@ bag_vetscan
         					Hub contains a dictionary of analyzers.
         test_run_hub_app.py			Runs the "Hub" GUI app.
         
+    analyzer_webclient
+    	TODO - 
+    	
     openAPISpecs
         openAPISpec.json			openAPI JSON file.
-        
+    
+    
 
 

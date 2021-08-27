@@ -6,7 +6,10 @@ File: thread_notify_hub.py
 
 import socket
 import class_state_machine_state
-   
+import select
+import time
+import threading
+
 
 def thread_notify_hub():
     server = socket.socket(socket.AF_INET, socket.SOCK_DGRAM, socket.IPPROTO_UDP)
@@ -73,3 +76,46 @@ def thread_notify_hub():
                 if (b"Hub" == name):
                     if (bTrace): print("  sync - Got Hub response")
                     strState = stateMa.set("BroadcastToHub")
+
+
+def thread_waiting_for_hub():
+    ip = 'localhost'
+    port = 1024
+    conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+    while True:
+        try:
+            print("Attempt connect to we server")
+            conn.connect((ip, port))
+            print("    Connected to server")
+            conn.settimeout(None)
+
+            while True:
+                try:
+                    print("    select()")
+                    ready_to_read, ready_to_write, in_error = \
+                            select.select([conn,], [conn,], [], 10)
+                    print("    select() exit")
+                except select.error:
+                    conn.shutdown(2)    # 0 = done receiving, 1 = done sending, 2 = both
+                    conn.close()
+                    # connection error event here, maybe reconnect
+                    print('connection error')
+                    break
+        except:
+            print("sleep...")
+            time.sleep(10)
+            print("  end of sleep")
+
+
+def start_thread_waiting_for_hub():
+    print("Starting waiting for clients")
+    thread = threading.Thread(target=thread_waiting_for_hub)
+    thread.start()
+    return thread
+
+    
+if __name__ == '__main__':
+    print("")
+
+    thread_wait_for_hub = start_thread_waiting_for_hub()
