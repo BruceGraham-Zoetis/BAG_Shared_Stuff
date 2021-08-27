@@ -9,15 +9,11 @@ dbus_dracula
 
 analyzer_dracula
 ==================
-* connect the web API calls to the DBus deamon.
-    finish adding calls to draculad to generated file.
-
-	def measurement_supported_consumables_get():
-	    oDracula = CDBusDraculaService()
-	    strConsumables = oDracula.draculad.measurement_supported_consumables_get()
-	    return strConsumables
+* test all APIs by calling them from CDBusDraculaService.py main
    
 * run copy_modified_files_to_templates.sh
+
+* security_controller_.py ? why no functions?
 
 
 analyzer_webclient

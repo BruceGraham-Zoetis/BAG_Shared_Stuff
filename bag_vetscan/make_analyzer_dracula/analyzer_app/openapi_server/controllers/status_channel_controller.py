@@ -1,29 +1,23 @@
 import connexion
 import six
 
-from openapi_server.models.inline_response2002 import InlineResponse2002  # noqa: E501
-from openapi_server.models.inline_response2003 import InlineResponse2003  # noqa: E501
-from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
+from openapi_server.models.inline_response2002 import InlineResponse2002
+from openapi_server.models.inline_response2003 import InlineResponse2003
+from openapi_server.models.inline_response400 import InlineResponse400
 from openapi_server import util
 
-
-def status_currently_activated_events_get():  # noqa: E501
-    """status_currently_activated_events_get
-
-    The HUB is requesting the analyzer respond with a list of all currently activated events # noqa: E501
-
-
-    :rtype: InlineResponse2003
-    """
-    return 'do some magic!'
+import os, sys
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+from CDBusDraculaService import CDBusDraculaService
 
 
-def status_operational_get():  # noqa: E501
-    """status_operational_get
+def status_currently_activated_events_get():
+    oDracula = CDBusDraculaService()
+    strRtn = oDracula.draculad.status_currently_activated_events_get()
+    return strRtn
 
-    The HUB can use send this message to get the status of an analyzer # noqa: E501
-
-
-    :rtype: InlineResponse2002
-    """
-    return 'do some magic!'
+def status_operational_get():
+    oDracula = CDBusDraculaService()
+    strRtn = oDracula.draculad.status_operational_get()
+    return strRtn
