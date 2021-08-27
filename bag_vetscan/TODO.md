@@ -9,8 +9,6 @@ dbus_dracula
 
 analyzer_dracula
 ==================
-* test all APIs by calling them from CDBusDraculaService.py main
-   
 * run copy_modified_files_to_templates.sh
 
 * security_controller_.py ? why no functions?
