@@ -13,7 +13,7 @@ dbus_dracula (service: com.zoetis.dracula)
           <--HTML-->
             Chrome (Web Browser) xx.xx.xx.xx:8080/ui/#/<SOME API PATH>
 
-## Events from Demon sent to Hub App
+## Events from Deamon sent to Hub App
 dbus_dracula (service: com.zoetis.dracula)
   [Signals-->
     DBus

@@ -49,6 +49,7 @@ class CDBusDraculaService():
             # before we acquired the lock. So check that the
             # instance is still nonexistent.
             if not cls._instance:
+                # super() adds DBus service’s Methods: @method(), Properties: @property, Signals:@signal()
                 cls._instance = super(CDBusDraculaService, cls).__new__(cls)
                 # Put any initialization here.
                 strRequestName = get_analyzer_dbus_request_name()

@@ -12,7 +12,7 @@ import control_channel_controller
 import measurement_channel_controller
 import status_channel_controller
 
-
+# ServiceInterface exports Methods: @method(), Properties: @property, Signals:@signal()
 class CZoetisAnalyzerInterface(ServiceInterface):
     def __init__(self, strAnalyzerName):
         super().__init__(strAnalyzerName)
