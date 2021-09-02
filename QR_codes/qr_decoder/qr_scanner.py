@@ -40,7 +40,10 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
-import data_matrix_decoder
+debug_decode_data_matrix = False
+
+if (debug_decode_data_matrix):
+    import data_matrix_decoder
 
 global test_parameter_auto_focus
 test_parameter_auto_focus = True
@@ -94,14 +97,14 @@ def decode_qr_code_in_frame(frame):
         barcodes = pyzbar.decode(frame)
 
         for barcode in barcodes:
-            barcode_info = barcode.data.decode('utf-8')
+            str_barcode = barcode.data.decode('utf-8')
             
             try:
                 # add barcode type on the returned dictionary
                 dicContents = {"barcodetype" : barcode.type}
-                text = json.loads(barcode_info)
-                dicContents.append(text)
-                if (1 < len(dicContents)):
+                dic_barcode = json.loads(str_barcode)
+                if (1 < len(dic_barcode)):
+                    dicContents.update(dic_barcode)
                     bFound = True
                 else:
                     bFound = False
@@ -111,7 +114,7 @@ def decode_qr_code_in_frame(frame):
     except:
         pass
 
-    if (not bFound):
+    if (not bFound and debug_decode_data_matrix):
         try:
             timeStart = time.time()
             strData = data_matrix_decoder.data_matrix_decode_image(frame)

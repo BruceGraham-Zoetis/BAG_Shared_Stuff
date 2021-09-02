@@ -1,0 +1,12 @@
+strHuman: diffuser2
+strFocus: Auto
+  iWidth: 20
+iVersion: 17
+Autofocus On
+
+Test runs 5 times
+        Timings:   6.23  4.59  9.58 12.00 10.16
+Completed iRuns: 5
+        Average: 8.51 sec
+============================================
+============================================
