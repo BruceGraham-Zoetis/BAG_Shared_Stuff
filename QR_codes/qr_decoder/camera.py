@@ -20,8 +20,28 @@ import numpy
 global strWindowtitle
 strWindowtitle = "Camera"
 
+
+def isCameraFlipped() -> bool:
+    bCameraIsFlipped = False
+
+    if (os.name != 'nt'):
+        tuples = platform.uname()
+        i = 0
+        while (i < len(tuples)):
+            strValue = tuples[i]
+            # print(strValue)
+            if ("lubuntu" == strValue):
+                bCameraIsFlipped = True
+                break
+            if ("ubuntu" == strValue):
+                break
+            i = i + 1
+    return bCameraIsFlipped
+    
 if __name__ == '__main__':
     font = cv2.FONT_HERSHEY_DUPLEX
+    
+    bCameraIsFlipped = isCameraFlipped()
 
     if (not os.path.isdir("./camera/")):
         os.mkdir("./camera/")
@@ -40,15 +60,20 @@ if __name__ == '__main__':
         camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
 
         while(True):
-            ret, frameIn = camera.read()
-            frameWithText = frameIn
+            if (not bCameraIsFlipped):
+                ret, frameOrig = camera.read()
+            else:
+                ret, frameFlipped = camera.read()
+                frameOrig = cv2.flip(frameFlipped, -1)
+
+            frameWithText = frameOrig
             cv2.putText(frameWithText, "Press Esc when ready", (50, 50), font, 1.0, (255, 255, 255), 1)
             cv2.imshow(strWindowtitle, frameWithText)
             cv2.waitKey(10) #???
             if cv2.waitKey(1) & 0xFF == 27:
                 break
 
-        cv2.imwrite(strFileName, frameIn)
+        cv2.imwrite(strFileName, frameOrig)
         print("Saved to file")
 
         # close output window
