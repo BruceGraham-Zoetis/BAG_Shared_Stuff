@@ -16,6 +16,7 @@ from pyzbar import pyzbar
 import os
 import time
 import numpy
+import platform
 
 global strWindowtitle
 strWindowtitle = "Camera"
@@ -30,7 +31,7 @@ def isCameraRotated() -> bool:
         while (i < len(tuples)):
             strValue = tuples[i]
             # print(strValue)
-            if ("lubuntu" == strValue):
+            if (-1 != strValue.find("vetscan")):
                 bCameraIsRotated = True
                 break
             if ("ubuntu" == strValue):
