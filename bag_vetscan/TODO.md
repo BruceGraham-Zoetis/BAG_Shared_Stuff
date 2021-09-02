@@ -2,6 +2,16 @@
 	TO DO
 ======================
 
+pull new openAPI.json
+java version of openAPI client
+
+
+
+
+
+
+sync process - openAPI server -> DBus service
+async process - websocket server
 
 dbus_dracula
 ==================

@@ -1,7 +1,11 @@
 #!/bin/bash
 
 # File: make_hub.sh
-# Purpose: Rebuild the hub server.
+# Purpose: Rebuild the server's openAPI python code.
+
+# Install the generator
+# Open the terminal and run the following to install OpenAPI Generator:
+# $ npm install @openapitools/openapi-generator-cli -g
 
 # Notes: hub_config.yaml lists files that the generator will use instead of the generated code.
 

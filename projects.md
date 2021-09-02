@@ -24,7 +24,7 @@ dbus_dracula (service: com.zoetis.dracula)
 
 ## Directories and files
 bag_vetscan
-    make_analyzer_dracula			"Dracula" analyzer. Network server.
+    make_analyzer_dracula			"Dracula" (openAPI server)
         make_analyzer.sh			Rebuild the "Dracula" analyzer server.
         templates				Files copied to analyzer_app.
         					Copied when the analyzer server is rebuilt.
@@ -36,7 +36,7 @@ bag_vetscan
         dbus_dracula.code-workspace		Visual Studio Code - workspace
         test_run_dbus_dracula.py		Runs the "Dracula" DBus deamon.
         
-    make_hub					"Hub" GUI app. Network client.
+    make_hub					"Hub" GUI app (openAPI client & webserver )
         make_hub.sh				Rebuild the "Hub" GUI app.
         hub_app.code-workspace		Visual Studio Code - workspace
         hub_app				The generated analyzer client.

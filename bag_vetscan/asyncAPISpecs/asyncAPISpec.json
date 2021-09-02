@@ -1,0 +1,335 @@
+{
+   "asyncapi": "2.1.0",
+   "info": {
+      "title": "Zoetis Vetscan Diagnostics Analyzer - Hub Asynchronous Websocket API",
+      "version": "0.0.1",
+      "description": "This document describes the asynchronous portion of the Dx Analyzer-Hub API. \nThis will be implemented over a Websocket interface.  \nThe analyser is the server and the Hub is the client."
+   },
+   "components": {
+      "schemas": {
+         "channel": {
+            "type": "string",
+            "description": "The functional grouping of the message"
+         },
+         "message": {
+            "type": "string",
+            "description": "The name of the message that indicates the specific function"
+         },
+         "correlation_id": {
+            "type": "string",
+            "description": "A unique ID that can be used to correlate messages being sent and received",
+            "example": "SPE1456"
+         },
+         "measurement_id": {
+            "type": "string",
+            "description": "The ID value for a measurement"
+         },
+         "elapsed_time_msec": {
+            "type": "number",
+            "description": "The time the operation has taken so far",
+            "minimum": 0
+         },
+         "measurement_status": {
+            "type": "string",
+            "description": "The status of the measurement",
+            "enum": [
+               "Initializing",
+               "Running",
+               "Aborted",
+               "Stopping",
+               "Complete"
+            ]
+         },
+         "status_detail": {
+            "type": "string",
+            "description": "Additional information in plain text that describes the value status of the analyzer.  If no additional detail is available or necessary, this will be an empty string"
+         }
+      },
+      "messages": {
+         "status": {
+            "description": "The analyzer is reporting the status of the current measurement to the Hub.  This should be done anytime the status of the measurement changes.",
+            "headers": {
+               "type": "object",
+               "properties": {
+                  "channel": {
+                     "$ref": "#/components/schemas/channel",
+                     "enum": [
+                        "measurement"
+                     ]
+                  },
+                  "message": {
+                     "$ref": "#/components/schemas/message",
+                     "enum": [
+                        "status"
+                     ]
+                  },
+                  "correlation_id": {
+                     "$ref": "#/components/schemas/correlation_id"
+                  }
+               },
+               "required": [
+                  "channel",
+                  "message",
+                  "correlation_id"
+               ]
+            },
+            "payload": {
+               "type": "object",
+               "properties": {
+                  "measurement_id": {
+                     "$ref": "#/components/schemas/measurement_id"
+                  },
+                  "elapsed_time_msec": {
+                     "$ref": "#/components/schemas/elapsed_time_msec"
+                  },
+                  "measurement_status": {
+                     "$ref": "#/components/schemas/measurement_status"
+                  },
+                  "status_detail": {
+                     "$ref": "#/components/schemas/status_detail"
+                  }
+               },
+               "required": [
+                  "measurement_id",
+                  "elapsed_time_msec",
+                  "measurement_status",
+                  "status_detail"
+               ]
+            }
+         },
+         "choose_option": {
+            "description": "The analyzer is requesting that the Hub present the operator with a choice of options.  Hub will respond with /prompts/option_chosen with the option selected.",
+            "headers": {
+               "type": "object",
+               "properties": {
+                  "channel": {
+                     "$ref": "#/components/schemas/channel",
+                     "enum": [
+                        "prompts"
+                     ]
+                  },
+                  "message": {
+                     "$ref": "#/components/schemas/message",
+                     "enum": [
+                        "choose_option"
+                     ]
+                  },
+                  "correlation_id": {
+                     "$ref": "#/components/schemas/correlation_id"
+                  }
+               },
+               "required": [
+                  "channel",
+                  "message",
+                  "correlation_id"
+               ]
+            },
+            "payload": {
+               "type": "object",
+               "properties": {
+                  "information": {
+                     "type": "string",
+                     "description": "Text describing the choice the operator is being requested to make",
+                     "example": "Do you want to run try again?"
+                  },
+                  "options": {
+                     "type": "array",
+                     "description": "This array of strings will let the Hub know what options the operator should be presented to choose from",
+                     "example": [
+                        "Yes",
+                        "No",
+                        "Cancel"
+                     ],
+                     "items": {
+                        "type": "string",
+                        "description": "An option the operator may choose from"
+                     }
+                  }
+               },
+               "required": [
+                  "information",
+                  "options"
+               ]
+            }
+         },
+         "progress_bar": {
+            "description": "The analyzer is requesting that the Hub UI show a progress bar to the operator.",
+            "headers": {
+               "type": "object",
+               "properties": {
+                  "channel": {
+                     "$ref": "#/components/schemas/channel",
+                     "enum": [
+                        "prompts"
+                     ]
+                  },
+                  "message": {
+                     "$ref": "#/components/schemas/message",
+                     "enum": [
+                        "progress_bar"
+                     ]
+                  },
+                  "correlation_id": {
+                     "$ref": "#/components/schemas/correlation_id"
+                  }
+               },
+               "required": [
+                  "channel",
+                  "message",
+                  "correlation_id"
+               ]
+            },
+            "payload": {
+               "type": "object",
+               "properties": {
+                  "title": {
+                     "type": "string",
+                     "description": "A title to give the progress bar when displayed to the operator",
+                     "example": "Updating firmware status"
+                  },
+                  "progress_pct": {
+                     "type": "number",
+                     "description": "The amount of progress to show in percentage",
+                     "minimum": 0,
+                     "maximum": 100,
+                     "example": 57.6
+                  },
+                  "time_remaining_secs": {
+                     "type": "number",
+                     "description": "Optional field showing how much time is remaining in seconds",
+                     "example": 104.2,
+                     "minimum": 0
+                  },
+                  "time_elapsed_secs": {
+                     "type": "number",
+                     "description": "Optional field for how much time has been spent so far in seconds",
+                     "example": "42.78",
+                     "minimum": 0
+                  }
+               },
+               "required": [
+                  "title",
+                  "progress_pct"
+               ]
+            }
+         },
+         "notification": {
+            "description": "The analyzer is requesting that the Hub UI show a notification to the operator. The Hub will respond with through /prompts/notification_ack",
+            "headers": {
+               "type": "object",
+               "properties": {
+                  "channel": {
+                     "$ref": "#/components/schemas/channel",
+                     "enum": [
+                        "prompts"
+                     ]
+                  },
+                  "message": {
+                     "$ref": "#/components/schemas/message",
+                     "enum": [
+                        "notification"
+                     ]
+                  },
+                  "correlation_id": {
+                     "$ref": "#/components/schemas/correlation_id"
+                  }
+               },
+               "required": [
+                  "channel",
+                  "message",
+                  "correlation_id"
+               ]
+            },
+            "payload": {
+               "type": "object",
+               "properties": {
+                  "notification_text": {
+                     "type": "string",
+                     "description": "The text of the string to show the operator",
+                     "example": "You have scanned an expired QR code"
+                  }
+               },
+               "required": [
+                  "notification_text"
+               ]
+            }
+         },
+         "scan_qr": {
+            "description": "The analyzer is requesting that the Hub UI allow the operator to scan a QR. The Hub will respond with through /prompts/qr_scanned",
+            "headers": {
+               "type": "object",
+               "properties": {
+                  "channel": {
+                     "$ref": "#/components/schemas/channel",
+                     "enum": [
+                        "prompts"
+                     ]
+                  },
+                  "message": {
+                     "$ref": "#/components/schemas/message",
+                     "enum": [
+                        "scan_qr"
+                     ]
+                  },
+                  "correlation_id": {
+                     "$ref": "#/components/schemas/correlation_id"
+                  }
+               },
+               "required": [
+                  "channel",
+                  "message",
+                  "correlation_id"
+               ]
+            },
+            "payload": {
+               "type": "object",
+               "properties": {
+                  "size_mm": {
+                     "type": "number",
+                     "description": "The size of the QR that is to be scanned in millimeters",
+                     "example": 17,
+                     "minimum": 10,
+                     "maximum": 50
+                  }
+               },
+               "required": [
+                  "size_mm"
+               ]
+            }
+         }
+      }
+   },
+   "channels": {
+      "measurement": {
+         "subscribe": {
+            "message": {
+               "oneOf": [
+                  {
+                     "$ref": "#/components/messages/status"
+                  }
+               ]
+            }
+         }
+      },
+      "prompts": {
+         "subscribe": {
+            "message": {
+               "oneOf": [
+                  {
+                     "$ref": "#/components/messages/choose_option"
+                  },
+                  {
+                     "$ref": "#/components/messages/progress_bar"
+                  },
+                  {
+                     "$ref": "#/components/messages/notification"
+                  },
+                  {
+                     "$ref": "#/components/messages/scan_qr"
+                  }
+               ]
+            }
+         }
+      }
+   }
+}
