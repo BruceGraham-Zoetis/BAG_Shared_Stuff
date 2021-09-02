@@ -21,8 +21,8 @@ global strWindowtitle
 strWindowtitle = "Camera"
 
 
-def isCameraFlipped() -> bool:
-    bCameraIsFlipped = False
+def isCameraRotated() -> bool:
+    bCameraIsRotated = False
 
     if (os.name != 'nt'):
         tuples = platform.uname()
@@ -31,17 +31,17 @@ def isCameraFlipped() -> bool:
             strValue = tuples[i]
             # print(strValue)
             if ("lubuntu" == strValue):
-                bCameraIsFlipped = True
+                bCameraIsRotated = True
                 break
             if ("ubuntu" == strValue):
                 break
             i = i + 1
-    return bCameraIsFlipped
+    return bCameraIsRotated
     
 if __name__ == '__main__':
     font = cv2.FONT_HERSHEY_DUPLEX
     
-    bCameraIsFlipped = isCameraFlipped()
+    bCameraIsRotated = isCameraRotated()
 
     if (not os.path.isdir("./camera/")):
         os.mkdir("./camera/")
@@ -60,11 +60,11 @@ if __name__ == '__main__':
         camera.set(cv2.CAP_PROP_AUTOFOCUS, 1)
 
         while(True):
-            if (not bCameraIsFlipped):
+            if (not bCameraIsRotated):
                 ret, frameOrig = camera.read()
             else:
-                ret, frameFlipped = camera.read()
-                frameOrig = cv2.flip(frameFlipped, -1)
+                ret, frameRotated = camera.read()
+                frameOrig = cv2.flip(frameRotated, -1)
 
             frameWithText = frameOrig
             cv2.putText(frameWithText, "Press Esc when ready", (50, 50), font, 1.0, (255, 255, 255), 1)

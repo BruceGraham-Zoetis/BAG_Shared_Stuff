@@ -43,8 +43,8 @@ if __name__ == '__main__':
     if (os.name == 'nt'):
         ret, frameOrig = camera.read()
     else:
-        ret, frameFlipped = camera.read()
-        frameOrig = cv2.flip(frameFlipped, -1)
+        ret, frameRotated = camera.read()
+        frameOrig = cv2.flip(frameRotated, -1)
     frameIn = cv2.resize(frameOrig, frameSize)
     imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
 
@@ -56,8 +56,8 @@ if __name__ == '__main__':
         if (os.name == 'nt'):
             ret, frameOrig = camera.read()
         else:
-            ret, frameFlipped = camera.read()
-            frameOrig = cv2.flip(frameFlipped, -1)
+            ret, frameRotated = camera.read()
+            frameOrig = cv2.flip(frameRotated, -1)
         frameIn = cv2.resize(frameOrig, frameSize)
         imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
         window['image'].update(data=imgbytes, size=(None,None))

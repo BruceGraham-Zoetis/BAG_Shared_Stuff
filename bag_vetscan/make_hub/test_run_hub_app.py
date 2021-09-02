@@ -37,8 +37,8 @@ global strWindowtitle
 strWindowtitle = 'Vetscan Hub'
 
 
-def isCameraFlipped() -> bool:
-    bCameraIsFlipped = False
+def isCameraRotated() -> bool:
+    bCameraIsRotated = False
 
     if (os.name != 'nt'):
         tuples = platform.uname()
@@ -47,19 +47,19 @@ def isCameraFlipped() -> bool:
             strValue = tuples[i]
             # print(strValue)
             if ("lubuntu" == strValue):
-                bCameraIsFlipped = True
+                bCameraIsRotated = True
                 break
             if ("ubuntu" == strValue):
                 break
             i = i + 1
-    return bCameraIsFlipped
+    return bCameraIsRotated
 
 
 
 def gui_window():
     print("Starting GUI superloop")
 
-    bCameraIsFlipped = isCameraFlipped()
+    bCameraIsRotated = isCameraRotated()
 
     # open output g_window
     camera = cv2.VideoCapture(0)
@@ -94,11 +94,11 @@ def gui_window():
 
     config.g_window = sg.Window(strWindowtitle, layout)
 
-    if (not bCameraIsFlipped):
+    if (not bCameraIsRotated):
         ret, frameOrig = camera.read()
     else:
-        ret, frameFlipped = camera.read()
-        frameOrig = cv2.flip(frameFlipped, -1)
+        ret, frameRotated = camera.read()
+        frameOrig = cv2.flip(frameRotated, -1)
     frameIn = cv2.resize(frameOrig, frameSize)
     imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
 
@@ -107,11 +107,11 @@ def gui_window():
         if event == 'Exit' or event == sg.WIN_CLOSED:
             break
 
-        if (not bCameraIsFlipped):
+        if (not bCameraIsRotated):
             ret, frameOrig = camera.read()
         else:
-            ret, frameFlipped = camera.read()
-            frameOrig = cv2.flip(frameFlipped, -1)
+            ret, frameRotated = camera.read()
+            frameOrig = cv2.flip(frameRotated, -1)
         frameIn = cv2.resize(frameOrig, frameSize)
         imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
         config.g_window['image'].update(data=imgbytes, size=(None,None))

@@ -188,8 +188,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
 
     timeEnd = time.time() + 5.0
     while(time.time() < timeEnd):
-        ret, frameFlipped = camera.read()
-        frameIn = cv2.flip(frameFlipped, -1)
+        ret, frameRotated = camera.read()
+        frameIn = cv2.flip(frameRotated, -1)
         bFound, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
             timeEnd = time.time() + 5.0
@@ -222,8 +222,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
 
     bFound = False
     while (not bFound):
-        ret, frameFlipped = camera.read()
-        frameIn = cv2.flip(frameFlipped, -1)
+        ret, frameRotated = camera.read()
+        frameIn = cv2.flip(frameRotated, -1)
         if (ret):
             bFound, dicContentsCaptured = decode_qr_code_in_frame(frameIn)
         else:
@@ -293,8 +293,8 @@ def runTestForVersionAndWidth(iRun : int) -> bool:
         # Print to the window, the key:Value of dicContents, one line per key
         timeEnd = time.time() + 5.0
         while(time.time() < timeEnd):
-            ret, frameFlipped = camera.read()
-            frameIn = cv2.flip(frameFlipped, -1)
+            ret, frameRotated = camera.read()
+            frameIn = cv2.flip(frameRotated, -1)
 
             dicContents = {"Scan Time" : "{:5.2f}".format(t_diff) + " sec", "" : ""}
             dicContents.update(dicContentsCaptured)
