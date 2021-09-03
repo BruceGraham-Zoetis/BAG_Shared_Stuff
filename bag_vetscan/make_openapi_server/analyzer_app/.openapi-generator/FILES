@@ -10,11 +10,13 @@ openapi_server/__main__.py
 openapi_server/controllers/CDBusDraculaService.py
 openapi_server/controllers/__init__.py
 openapi_server/controllers/configuration_controller.py
+openapi_server/controllers/configuration_controller.py
 openapi_server/controllers/control_channel_controller.py
 openapi_server/controllers/control_channel_controller.py
 openapi_server/controllers/measurement_channel_controller.py
 openapi_server/controllers/measurement_channel_controller.py
 openapi_server/controllers/security_controller_.py
+openapi_server/controllers/status_channel_controller.py
 openapi_server/controllers/status_channel_controller.py
 openapi_server/encoder.py
 openapi_server/models/__init__.py

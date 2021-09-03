@@ -25,9 +25,18 @@ def channel_measurement_get_measurement_status():
         "status_detail"         -> str: "" or some kind of detail string 
     """
 
+    """
     str_rtn = "{'measurement_id': 'THX 1138', 'elapsed_time_msec': 12345, 'measurement_status': 'Running', 'status_detail': 'JUST HAVING FUN!'}"
-
     return str_rtn
+    """
+    dict_rtn = {
+        'measurement_id': 'THX 1138',
+        'elapsed_time_msec': '12345',
+        'measurement_status': 'Running',
+        'status_detail': 'JUST HAVING FUN!'
+    }
+    #TODO
+    return dict_rtn
 
 
 def measurement_cancel_delete():

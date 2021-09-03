@@ -17,38 +17,38 @@ from CDBusDraculaService import CDBusDraculaService
 
 def channel_measurement_get_measurement_status():
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.channel_measurement_get_measurement_status()
-    return strRtn
+    str_rtn = oDracula.draculad.channel_measurement_get_measurement_status()
+    return str_rtn
 
 def measurement_cancel_delete():
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_cancel_delete()
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_cancel_delete()
+    return str_rtn
 
 def measurement_consumable_consumable_uuid_post(consumable_uuid):
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_consumable_consumable_uuid_post(consumable_uuid)
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_consumable_consumable_uuid_post(consumable_uuid)
+    return str_rtn
 
 def measurement_file_post(inline_object1):
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_file_post(inline_object1)
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_file_post(inline_object1)
+    return str_rtn
 
 def measurement_past_results_get(start_time, start_date, end_time, end_date):
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_past_results_get(start_time, start_date, end_time, end_date)
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_past_results_get(start_time, start_date, end_time, end_date)
+    return str_rtn
 
 def measurement_result_get():
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_result_get()
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_result_get()
+    return str_rtn
 
 def measurement_script_post(inline_object):
     oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.measurement_script_post(inline_object)
-    return strRtn
+    str_rtn = oDracula.draculad.measurement_script_post(inline_object)
+    return str_rtn
 
 def measurement_supported_consumables_get():
     oDracula = CDBusDraculaService()

@@ -34,6 +34,12 @@ class TestControlChannelApi(unittest.TestCase):
         """
         pass
 
+    def test_control_light_off_put(self):
+        """Test case for control_light_off_put
+
+        """
+        pass
+
     def test_control_power_off_put(self):
         """Test case for control_power_off_put
 

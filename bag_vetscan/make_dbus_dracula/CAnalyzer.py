@@ -83,12 +83,18 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     ########################################################
     # from measurement_channel_controller.py
     ########################################################
+    """
     @method()
     def channel_measurement_get_measurement_status(self) -> 's':
         # returns str type
         str_rtn = measurement_channel_controller.channel_measurement_get_measurement_status()
         # return a str to caller
         return str_rtn
+    """
+    @method()
+    def channel_measurement_get_measurement_status(self) -> 'a{ss}':
+        dict_rtn = measurement_channel_controller.channel_measurement_get_measurement_status()
+        return dict_rtn
 
     @method()
     def measurement_cancel_delete(self) -> 's':

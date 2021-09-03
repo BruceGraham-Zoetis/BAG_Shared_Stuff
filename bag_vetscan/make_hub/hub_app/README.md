@@ -88,6 +88,7 @@ Class | Method | HTTP request | Description
 *ConfigurationApi* | [**configuration_put**](docs/ConfigurationApi.md#configuration_put) | **PUT** /configuration | 
 *ConfigurationApi* | [**configuration_schema_get**](docs/ConfigurationApi.md#configuration_schema_get) | **GET** /configuration/schema | 
 *ControlChannelApi* | [**control_light_blink_put**](docs/ControlChannelApi.md#control_light_blink_put) | **PUT** /control/light/blink | 
+*ControlChannelApi* | [**control_light_off_put**](docs/ControlChannelApi.md#control_light_off_put) | **PUT** /control/light/off | 
 *ControlChannelApi* | [**control_power_off_put**](docs/ControlChannelApi.md#control_power_off_put) | **PUT** /control/power/off | 
 *ControlChannelApi* | [**control_power_reboot_put**](docs/ControlChannelApi.md#control_power_reboot_put) | **PUT** /control/power/reboot | 
 *MeasurementChannelApi* | [**channel_measurement_get_measurement_status**](docs/MeasurementChannelApi.md#channel_measurement_get_measurement_status) | **GET** /measurement/status | 
@@ -98,7 +99,6 @@ Class | Method | HTTP request | Description
 *MeasurementChannelApi* | [**measurement_result_get**](docs/MeasurementChannelApi.md#measurement_result_get) | **GET** /measurement/result | 
 *MeasurementChannelApi* | [**measurement_script_post**](docs/MeasurementChannelApi.md#measurement_script_post) | **POST** /measurement/script | 
 *MeasurementChannelApi* | [**measurement_supported_consumables_get**](docs/MeasurementChannelApi.md#measurement_supported_consumables_get) | **GET** /measurement/supported_consumables | 
-*RemoteControlChannelApi* | [**channel_remote_control_put_remote_control_light_off**](docs/RemoteControlChannelApi.md#channel_remote_control_put_remote_control_light_off) | **PUT** /control/light/off | 
 *StatusChannelApi* | [**status_currently_activated_events_get**](docs/StatusChannelApi.md#status_currently_activated_events_get) | **GET** /status/currently_activated_events | 
 *StatusChannelApi* | [**status_operational_get**](docs/StatusChannelApi.md#status_operational_get) | **GET** /status/operational | 
 

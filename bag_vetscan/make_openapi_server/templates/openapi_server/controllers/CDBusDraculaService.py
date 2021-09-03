@@ -49,7 +49,6 @@ class CDBusDraculaService():
             # before we acquired the lock. So check that the
             # instance is still nonexistent.
             if not cls._instance:
-                # super() adds DBus service’s Methods: @method(), Properties: @property, Signals:@signal()
                 cls._instance = super(CDBusDraculaService, cls).__new__(cls)
                 # Put any initialization here.
                 strRequestName = get_analyzer_dbus_request_name()
@@ -64,12 +63,12 @@ class CDBusDraculaService():
         return cls._instance
 
     @property
-    def measurement_id(self) -> int:
+    def measurement_id(self) -> str:
         return self.draculad.measurement_id
 
     @measurement_id.setter
-    def measurement_id(self, iValue : int):
-        self.draculad.measurement_id = iValue
+    def measurement_id(self, str_value : str):
+        self.draculad.measurement_id = str_value
 
 """
 TODO - Create a DBus .service file

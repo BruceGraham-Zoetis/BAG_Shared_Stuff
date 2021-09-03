@@ -1,7 +1,7 @@
 .gitignore
 .gitlab-ci.yml
-.openapi-generator-ignore
 .travis.yml
+AUTHORS.md
 README.md
 docs/AnalyzerType.md
 docs/ConfigurationApi.md
@@ -17,7 +17,6 @@ docs/InlineResponse400.md
 docs/MeasurementChannelApi.md
 docs/MeasurementResult.md
 docs/MeasurementStatus.md
-docs/RemoteControlChannelApi.md
 docs/StatusChannelApi.md
 git_push.sh
 openapi_client/__init__.py
@@ -25,7 +24,6 @@ openapi_client/api/__init__.py
 openapi_client/api/configuration_api.py
 openapi_client/api/control_channel_api.py
 openapi_client/api/measurement_channel_api.py
-openapi_client/api/remote_control_channel_api.py
 openapi_client/api/status_channel_api.py
 openapi_client/api_client.py
 openapi_client/configuration.py
@@ -48,20 +46,4 @@ setup.cfg
 setup.py
 test-requirements.txt
 test/__init__.py
-test/test_analyzer_type.py
-test/test_configuration_api.py
-test/test_control_channel_api.py
-test/test_event_info.py
-test/test_inline_object.py
-test/test_inline_object1.py
-test/test_inline_response200.py
-test/test_inline_response2001.py
-test/test_inline_response2002.py
-test/test_inline_response2003.py
-test/test_inline_response400.py
-test/test_measurement_channel_api.py
-test/test_measurement_result.py
-test/test_measurement_status.py
-test/test_remote_control_channel_api.py
-test/test_status_channel_api.py
 tox.ini

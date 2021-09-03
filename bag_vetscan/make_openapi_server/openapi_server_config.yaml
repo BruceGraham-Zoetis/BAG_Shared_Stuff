@@ -9,3 +9,7 @@ files:
     folder: .
   openapi_server/controllers/control_channel_controller.py:
     folder: .
+  openapi_server/controllers/status_channel_controller.py:
+    folder: .
+  openapi_server/controllers/configuration_controller.py:
+    folder: .
