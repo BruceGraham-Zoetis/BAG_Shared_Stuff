@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# File: run_all.sh
-# Purpose: starts the applications in the proper order.
+# File: kill_all.sh
+# Purpose: kills the applications in the proper order.
 
 
 ########################################
