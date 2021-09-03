@@ -34,8 +34,6 @@ def isCameraRotated() -> bool:
             if (-1 != strValue.find("vetscan")):
                 bCameraIsRotated = True
                 break
-            if ("ubuntu" == strValue):
-                break
             i = i + 1
     return bCameraIsRotated
     

@@ -46,10 +46,8 @@ def isCameraRotated() -> bool:
         while (i < len(tuples)):
             strValue = tuples[i]
             # print(strValue)
-            if ("lubuntu" == strValue):
+            if (-1 != strValue.find("vetscan")):
                 bCameraIsRotated = True
-                break
-            if ("ubuntu" == strValue):
                 break
             i = i + 1
     return bCameraIsRotated
