@@ -64,12 +64,12 @@ class CDBusDraculaService():
         return cls._instance
 
     @property
-    def nTest(self) -> int:
-        return self.draculad.nTest
+    def measurement_id(self) -> int:
+        return self.draculad.measurement_id
 
-    @nTest.setter
-    def nTest(self, iValue : int):
-        self.draculad.nTest = iValue
+    @measurement_id.setter
+    def measurement_id(self, iValue : int):
+        self.draculad.measurement_id = iValue
 
 """
 TODO - Create a DBus .service file
@@ -131,11 +131,11 @@ if __name__ == '__main__':
     oDracula = CDBusDraculaService()
 
 
-    # get and set nTest 
-    iValue = oDracula.nTest
-    print("nTest: %d" % oDracula.nTest)
-    oDracula.nTest += 10
-    print("nTest after += 10: %d" % oDracula.nTest)
+    # get and set measurement_id 
+    str_value = oDracula.measurement_id
+    print("measurement_id: %s" % oDracula.measurement_id)
+    oDracula.measurement_id = "xyz123"
+    print("measurement_id after set: %s" % oDracula.measurement_id)
 
     oDracula = CDBusDraculaService()
 

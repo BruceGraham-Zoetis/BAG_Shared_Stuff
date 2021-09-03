@@ -66,26 +66,26 @@ If the author's DNS domain name contains hyphen/minus characters ('-'), which ar
 """
 
 def get_analyzer_name() -> str:
-    strAnalyzerName = "dracula"
-    return strAnalyzerName
+    str_analyzer_name = "dracula"
+    return str_analyzer_name
 
 def get_analyzer_dbus_request_name() -> str:
-    strRequestName = 'com.zoetis.' + get_analyzer_name()
-    return strRequestName
+    str_request_name = 'com.zoetis.' + get_analyzer_name()
+    return str_request_name
 
 
 def get_analyzer_dbus_service_path() -> str:
-    strServicePath = '/com/zoetis/' + get_analyzer_name()
-    return strServicePath
+    str_service_path = '/com/zoetis/' + get_analyzer_name()
+    return str_service_path
 
 
 async def main():
     bus = await MessageBus().connect()
-    strRequestName = get_analyzer_dbus_request_name()
-    strServicePath  = get_analyzer_dbus_service_path()
-    interface = CAnalyzer.CZoetisAnalyzerInterface(strRequestName)
-    bus.export(strServicePath, interface)
-    await bus.request_name(strRequestName)
+    str_request_name = get_analyzer_dbus_request_name()
+    str_service_path  = get_analyzer_dbus_service_path()
+    interface = CAnalyzer.CZoetisAnalyzerInterface(str_request_name)
+    bus.export(str_service_path, interface)
+    await bus.request_name(str_request_name)
 
     # emit the changed signal after two seconds.
     await asyncio.sleep(2)

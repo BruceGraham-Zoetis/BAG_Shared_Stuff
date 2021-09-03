@@ -6,7 +6,6 @@ File: measurement_channel_controller.py
 Purpose: DBus service interface for the dracula analyzer app.
 """
 
-import json
 
 def channel_measurement_get_measurement_status():
     """channel_measurement_get_measurement_status
@@ -16,11 +15,19 @@ def channel_measurement_get_measurement_status():
 
     :rtype: InlineResponse200
     """
-    dictReturn = {
-        "status": "done"
-    }
-    #TODO
-    return dictReturn
+    
+    """
+    TODO
+    return JSON str with
+        "measurement_id",       -> str: ?
+        "elapsed_time_msec",    -> int: 0 to ?
+        "measurement_status",   -> str: "Initializing", "Running", "Aborted", "Stopping", "Complete"
+        "status_detail"         -> str: "" or some kind of detail string 
+    """
+
+    str_rtn = "{'measurement_id': 'THX 1138', 'elapsed_time_msec': 12345, 'measurement_status': 'Running', 'status_detail': 'JUST HAVING FUN!'}"
+
+    return str_rtn
 
 
 def measurement_cancel_delete():
@@ -31,11 +38,11 @@ def measurement_cancel_delete():
 
     :rtype: InlineResponse200
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_consumable_consumable_uuid_post(consumable_uuid):
@@ -51,11 +58,11 @@ def measurement_consumable_consumable_uuid_post(consumable_uuid):
     
     #TODO consumable_uuid
 
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_file_post(inline_object1):
@@ -70,11 +77,11 @@ def measurement_file_post(inline_object1):
     """
     # TODO - inline_object1
     
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_past_results_get(start_time, start_date, end_time, end_date):
@@ -93,11 +100,11 @@ def measurement_past_results_get(start_time, start_date, end_time, end_date):
 
     :rtype: InlineResponse2001
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_result_get():
@@ -108,11 +115,11 @@ def measurement_result_get():
 
     :rtype: MeasurementResult
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_script_post(inline_object):
@@ -128,11 +135,11 @@ def measurement_script_post(inline_object):
 
     # TODO -something with the object
 
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def measurement_supported_consumables_get():

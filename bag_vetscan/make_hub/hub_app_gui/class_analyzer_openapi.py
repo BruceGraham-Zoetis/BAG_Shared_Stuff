@@ -15,7 +15,7 @@ sys.path.append(strThisFilePath + "/../hub_app")
 
 import openapi_client
 from openapi_client.rest import ApiException
-
+from openapi_client.models.inline_object1 import InlineObject1
 
 """
 Purpose: keep info about a connected analyzer
@@ -30,10 +30,15 @@ class analyzer_client():
         # Enter a context with an instance of the API client
         with openapi_client.ApiClient(self.configuration) as api_client:
             # Create an instance of the API class
-            self.api_instance = openapi_client.MeasurementChannelApi(api_client)
+            self.configuration_api          = openapi_client.ConfigurationApi(api_client)
+            self.control_channel_api        = openapi_client.ControlChannelApi(api_client)
+            self.measurement_channel_api    = openapi_client.MeasurementChannelApi(api_client)
+            self.remote_control_channel_api = openapi_client.RemoteControlChannelApi(api_client)
+            self.status_channel_api         = openapi_client.StatusChannelApi(api_client)
 
         self.__str_ip_address = str_ip_address
         self.__str_client_name = str_client_name
+        self.__trace = True
 
     def get_ip_address(self) -> str:
         return self.__str_ip_address
@@ -48,102 +53,186 @@ class analyzer_client():
 
 
     ################################################
-    # File: measurement_channel_api
+    # Class: ConfigurationApi
     ################################################
-
-    def channel_measurement_get_measurement_status(self) -> str:
-        try:
-            api_response = self.api_instance.channel_measurement_get_measurement_status(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_cancel_delete(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_cancel_delete(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_consumable_consumable_uuid_post(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_consumable_consumable_uuid_post(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_file_post(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_file_post(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_past_results_get(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_past_results_get(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_result_get(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_result_get(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_script_post(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_script_post(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_supported_consumables_get(self) -> str:
-        try:
-            api_response = self.api_instance.measurement_supported_consumables_get(async_req=True)
-            return api_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-
+    """
+    configuration_factory_reset_put
+    configuration_get
+    configuration_put
+    configuration_schema_get
+    """
     ################################################
-    # File: control_channel_api
+    # Class: ControlChannelApi
     ################################################
 
     def control_light_blink_put(self) -> str:
         try:
-            api_response = self.api_instance.control_light_blink_put(async_req=True)
-            return api_response
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.control_channel_api.control_light_blink_put(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
         except ApiException as e:
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
     def control_power_off_put(self) -> str:
         try:
-            api_response = self.api_instance.control_power_off_put(async_req=True)
-            return api_response
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.control_channel_api.control_power_off_put(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
         except ApiException as e:
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
     def control_power_reboot_put(self) -> str:
         try:
-            api_response = self.api_instance.control_power_reboot_put(async_req=True)
-            return api_response
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.control_channel_api.control_power_reboot_put(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
         except ApiException as e:
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
+    ################################################
+    # File: measurement_channel_api
+    ################################################
+
+    def channel_measurement_get_measurement_status(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            """
+            thread = self.measurement_channel_api.channel_measurement_get_measurement_status(async_req=True)
+            str_response = thread.get()
+            """
+            str_response = self.measurement_channel_api.channel_measurement_get_measurement_status()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_cancel_delete(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_cancel_delete(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_consumable_consumable_uuid_post(self, consumable_uuid : str) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_consumable_consumable_uuid_post(consumable_uuid, async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_file_post(self, inline_object1 : str) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_file_post(inline_object1, async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_past_results_get(self, start_time : str, start_date : str, end_time : str, end_date : str) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_past_results_get(start_time, start_date, end_time, end_date, async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_result_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_result_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_script_post(self, inline_object1 : str) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.measurement_channel_api.measurement_script_post(inline_object1, async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def measurement_supported_consumables_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            """
+            str_response = self.measurement_channel_api.measurement_supported_consumables_get()
+            """
+            thread = self.measurement_channel_api.measurement_supported_consumables_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+
+    ################################################
+    # Class: RemoteControlChannelApi
+    ################################################
+    """
+    channel_remote_control_put_remote_control_light_off
+    """
+
+    ################################################
+    # Class: StatusChannelApi
+    ################################################
+    """
+    status_currently_activated_events_get
+    status_operational_get
+    """
 
 
 if __name__ == '__main__':
@@ -154,8 +243,47 @@ if __name__ == '__main__':
 
     oAna = analyzer_client(str_ip_address, str_client_name)
 
-    oOut = oAna.measurement_supported_consumables_get()
-    print(oOut)
-    oOut = oAna.channel_measurement_get_measurement_status()
-    print(oOut)
+    ################################################
+    # Class: ConfigurationApi
+    ################################################
+    """
+    configuration_factory_reset_put
+    configuration_get
+    configuration_put
+    configuration_schema_get
+    """
+    ################################################
+    # Class: ControlChannelApi
+    ################################################
+    oAna.control_light_blink_put()
+    oAna.control_power_off_put()
+    oAna.control_power_reboot_put()
 
+    ################################################
+    # File: measurement_channel_api
+    ################################################
+    oAna.channel_measurement_get_measurement_status()
+    oAna.measurement_cancel_delete()
+    oAna.measurement_consumable_consumable_uuid_post("consumable_uuid")
+
+    obj = InlineObject1.InlineObject1()
+    oAna.measurement_file_post("inline_object1")
+    oAna.measurement_past_results_get("start_time", "start_date", "end_time", "end_date")
+    oAna.measurement_result_get()
+    oAna.measurement_script_post("inline_object1")
+    oAna.measurement_supported_consumables_get()
+
+    ################################################
+    # Class: RemoteControlChannelApi
+    ################################################
+    """
+    channel_remote_control_put_remote_control_light_off
+    """
+
+    ################################################
+    # Class: StatusChannelApi
+    ################################################
+    """
+    status_currently_activated_events_get
+    status_operational_get
+    """
