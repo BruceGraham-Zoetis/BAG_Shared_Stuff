@@ -155,7 +155,7 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def measurement_past_results_get(self, start_time: 's', start_date: 's', end_time: 's', end_date: 's') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_past_results_get(start_time, start_date, end_time, end_date)
+        dict_rtn = measurement_channel_controller.measurement_past_results_get(self, start_time, start_date, end_time, end_date)
         # return a str to caller
         return str(dict_rtn)
 

@@ -25,8 +25,6 @@ import PySimpleGUI as sg
 import cv2
 import os
 import platform
-import asyncio
-import datetime
 import hub_app_gui.class_vetscan_hub
 import config
 import thread_wait_for_clients
@@ -46,9 +44,9 @@ def isCameraRotated() -> bool:
         tuples = platform.uname()
         i = 0
         while (i < len(tuples)):
-            strValue = tuples[i]
-            # print(strValue)
-            if (-1 != strValue.find("vetscan")):
+            str_value = tuples[i]
+            # print(str_value)
+            if (-1 != str_value.find("vetscan")):
                 bCameraIsRotated = True
                 break
             i = i + 1

@@ -73,7 +73,7 @@ def measurement_file_post(inline_object1):
     return dict_rtn
 
 
-def measurement_past_results_get(start_time, start_date, end_time, end_date):
+def measurement_past_results_get(self : CAnalyzer, start_time, start_date, end_time, end_date):
     """measurement_past_results_get
 
     The HUB is requesting the analyzer send past results between two times # noqa: E501
@@ -89,10 +89,8 @@ def measurement_past_results_get(start_time, start_date, end_time, end_date):
 
     :rtype: InlineResponse2001
     """
-    dict_rtn = {
-        "status": "done"
-    }
-    #TODO
+
+    dict_rtn = self.operation_current.get_status()
     return dict_rtn
 
 
@@ -104,10 +102,8 @@ def measurement_result_get():
 
     :rtype: MeasurementResult
     """
-    dict_rtn = {
-        "status": "done"
-    }
-    #TODO
+
+    dict_rtn = self.operation_current.get_status()
     return dict_rtn
 
 

@@ -21,12 +21,12 @@ class CVetscanHub:
     def __init__(self):
         self.dictAnalyzers = {}
 
-    def analyzer_connected(self, str_IP_Address : str, strName = "") -> analyzer_client:
+    def analyzer_connected(self, str_IP_Address : str, strName = "") -> bool:
         oAna = analyzer_client(str_IP_Address, strName)
         self.dictAnalyzers[str_IP_Address] = oAna
         return True
 
-    def analyzer_set_name(self, str_IP_Address : str, strName : str) -> analyzer_client:
+    def analyzer_set_name(self, str_IP_Address : str, strName : str) -> bool:
         oAna = analyzer_client(str_IP_Address, strName)
         self.dictAnalyzers[str_IP_Address] = oAna
         return True
