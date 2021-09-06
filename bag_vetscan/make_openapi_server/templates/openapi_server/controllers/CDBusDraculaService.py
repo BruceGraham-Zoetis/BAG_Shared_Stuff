@@ -3,28 +3,36 @@
 """
 File: CDBusDraculaService.py
 
-TODO: Intergrate this code into the analyzer app.
+TODO:
+* Create a DBus .service file
+
+    File: com.zoetis.dracula.service 
+
+    [D-BUS Service]
+    Name=com.zoetis.dracula
+    Exec=/home/myuser/Workspace/service-start
+    User=myuser
 
 pip3 install pydbus
 """
 
+import os, sys
 from pydbus import SessionBus
-from pydbus import SystemBus
 import threading
-import dbus
-import os
-import subprocess
-import time
-import pathlib
+
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+sys.path.append(strThisFilePath + "/..")
+from models import inline_object1
 
 
 def get_analyzer_name() -> str:
-    strAnalyzerName = "dracula"
-    return strAnalyzerName
+    str_analyzer_name = "dracula"
+    return str_analyzer_name
 
 def get_analyzer_dbus_request_name() -> str:
-    strRequestName = 'com.zoetis.' + get_analyzer_name()
-    return strRequestName
+    str_request_name = 'com.zoetis.' + get_analyzer_name()
+    return str_request_name
 
 
 """
@@ -39,8 +47,8 @@ class CDBusDraculaService():
     _lock = threading.Lock()
 
     def get_request_name(self) -> str:
-        strRequestName = get_analyzer_dbus_request_name()
-        return strRequestName
+        str_request_name = get_analyzer_dbus_request_name()
+        return str_request_name
 
 
     def __new__(cls, *args, **kwargs):
@@ -51,10 +59,10 @@ class CDBusDraculaService():
             if not cls._instance:
                 cls._instance = super(CDBusDraculaService, cls).__new__(cls)
                 # Put any initialization here.
-                strRequestName = get_analyzer_dbus_request_name()
+                str_request_name = get_analyzer_dbus_request_name()
 
                 cls.bus      = SessionBus()
-                cls.draculad = cls.bus.get(strRequestName)
+                cls.draculad = cls.bus.get(str_request_name)
                 #print('Created new singleton ', cls._instance)
             else:
                 #print("using singleton ", cls._instance)
@@ -70,73 +78,18 @@ class CDBusDraculaService():
     def measurement_id(self, str_value : str):
         self.draculad.measurement_id = str_value
 
-"""
-TODO - Create a DBus .service file
 
-File: com.zoetis.dracula.service 
-
-[D-BUS Service]
-Name=com.zoetis.dracula
-Exec=/home/myuser/Workspace/service-start
-User=myuser
-
-"""
 
 if __name__ == '__main__':
-    print("Test - Call all APIs")
-
-    """
-    REQUEST_NAME_REPLY_ALREADY_OWNER = 4
-    REQUEST_NAME_REPLY_EXISTS        = 3
-    REQUEST_NAME_REPLY_IN_QUEUE      = 2
-    REQUEST_NAME_REPLY_PRIMARY_OWNER = 1
-
-    strRequestName = get_analyzer_dbus_request_name()
-    #strRequestName = "com.xxxx"
-    iRtn = dbus.SessionBus().request_name(strRequestName)
-    if (REQUEST_NAME_REPLY_PRIMARY_OWNER == iRtn):
-        #print("REQUEST_NAME_REPLY_PRIMARY_OWNER")
-        print("Starting Dracula service")
-        path = pathlib.Path(__file__)
-        path = path.parent
-        path = pathlib.Path(path)
-        path = path.parent
-        path = pathlib.Path(path)
-        path = path.parent
-        path = pathlib.Path(path)
-        path = path.parent
-        path = pathlib.Path(path)
-        strPath = str(path.parent)
-        strPath += "/make_dbus_dracula/test_run_dbus_dracula.py"
-        #iRtn = subprocess.call(["python3", strPath, "&"])
-        #execfile(strPath)
-        os.system("python3 " + strPath)
-        if (0 == iRtn):
-            time.sleep(10)
-        else:
-            print("Error failed to start dracula service")
-
-    elif (REQUEST_NAME_REPLY_IN_QUEUE == iRtn):
-        #print("REQUEST_NAME_REPLY_IN_QUEUE")
-        pass
-    elif (REQUEST_NAME_REPLY_EXISTS == iRtn):
-        #print("REQUEST_NAME_REPLY_EXISTS")
-        pass
-    elif (REQUEST_NAME_REPLY_ALREADY_OWNER == iRtn):
-        #print("REQUEST_NAME_REPLY_ALREADY_OWNER")
-        pass
-    """
+    print("Test - Call all low-level 'Dracula' DBus service APIs")
 
     oDracula = CDBusDraculaService()
-
 
     # get and set measurement_id 
     str_value = oDracula.measurement_id
     print("measurement_id: %s" % oDracula.measurement_id)
     oDracula.measurement_id = "xyz123"
     print("measurement_id after set: %s" % oDracula.measurement_id)
-
-    oDracula = CDBusDraculaService()
 
     print("\nfile: configuration_controller.py")
     print("=========================================")
@@ -176,7 +129,8 @@ if __name__ == '__main__':
     strRtn = oDracula.draculad.measurement_consumable_consumable_uuid_post("consumable_uuid")
     print("measurement_consumable_consumable_uuid_post()\n\t%s" % strRtn)
 
-    strRtn = oDracula.draculad.measurement_file_post("inline_object1")
+    inline_object1 = inline_object1.InlineObject1(filename="dummy", local_vars_configuration=None)
+    strRtn = oDracula.draculad.measurement_file_post(inline_object1)
     print("measurement_file_post()\n\t%s" % strRtn)
 
     strRtn = oDracula.draculad.measurement_past_results_get("start_time", "start_date", "end_time", "end_date")

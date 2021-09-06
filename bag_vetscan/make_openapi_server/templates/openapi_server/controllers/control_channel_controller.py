@@ -11,21 +11,17 @@ from CDBusDraculaService import CDBusDraculaService
 
 
 def control_light_blink_put():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.control_light_blink_put()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.control_light_blink_put()
     return strRtn
 
 def control_light_off_put():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.control_light_off_put()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.control_light_off_put()
     return strRtn
 
 def control_power_off_put():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.control_power_off_put()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.control_power_off_put()
     return strRtn
 
 def control_power_reboot_put():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.control_power_reboot_put()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.control_power_reboot_put()
     return strRtn

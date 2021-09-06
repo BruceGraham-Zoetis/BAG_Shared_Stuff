@@ -1,23 +1,23 @@
-import connexion
-import six
+"""
+File: status_channel_controller.py
 
-from openapi_server.models.inline_response2002 import InlineResponse2002
-from openapi_server.models.inline_response2003 import InlineResponse2003
-from openapi_server.models.inline_response400 import InlineResponse400
-from openapi_server import util
+Purpose: These are the openAPI functions.
+These functions call the analyzer "Dracula" DBus service.
+The "Dracula" DBus service will perform the low-level part of the openAPIs.
+"""
+
 
 import os, sys
 strThisFilePath = os.path.dirname(__file__)
 sys.path.append(strThisFilePath)
-from CDBusDraculaService import CDBusDraculaService
+
+import CDBusDraculaService
 
 
 def status_currently_activated_events_get():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.status_currently_activated_events_get()
-    return strRtn
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.status_currently_activated_events_get()
+    return str_rtn
 
 def status_operational_get():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.status_operational_get()
-    return strRtn
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.status_operational_get()
+    return str_rtn

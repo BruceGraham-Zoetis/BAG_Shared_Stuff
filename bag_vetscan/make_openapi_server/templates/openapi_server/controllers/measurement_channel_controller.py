@@ -16,38 +16,31 @@ from CDBusDraculaService import CDBusDraculaService
 
 
 def channel_measurement_get_measurement_status():
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.channel_measurement_get_measurement_status()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.channel_measurement_get_measurement_status()
     return str_rtn
 
 def measurement_cancel_delete():
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_cancel_delete()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_cancel_delete()
     return str_rtn
 
 def measurement_consumable_consumable_uuid_post(consumable_uuid):
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_consumable_consumable_uuid_post(consumable_uuid)
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_consumable_consumable_uuid_post(consumable_uuid)
     return str_rtn
 
 def measurement_file_post(inline_object1):
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_file_post(inline_object1)
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_file_post(inline_object1)
     return str_rtn
 
 def measurement_past_results_get(start_time, start_date, end_time, end_date):
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_past_results_get(start_time, start_date, end_time, end_date)
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_past_results_get(start_time, start_date, end_time, end_date)
     return str_rtn
 
 def measurement_result_get():
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_result_get()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_result_get()
     return str_rtn
 
 def measurement_script_post(inline_object):
-    oDracula = CDBusDraculaService()
-    str_rtn = oDracula.draculad.measurement_script_post(inline_object)
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.measurement_script_post(inline_object)
     return str_rtn
 
 def measurement_supported_consumables_get():

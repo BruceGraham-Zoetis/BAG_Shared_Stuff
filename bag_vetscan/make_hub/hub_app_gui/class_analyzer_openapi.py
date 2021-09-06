@@ -33,7 +33,6 @@ class analyzer_client():
             self.configuration_api          = openapi_client.ConfigurationApi(api_client)
             self.control_channel_api        = openapi_client.ControlChannelApi(api_client)
             self.measurement_channel_api    = openapi_client.MeasurementChannelApi(api_client)
-            self.remote_control_channel_api = openapi_client.RemoteControlChannelApi(api_client)
             self.status_channel_api         = openapi_client.StatusChannelApi(api_client)
 
         self.__str_ip_address = str_ip_address
@@ -78,6 +77,19 @@ class analyzer_client():
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
+    def control_light_off_put(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.control_channel_api.control_light_off_put(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
     def control_power_off_put(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
@@ -111,11 +123,8 @@ class analyzer_client():
     def channel_measurement_get_measurement_status(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            """
             thread = self.measurement_channel_api.channel_measurement_get_measurement_status(async_req=True)
             str_response = thread.get()
-            """
-            str_response = self.measurement_channel_api.channel_measurement_get_measurement_status()
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -127,8 +136,13 @@ class analyzer_client():
     def measurement_cancel_delete(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            """
+            TODO - This fails: 
+                raise ValueError("Invalid value for `measurement_id`, must not be `None`")  # noqa: E501
             thread = self.measurement_channel_api.measurement_cancel_delete(async_req=True)
             str_response = thread.get()
+            """
+            str_response = "--- this failed"
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -140,8 +154,15 @@ class analyzer_client():
     def measurement_consumable_consumable_uuid_post(self, consumable_uuid : str) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            """
+            TODO - This fails: 
+                raise ValueError("Invalid value for `measurement_id`, must not be `None`")  # noqa: E501
+            thread = self.measurement_channel_api.measurement_cancel_delete(async_req=True)
+            str_response = thread.get()
             thread = self.measurement_channel_api.measurement_consumable_consumable_uuid_post(consumable_uuid, async_req=True)
             str_response = thread.get()
+            """
+            str_response = "--- this failed"
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -220,13 +241,6 @@ class analyzer_client():
 
 
     ################################################
-    # Class: RemoteControlChannelApi
-    ################################################
-    """
-    channel_remote_control_put_remote_control_light_off
-    """
-
-    ################################################
     # Class: StatusChannelApi
     ################################################
     """
@@ -266,19 +280,12 @@ if __name__ == '__main__':
     oAna.measurement_cancel_delete()
     oAna.measurement_consumable_consumable_uuid_post("consumable_uuid")
 
-    obj = InlineObject1.InlineObject1()
-    oAna.measurement_file_post("inline_object1")
+    inline_object1 = InlineObject1(filename="dummy", local_vars_configuration=None)
+    oAna.measurement_file_post(inline_object1)
     oAna.measurement_past_results_get("start_time", "start_date", "end_time", "end_date")
     oAna.measurement_result_get()
-    oAna.measurement_script_post("inline_object1")
+    oAna.measurement_script_post(inline_object1)
     oAna.measurement_supported_consumables_get()
-
-    ################################################
-    # Class: RemoteControlChannelApi
-    ################################################
-    """
-    channel_remote_control_put_remote_control_light_off
-    """
 
     ################################################
     # Class: StatusChannelApi

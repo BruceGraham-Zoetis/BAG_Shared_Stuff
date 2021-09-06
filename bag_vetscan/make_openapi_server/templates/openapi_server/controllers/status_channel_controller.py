@@ -13,11 +13,9 @@ from CDBusDraculaService import CDBusDraculaService
 
 
 def status_currently_activated_events_get():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.status_currently_activated_events_get()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.status_currently_activated_events_get()
     return strRtn
 
 def status_operational_get():
-    oDracula = CDBusDraculaService()
-    strRtn = oDracula.draculad.status_operational_get()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.status_operational_get()
     return strRtn

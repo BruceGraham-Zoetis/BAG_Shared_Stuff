@@ -8,13 +8,16 @@ import connexion
 
 ## fix path so that contained py files can be imported
 import os, sys
+import threading
+
 strThisFilePath = os.path.dirname(__file__)
 sys.path.append(strThisFilePath)
 sys.path.append(strThisFilePath + "/analyzer_app")
 from analyzer_app.openapi_server import encoder
 
 
-def analyzer_apis():
+
+def thread_analyzer_apis():
     print("Running openAPIs")
 
     app_options = {
@@ -34,6 +37,18 @@ def analyzer_apis():
     app.run(port=8080)
 
 
+def start_thread_openapi_server():
+    print("Starting openAPI server")
+    thread = threading.Thread(target = thread_analyzer_apis)
+    thread.start()
+    return thread
+
+
+
 if __name__ == '__main__':
     print("")
-    analyzer_apis()
+    thread_openapi = start_thread_openapi_server()
+
+    forever = threading.Event()
+    forever.wait()
+

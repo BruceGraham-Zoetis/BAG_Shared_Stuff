@@ -12,11 +12,46 @@ import control_channel_controller
 import measurement_channel_controller
 import status_channel_controller
 
+
+class class_measurement_operation():
+    def __init__(self, measurement_id, elapsed_time_msec, measurement_status, status_detail):
+        # str: ?
+        self.measurement_id     = measurement_id
+        # str: 0 to ?
+        self.elapsed_time_msec  = elapsed_time_msec
+        # str: enum = "Initializing", "Running", "Aborted", "Stopping", "Complete"
+        self.measurement_status = measurement_status
+        # str: "" or some kind of detail string 
+        self.status_detail      = status_detail
+
+    def get_status(self):
+        dict_rtn = {
+            'measurement_id': self.measurement_id,
+            'elapsed_time_msec': self.elapsed_time_msec,
+            'measurement_status': self.measurement_status,
+            'status_detail': self.status_detail
+        }
+        return dict_rtn
+
+    def delete(self):
+        self.measurement_id     = ''
+        self.elapsed_time_msec  = '0'
+        self.measurement_status = 'Complete'
+        self.status_detail      = ''
+        dict_rtn = self.get_status()
+        return dict_rtn
+
+
 # ServiceInterface exports Methods: @method(), Properties: @property, Signals:@signal()
 class CZoetisAnalyzerInterface(ServiceInterface):
     def __init__(self, str_analyzer_name):
         super().__init__(str_analyzer_name)
-        self.__measurement_id = ""
+        self.operation_current = class_measurement_operation(
+                                    measurement_id     = 'THX 1138',
+                                    elapsed_time_msec  = '12345',
+                                    measurement_status = 'Running',
+                                    status_detail      = 'JUST HAVING FUN!')
+
 
     ########################################################
     # from configuration_controller.py
@@ -93,13 +128,13 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     """
     @method()
     def channel_measurement_get_measurement_status(self) -> 'a{ss}':
-        dict_rtn = measurement_channel_controller.channel_measurement_get_measurement_status()
+        dict_rtn = measurement_channel_controller.channel_measurement_get_measurement_status(self)
         return dict_rtn
 
     @method()
     def measurement_cancel_delete(self) -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_cancel_delete()
+        dict_rtn = measurement_channel_controller.measurement_cancel_delete(self)
         # return a str to caller
         return str(dict_rtn)
 
@@ -199,14 +234,14 @@ class CZoetisAnalyzerInterface(ServiceInterface):
 
     @dbus_property()
     def measurement_id(self) -> 's':
-        return self.__measurement_id
+        return self.operation_current.measurement_id
 
     @measurement_id.setter
     def measurement_id(self, val: 's'):
-        if self.__measurement_id == val:
+        if self.operation_current.measurement_id == val:
             return
 
-        self.__measurement_id = val
+        self.operation_current.measurement_id = val
 
-        self.emit_properties_changed({'measurement_id': self.__measurement_id})
+        self.emit_properties_changed({'measurement_id': self.operation_current.measurement_id})
 

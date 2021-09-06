@@ -31,6 +31,8 @@ import hub_app_gui.class_vetscan_hub
 import config
 import thread_wait_for_clients
 
+debug_use_camera = False
+
 global camera
 
 global strWindowtitle
@@ -57,27 +59,27 @@ def isCameraRotated() -> bool:
 def gui_window():
     print("Starting GUI superloop")
 
-    bCameraIsRotated = isCameraRotated()
+    if (debug_use_camera):
+        bCameraIsRotated = isCameraRotated()
 
-    # open output g_window
-    camera = cv2.VideoCapture(0)
+        # open output g_window
+        camera = cv2.VideoCapture(0)
 
-    try:
-        ret, frameOrig = camera.read()
-    except:
-        ret = False
+        try:
+            ret, frameOrig = camera.read()
+        except:
+            ret = False
 
-    if (not ret):
-        print("Error: Unable to read from camera.")
-        print("Confirm that the camera is connected.")
-        exit()
+        if (not ret):
+            print("Error: Unable to read from camera.")
+            print("Confirm that the camera is connected.")
+            exit()
+
+        camera_Width  = 320 # 480 # 640 # 1024 # 1280
+        camera_Height = 240 # 320 # 480 # 780  # 960
+        frameSize = (camera_Width, camera_Height)
 
     sg.theme('BluePurple')
-
-    camera_Width  = 320 # 480 # 640 # 1024 # 1280
-    camera_Height = 240 # 320 # 480 # 780  # 960
-    frameSize = (camera_Width, camera_Height)
-
     layout = [
             [sg.Image(filename='', key='image')],
             [sg.Text(size=(50, 1), key='-ANALYZER-')],
@@ -92,19 +94,7 @@ def gui_window():
 
     config.g_window = sg.Window(strWindowtitle, layout)
 
-    if (not bCameraIsRotated):
-        ret, frameOrig = camera.read()
-    else:
-        ret, frameRotated = camera.read()
-        frameOrig = cv2.flip(frameRotated, -1)
-    frameIn = cv2.resize(frameOrig, frameSize)
-    imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
-
-    while True:  # Event Loop
-        event, values = config.g_window.read(timeout=20)
-        if event == 'Exit' or event == sg.WIN_CLOSED:
-            break
-
+    if (debug_use_camera):
         if (not bCameraIsRotated):
             ret, frameOrig = camera.read()
         else:
@@ -112,7 +102,21 @@ def gui_window():
             frameOrig = cv2.flip(frameRotated, -1)
         frameIn = cv2.resize(frameOrig, frameSize)
         imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
-        config.g_window['image'].update(data=imgbytes, size=(None,None))
+
+    while True:  # Event Loop
+        event, values = config.g_window.read(timeout=20)
+        if event == 'Exit' or event == sg.WIN_CLOSED:
+            break
+
+        if (debug_use_camera):
+            if (not bCameraIsRotated):
+                ret, frameOrig = camera.read()
+            else:
+                ret, frameRotated = camera.read()
+                frameOrig = cv2.flip(frameRotated, -1)
+            frameIn = cv2.resize(frameOrig, frameSize)
+            imgbytes = cv2.imencode('.png', frameIn)[1].tobytes()  # ditto
+            config.g_window['image'].update(data=imgbytes, size=(None,None))
 
         if event == sg.WIN_CLOSED or event == 'Exit':
             break
@@ -142,9 +146,10 @@ def gui_window():
 
     config.g_window.close()
 
-    # close output g_window
-    camera.release()
-    cv2.destroyAllWindows()
+    if (debug_use_camera):
+        # close output g_window
+        camera.release()
+        cv2.destroyAllWindows()
 
 
 

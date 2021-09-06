@@ -6,8 +6,10 @@ File: measurement_channel_controller.py
 Purpose: DBus service interface for the dracula analyzer app.
 """
 
+import CAnalyzer
 
-def channel_measurement_get_measurement_status():
+
+def channel_measurement_get_measurement_status(self : CAnalyzer):
     """channel_measurement_get_measurement_status
 
     The HUB is requesting the analyzer return the status of the current measurement being performed # noqa: E501
@@ -16,30 +18,11 @@ def channel_measurement_get_measurement_status():
     :rtype: InlineResponse200
     """
     
-    """
-    TODO
-    return JSON str with
-        "measurement_id",       -> str: ?
-        "elapsed_time_msec",    -> int: 0 to ?
-        "measurement_status",   -> str: "Initializing", "Running", "Aborted", "Stopping", "Complete"
-        "status_detail"         -> str: "" or some kind of detail string 
-    """
-
-    """
-    str_rtn = "{'measurement_id': 'THX 1138', 'elapsed_time_msec': 12345, 'measurement_status': 'Running', 'status_detail': 'JUST HAVING FUN!'}"
-    return str_rtn
-    """
-    dict_rtn = {
-        'measurement_id': 'THX 1138',
-        'elapsed_time_msec': '12345',
-        'measurement_status': 'Running',
-        'status_detail': 'JUST HAVING FUN!'
-    }
-    #TODO
+    dict_rtn = self.operation_current.get_status()
     return dict_rtn
 
 
-def measurement_cancel_delete():
+def measurement_cancel_delete(self : CAnalyzer):
     """measurement_cancel_delete
 
     The HUB is requesting the analyzer cancel the measurement that is currently being performed # noqa: E501
@@ -47,10 +30,7 @@ def measurement_cancel_delete():
 
     :rtype: InlineResponse200
     """
-    dict_rtn = {
-        "status": "done"
-    }
-    #TODO
+    dict_rtn = self.operation_current.delete()
     return dict_rtn
 
 
@@ -160,7 +140,7 @@ def measurement_supported_consumables_get():
     :rtype: object
     """
     
-    dictConsumables = {
+    dict_consumables = {
         "consumables":
         [
             {
@@ -193,4 +173,4 @@ def measurement_supported_consumables_get():
         ]
     }
 
-    return dictConsumables
+    return dict_consumables
