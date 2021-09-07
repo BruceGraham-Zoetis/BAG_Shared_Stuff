@@ -11,5 +11,7 @@ files:
     folder: .
   openapi_server/controllers/status_channel_controller.py:
     folder: .
-  openapi_server/controllers/configuration_controller.py:
+  openapi_server/controllers/configuration_channel_controller.py:
+    folder: .
+  openapi_server/controllers/prompts_channel_controller.py:
     folder: .

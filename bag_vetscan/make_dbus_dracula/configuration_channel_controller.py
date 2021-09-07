@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 """
-File: configuration_controller.py
+File: configuration_channel_controller.py
 
 Purpose: DBus service interface for the dracula analyzer app.
 """
@@ -14,11 +14,11 @@ def configuration_factory_reset_put(self):
 
     :rtype: None
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 
@@ -30,11 +30,11 @@ def configuration_get(self):
 
     :rtype: object
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def configuration_put(self, body):
@@ -47,11 +47,11 @@ def configuration_put(self, body):
 
     :rtype: None
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def configuration_schema_get(self):
@@ -62,10 +62,10 @@ def configuration_schema_get(self):
 
     :rtype: object
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 

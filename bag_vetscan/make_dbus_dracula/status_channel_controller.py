@@ -16,11 +16,11 @@ def status_currently_activated_events_get(self):
 
     :rtype: InlineResponse2003
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn
 
 
 def status_operational_get(self):
@@ -31,8 +31,8 @@ def status_operational_get(self):
 
     :rtype: InlineResponse2002
     """
-    dictReturn = {
+    dict_rtn = {
         "status": "done"
     }
     #TODO
-    return dictReturn
+    return dict_rtn

@@ -2,7 +2,12 @@
 """
 File: test_call_openapi_server_apis.py
 
+Purpose: Call the DBus service APIs in the 'Dracula' deamon. The openapi server will call the DBus APIs at run time.
+
 """
+
+#import json
+#from hub_app.openapi_client.models import inline_object1
 
 import hub_app_gui.class_analyzer_openapi
 from hub_app.openapi_client.rest import ApiException
@@ -18,14 +23,14 @@ if __name__ == '__main__':
     oAna = hub_app_gui.class_analyzer_openapi.analyzer_client(str_ip_address, str_client_name)
 
     ################################################
-    # Class: ConfigurationApi
+    # Class: ConfigurationChannelApi
     ################################################
-    """
-    configuration_factory_reset_put
-    configuration_get
-    configuration_put
-    configuration_schema_get
-    """
+    oAna.configuration_factory_reset_put()
+    oAna.configuration_get()
+    oSomeObject = {"bla": "bla"}
+    oAna.configuration_put(oSomeObject)
+    oAna.configuration_schema_get()
+
     ################################################
     # Class: ControlChannelApi
     ################################################
@@ -36,23 +41,25 @@ if __name__ == '__main__':
     ################################################
     # File: measurement_channel_api
     ################################################
-    oAna.channel_measurement_get_measurement_status()
-    oAna.measurement_cancel_delete()
+    oAna.measurement_cancel_post()
     oAna.measurement_consumable_consumable_uuid_post("consumable_uuid")
 
-    #inline_object1 = InlineObject1(filename="dummy", local_vars_configuration=None)
-    #oAna.measurement_file_post(inline_object1)
-    oAna.measurement_file_post("dummy_file")
-    oAna.measurement_results_get("2020-11-05T13:15:30+00:00", "2020-12-02T14:29:27+00:00")
-    oAna.measurement_result_get()
+    #TODO How to pass object to openapi?
+    #objectx = InlineObject1(filename="dummy")
+    #oAna.measurement_file_post(inline_object1=objectx)
+    oAna.measurement_results_get(start_datetime="2020-11-05T13:15:30+00:00", end_datetime="2020-12-02T14:29:27+00:00")
+    #oAna.measurement_results_get()
+
+    oAna.measurement_results_latest_get()
+
+    #TODO How to pass object to openapi?
     #oAna.measurement_script_post(inline_object1)
-    oAna.measurement_script_post("dummy_file")
+    #oAna.measurement_script_post("dummy_file")
+
     oAna.measurement_supported_consumables_get()
 
     ################################################
     # Class: StatusChannelApi
     ################################################
-    """
-    status_currently_activated_events_get
-    status_operational_get
-    """
+    oAna.status_currently_activated_events_get()
+    oAna.status_operational_get()

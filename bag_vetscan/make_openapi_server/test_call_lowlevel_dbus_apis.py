@@ -9,7 +9,7 @@ import os, sys
 strThisFilePath = os.path.dirname(__file__)
 sys.path.append(strThisFilePath)
 sys.path.append(strThisFilePath + "/analyzer_app")
-from analyzer_app.openapi_server.models import inline_object1
+from analyzer_app.openapi_server.models.inline_object1 import InlineObject1
 from analyzer_app.openapi_server.controllers import CDBusDraculaService
 
 
@@ -30,7 +30,8 @@ if __name__ == '__main__':
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_get()
     print("configuration_get()\n\t%s" % strRtn)
 
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_put("body")
+    oSomeObject = {"bla": "bla"}
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_put(str(oSomeObject))
     print("configuration_put()\n\t%s" % strRtn)
 
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_schema_get()
@@ -57,7 +58,8 @@ if __name__ == '__main__':
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_consumable_consumable_uuid_post("consumable_uuid")
     print("measurement_consumable_consumable_uuid_post()\n\t%s" % strRtn)
 
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post("file_x.abc")
+    inline_object1 = InlineObject1(filename="dummy")
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post(str(inline_object1))
     print("measurement_file_post()\n\t%s" % strRtn)
 
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_results_get("2020-11-05T13:15:30+00:00", "2020-12-02T14:29:27+00:00")

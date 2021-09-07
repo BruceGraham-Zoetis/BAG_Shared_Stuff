@@ -7,11 +7,10 @@ The "Dracula" DBus service will perform the low-level part of the openAPIs.
 """
 
 import CDBusDraculaService
-from openapi_server import util
 
 
 def measurement_cancel_post():  # noqa: E501
-    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_cancel_delete()
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_cancel_post()
     return str_rtn
 
 def measurement_consumable_consumable_uuid_post(consumable_uuid):  # noqa: E501
@@ -23,8 +22,6 @@ def measurement_file_post(inline_object1):  # noqa: E501
     return str_rtn
 
 def measurement_results_get(start_datetime=None, end_datetime=None):  # noqa: E501
-    start_datetime = util.deserialize_datetime(start_datetime)
-    end_datetime = util.deserialize_datetime(end_datetime)
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_results_get(start_datetime, end_datetime)
     return str_rtn
 

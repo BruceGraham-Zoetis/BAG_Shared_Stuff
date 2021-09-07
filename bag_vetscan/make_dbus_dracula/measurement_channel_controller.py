@@ -9,19 +9,6 @@ Purpose: DBus service interface for the dracula analyzer app.
 import CAnalyzer
 
 
-def channel_measurement_get_measurement_status(self : CAnalyzer):
-    """channel_measurement_get_measurement_status
-
-    The HUB is requesting the analyzer return the status of the current measurement being performed # noqa: E501
-
-
-    :rtype: InlineResponse200
-    """
-    
-    dict_rtn = self.operation_current.get_status()
-    return dict_rtn
-
-
 def measurement_cancel_post(self : CAnalyzer):
     """measurement_cancel_post
 

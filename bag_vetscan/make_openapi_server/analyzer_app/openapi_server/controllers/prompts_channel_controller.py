@@ -1,3 +1,18 @@
+"""
+File: prompts_channel_controller.py
+
+Purpose: These are the openAPI functions.
+These functions call the analyzer "Dracula" DBus service.
+The "Dracula" DBus service will perform the low-level part of the openAPIs.
+"""
+
+
+import os, sys
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+
+import CDBusDraculaService
+
 import connexion
 import six
 
@@ -20,7 +35,7 @@ def prompts_notification_ack_post(inline_object3):  # noqa: E501
     """
     if connexion.request.is_json:
         inline_object3 = InlineObject3.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return 'TODO - Call the DBus service API'
 
 
 def prompts_option_chosen_post(inline_object2):  # noqa: E501
@@ -35,7 +50,7 @@ def prompts_option_chosen_post(inline_object2):  # noqa: E501
     """
     if connexion.request.is_json:
         inline_object2 = InlineObject2.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return 'TODO - Call the DBus service API'
 
 
 def prompts_qr_scanned_post(inline_object4):  # noqa: E501
@@ -50,4 +65,4 @@ def prompts_qr_scanned_post(inline_object4):  # noqa: E501
     """
     if connexion.request.is_json:
         inline_object4 = InlineObject4.from_dict(connexion.request.get_json())  # noqa: E501
-    return 'do some magic!'
+    return 'TODO - Call the DBus service API'

@@ -29,7 +29,7 @@ class analyzer_client():
         # Enter a context with an instance of the API client
         with openapi_client.ApiClient(self.configuration) as api_client:
             # Create an instance of the API class
-            self.configuration_api          = openapi_client.ConfigurationApi(api_client)
+            self.configuration_api          = openapi_client.ConfigurationChannelApi(api_client)
             self.control_channel_api        = openapi_client.ControlChannelApi(api_client)
             self.measurement_channel_api    = openapi_client.MeasurementChannelApi(api_client)
             self.status_channel_api         = openapi_client.StatusChannelApi(api_client)
@@ -53,12 +53,58 @@ class analyzer_client():
     ################################################
     # Class: ConfigurationApi
     ################################################
-    """
-    configuration_factory_reset_put
-    configuration_get
-    configuration_put
-    configuration_schema_get
-    """
+    def configuration_factory_reset_put(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.configuration_api.configuration_factory_reset_put(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def configuration_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.configuration_api.configuration_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def configuration_put(self, body : str) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.configuration_api.configuration_put(body, async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
+    def configuration_schema_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.configuration_api.configuration_schema_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+
     ################################################
     # Class: ControlChannelApi
     ################################################
@@ -119,29 +165,11 @@ class analyzer_client():
     # Class: MeasurementChannelApi
     ################################################
 
-    def channel_measurement_get_measurement_status(self) -> str:
+    def measurement_cancel_post(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            thread = self.measurement_channel_api.channel_measurement_get_measurement_status(async_req=True)
+            thread = self.measurement_channel_api.measurement_cancel_post(async_req=True)
             str_response = thread.get()
-            if (self.__trace):
-                print("\tReturned: ", end = '')
-                print(str_response)
-            return str_response
-        except ApiException as e:
-            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
-            return ""
-
-    def measurement_cancel_delete(self) -> str:
-        try:
-            if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            """
-            TODO - This fails: 
-                raise ValueError("Invalid value for `measurement_id`, must not be `None`")  # noqa: E501
-            thread = self.measurement_channel_api.measurement_cancel_delete(async_req=True)
-            str_response = thread.get()
-            """
-            str_response = "--- this failed"
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -153,15 +181,8 @@ class analyzer_client():
     def measurement_consumable_consumable_uuid_post(self, consumable_uuid : str) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            """
-            TODO - This fails: 
-                raise ValueError("Invalid value for `measurement_id`, must not be `None`")  # noqa: E501
-            thread = self.measurement_channel_api.measurement_cancel_delete(async_req=True)
-            str_response = thread.get()
             thread = self.measurement_channel_api.measurement_consumable_consumable_uuid_post(consumable_uuid, async_req=True)
             str_response = thread.get()
-            """
-            str_response = "--- this failed"
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -170,7 +191,7 @@ class analyzer_client():
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
-    def measurement_file_post(self, inline_object1 : str) -> str:
+    def measurement_file_post(self, inline_object1) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
             thread = self.measurement_channel_api.measurement_file_post(inline_object1, async_req=True)
@@ -183,16 +204,13 @@ class analyzer_client():
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
-    def measurement_past_results_get(self, start_time : str, start_date : str, end_time : str, end_date : str) -> str:
+    #def measurement_results_get(self, start_datetime : str, end_datetime : str) -> str:
+    def measurement_results_get(self, **kwargs) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            """
-            TODO - This fails: 
-                raise ValueError("Invalid value for `measurement_id`, must not be `None`")  # noqa: E501
-            thread = self.measurement_channel_api.measurement_past_results_get(start_time, start_date, end_time, end_date, async_req=True)
+            #thread = self.measurement_channel_api.measurement_results_get(start_datetime, end_datetime, async_req=True)
+            thread = self.measurement_channel_api.measurement_results_get(async_req=True, **kwargs)
             str_response = thread.get()
-            """
-            str_response = "--- this failed"
             if (self.__trace):
                 print("\tReturned: ", end = '')
                 print(str_response)
@@ -201,10 +219,10 @@ class analyzer_client():
             print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
             return ""
 
-    def measurement_result_get(self) -> str:
+    def measurement_results_latest_get(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            thread = self.measurement_channel_api.measurement_result_get(async_req=True)
+            thread = self.measurement_channel_api.measurement_results_latest_get(async_req=True)
             str_response = thread.get()
             if (self.__trace):
                 print("\tReturned: ", end = '')
@@ -230,9 +248,6 @@ class analyzer_client():
     def measurement_supported_consumables_get(self) -> str:
         try:
             if (self.__trace): print(inspect.currentframe().f_code.co_name)
-            """
-            str_response = self.measurement_channel_api.measurement_supported_consumables_get()
-            """
             thread = self.measurement_channel_api.measurement_supported_consumables_get(async_req=True)
             str_response = thread.get()
             if (self.__trace):
@@ -247,8 +262,29 @@ class analyzer_client():
     ################################################
     # Class: StatusChannelApi
     ################################################
-    """
-    status_currently_activated_events_get
-    status_operational_get
-    """
+    def status_currently_activated_events_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.status_channel_api.status_currently_activated_events_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
+    
+    def status_operational_get(self) -> str:
+        try:
+            if (self.__trace): print(inspect.currentframe().f_code.co_name)
+            thread = self.status_channel_api.status_operational_get(async_req=True)
+            str_response = thread.get()
+            if (self.__trace):
+                print("\tReturned: ", end = '')
+                print(str_response)
+            return str_response
+        except ApiException as e:
+            print("Exception when calling %s() error: %s\n" % (inspect.currentframe().f_code.co_name, e))
+            return ""
 

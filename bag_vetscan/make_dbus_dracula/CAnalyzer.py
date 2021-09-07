@@ -1,16 +1,22 @@
 """
 File: CAnalyzer.py
 
+Notes:
+    The parameters and return types must be type cast. For example: use 's' for str type.
+    See https://python-dbus-next.readthedocs.io/en/latest/type-system
+
 """
 
 from dbus_next.service import (ServiceInterface,
                                method, dbus_property, signal)
 from dbus_next import Variant, DBusError
 
-import configuration_controller
+import configuration_channel_controller
 import control_channel_controller
 import measurement_channel_controller
 import status_channel_controller
+import prompts_channel_controller
+#from openapi_server import util
 
 
 class class_measurement_operation():
@@ -25,6 +31,10 @@ class class_measurement_operation():
         self.status_detail      = status_detail
 
     def measurement_results_get(self, start_datetime, end_datetime):
+        # TODO Use start_datetime, end_datetime during the get.
+        # start_datetime = util.deserialize_datetime(start_datetime)
+        # end_datetime = util.deserialize_datetime(end_datetime)
+
         dict_rtn = self.get_status()
         return dict_rtn
 
@@ -58,33 +68,33 @@ class CZoetisAnalyzerInterface(ServiceInterface):
 
 
     ########################################################
-    # from configuration_controller.py
+    # from configuration_channel_controller.py
     ########################################################
     @method()
     def configuration_factory_reset_put(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_factory_reset_put(self)
+        dict_rtn = configuration_channel_controller.configuration_factory_reset_put(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_get(self)
+        dict_rtn = configuration_channel_controller.configuration_get(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_put(self, body : 's') -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_put(self, body)
+        dict_rtn = configuration_channel_controller.configuration_put(self, body)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_schema_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_schema_get(self)
+        dict_rtn = configuration_channel_controller.configuration_schema_get(self)
         # return a str to caller
         return str(dict_rtn)
 
@@ -121,11 +131,6 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         dict_rtn = measurement_channel_controller.measurement_cancel_post(self)
         # return a str to caller
         return str(dict_rtn)
-
-    @method()
-    def channel_measurement_get_measurement_status(self) -> 'a{ss}':
-        dict_rtn = measurement_channel_controller.channel_measurement_get_measurement_status(self)
-        return dict_rtn
 
     @method()
     def measurement_consumable_consumable_uuid_post(self, consumable_uuid : 's') -> 's':
@@ -194,6 +199,33 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         # return a str to caller
         return str(dict_rtn)
 
+
+    ########################################################
+    # from prompts_channel_controller.py
+    ########################################################
+    # TODO Pass inline_object3
+    @method()
+    def prompts_notification_ack_post(self) -> 's':
+        # returns dictionary type
+        dict_rtn = configuration_channel_controller.prompts_notification_ack_post(self)
+        # return a str to caller
+        return str(dict_rtn)
+
+    # TODO Pass inline_object2
+    @method()
+    def prompts_option_chosen_post(self) -> 's':
+        # returns dictionary type
+        dict_rtn = configuration_channel_controller.prompts_option_chosen_post(self)
+        # return a str to caller
+        return str(dict_rtn)
+
+    # TODO Pass inline_object4
+    @method()
+    def prompts_qr_scanned_post(self) -> 's':
+        # returns dictionary type
+        dict_rtn = configuration_channel_controller.prompts_qr_scanned_post(self)
+        # return a str to caller
+        return str(dict_rtn)
 
     ########################################################
     # from here - test methods, signals

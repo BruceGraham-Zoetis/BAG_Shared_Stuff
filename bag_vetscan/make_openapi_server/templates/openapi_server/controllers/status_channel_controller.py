@@ -1,29 +1,24 @@
-import connexion
-import six
+"""
+File: status_channel_controller.py
 
-from openapi_server.models.inline_response2001 import InlineResponse2001  # noqa: E501
-from openapi_server.models.inline_response2002 import InlineResponse2002  # noqa: E501
-from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
-from openapi_server import util
-
-
-def status_currently_activated_events_get():  # noqa: E501
-    """status_currently_activated_events_get
-
-    The HUB is requesting the analyzer respond with a list of all currently activated events # noqa: E501
+Purpose: These are the openAPI functions.
+These functions call the analyzer "Dracula" DBus service.
+The "Dracula" DBus service will perform the low-level part of the openAPIs.
+"""
 
 
-    :rtype: InlineResponse2002
-    """
-    return 'do some magic!'
+import os, sys
+strThisFilePath = os.path.dirname(__file__)
+sys.path.append(strThisFilePath)
+
+import CDBusDraculaService
 
 
-def status_operational_get():  # noqa: E501
-    """status_operational_get
+def status_currently_activated_events_get():
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.status_currently_activated_events_get()
+    return str_rtn
 
-    The HUB can use send this message to get the status of an analyzer # noqa: E501
-
-
-    :rtype: InlineResponse2001
-    """
-    return 'do some magic!'
+def status_operational_get():
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.status_operational_get()
+    return str_rtn
+    
