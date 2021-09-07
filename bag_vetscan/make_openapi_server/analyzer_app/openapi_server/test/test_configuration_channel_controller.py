@@ -10,8 +10,8 @@ from openapi_server.models.inline_response400 import InlineResponse400  # noqa: 
 from openapi_server.test import BaseTestCase
 
 
-class TestConfigurationController(BaseTestCase):
-    """ConfigurationController integration test stubs"""
+class TestConfigurationChannelController(BaseTestCase):
+    """ConfigurationChannelController integration test stubs"""
 
     def test_configuration_factory_reset_put(self):
         """Test case for configuration_factory_reset_put

@@ -36,54 +36,48 @@ class InlineResponse2002(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'status': 'str'
+        'currently_activated_events': 'list[EventInfo]'
     }
 
     attribute_map = {
-        'status': 'status'
+        'currently_activated_events': 'currently_activated_events'
     }
 
-    def __init__(self, status=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, currently_activated_events=None, local_vars_configuration=None):  # noqa: E501
         """InlineResponse2002 - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
-        self._status = None
+        self._currently_activated_events = None
         self.discriminator = None
 
-        self.status = status
+        self.currently_activated_events = currently_activated_events
 
     @property
-    def status(self):
-        """Gets the status of this InlineResponse2002.  # noqa: E501
+    def currently_activated_events(self):
+        """Gets the currently_activated_events of this InlineResponse2002.  # noqa: E501
 
-        The status of the analyzer  # noqa: E501
+        An array of all events that are currently activated  # noqa: E501
 
-        :return: The status of this InlineResponse2002.  # noqa: E501
-        :rtype: str
+        :return: The currently_activated_events of this InlineResponse2002.  # noqa: E501
+        :rtype: list[EventInfo]
         """
-        return self._status
+        return self._currently_activated_events
 
-    @status.setter
-    def status(self, status):
-        """Sets the status of this InlineResponse2002.
+    @currently_activated_events.setter
+    def currently_activated_events(self, currently_activated_events):
+        """Sets the currently_activated_events of this InlineResponse2002.
 
-        The status of the analyzer  # noqa: E501
+        An array of all events that are currently activated  # noqa: E501
 
-        :param status: The status of this InlineResponse2002.  # noqa: E501
-        :type status: str
+        :param currently_activated_events: The currently_activated_events of this InlineResponse2002.  # noqa: E501
+        :type currently_activated_events: list[EventInfo]
         """
-        if self.local_vars_configuration.client_side_validation and status is None:  # noqa: E501
-            raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
-        allowed_values = ["NotReady", "Ready", "Analyzing", "UserActionNeeded", "Advisory", "TestComplete"]  # noqa: E501
-        if self.local_vars_configuration.client_side_validation and status not in allowed_values:  # noqa: E501
-            raise ValueError(
-                "Invalid value for `status` ({0}), must be one of {1}"  # noqa: E501
-                .format(status, allowed_values)
-            )
+        if self.local_vars_configuration.client_side_validation and currently_activated_events is None:  # noqa: E501
+            raise ValueError("Invalid value for `currently_activated_events`, must not be `None`")  # noqa: E501
 
-        self._status = status
+        self._currently_activated_events = currently_activated_events
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

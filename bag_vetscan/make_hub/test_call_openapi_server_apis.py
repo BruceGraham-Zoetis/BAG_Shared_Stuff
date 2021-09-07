@@ -43,7 +43,7 @@ if __name__ == '__main__':
     #inline_object1 = InlineObject1(filename="dummy", local_vars_configuration=None)
     #oAna.measurement_file_post(inline_object1)
     oAna.measurement_file_post("dummy_file")
-    oAna.measurement_past_results_get("start_time", "start_date", "end_time", "end_date")
+    oAna.measurement_results_get("2020-11-05T13:15:30+00:00", "2020-12-02T14:29:27+00:00")
     oAna.measurement_result_get()
     #oAna.measurement_script_post(inline_object1)
     oAna.measurement_script_post("dummy_file")

@@ -24,6 +24,10 @@ class class_measurement_operation():
         # str: "" or some kind of detail string 
         self.status_detail      = status_detail
 
+    def measurement_results_get(self, start_datetime, end_datetime):
+        dict_rtn = self.get_status()
+        return dict_rtn
+
     def get_status(self):
         dict_rtn = {
             'measurement_id': self.measurement_id,
@@ -33,7 +37,7 @@ class class_measurement_operation():
         }
         return dict_rtn
 
-    def delete(self):
+    def cancel(self):
         self.measurement_id     = ''
         self.elapsed_time_msec  = '0'
         self.measurement_status = 'Complete'
@@ -59,28 +63,28 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def configuration_factory_reset_put(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_factory_reset_put()
+        dict_rtn = configuration_controller.configuration_factory_reset_put(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_get()
+        dict_rtn = configuration_controller.configuration_get(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_put(self, body : 's') -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_put(body)
+        dict_rtn = configuration_controller.configuration_put(self, body)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def configuration_schema_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_controller.configuration_schema_get()
+        dict_rtn = configuration_controller.configuration_schema_get(self)
         # return a str to caller
         return str(dict_rtn)
 
@@ -90,93 +94,85 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def control_light_blink_put(self) -> 's':
         # returns dictionary type
-        dict_rtn = control_channel_controller.control_light_blink_put()
-        # return a str to caller
-        return str(dict_rtn)
-
-    @method()
-    def control_light_off_put(self) -> 's':
-        # returns dictionary type
-        dict_rtn = control_channel_controller.control_light_off_put()
+        dict_rtn = control_channel_controller.control_light_blink_put(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def control_power_off_put(self) -> 's':
         # returns dictionary type
-        dict_rtn = control_channel_controller.control_power_off_put()
+        dict_rtn = control_channel_controller.control_power_off_put(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def control_power_reboot_put(self) -> 's':
         # returns dictionary type
-        dict_rtn = control_channel_controller.control_power_reboot_put()
+        dict_rtn = control_channel_controller.control_power_reboot_put(self)
         # return a str to caller
         return str(dict_rtn)
 
     ########################################################
     # from measurement_channel_controller.py
     ########################################################
-    """
     @method()
-    def channel_measurement_get_measurement_status(self) -> 's':
-        # returns str type
-        str_rtn = measurement_channel_controller.channel_measurement_get_measurement_status()
+    def measurement_cancel_post(self) -> 's':
+        # returns dictionary type
+        dict_rtn = measurement_channel_controller.measurement_cancel_post(self)
         # return a str to caller
-        return str_rtn
-    """
+        return str(dict_rtn)
+
     @method()
     def channel_measurement_get_measurement_status(self) -> 'a{ss}':
         dict_rtn = measurement_channel_controller.channel_measurement_get_measurement_status(self)
         return dict_rtn
 
     @method()
-    def measurement_cancel_delete(self) -> 's':
-        # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_cancel_delete(self)
-        # return a str to caller
-        return str(dict_rtn)
-
-    @method()
     def measurement_consumable_consumable_uuid_post(self, consumable_uuid : 's') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_consumable_consumable_uuid_post(consumable_uuid)
+        dict_rtn = measurement_channel_controller.measurement_consumable_consumable_uuid_post(self, consumable_uuid)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def measurement_file_post(self, inline_object1 : 's') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_file_post(inline_object1)
+        dict_rtn = measurement_channel_controller.measurement_file_post(self, inline_object1)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
-    def measurement_past_results_get(self, start_time: 's', start_date: 's', end_time: 's', end_date: 's') -> 's':
+    def measurement_results_get(self, start_datetime : 's', end_datetime : 's') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_past_results_get(self, start_time, start_date, end_time, end_date)
+        dict_rtn = measurement_channel_controller.measurement_results_get(self, start_datetime, end_datetime)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def measurement_result_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_result_get()
+        dict_rtn = measurement_channel_controller.measurement_result_get(self)
+        # return a str to caller
+        return str(dict_rtn)
+
+    @method()
+    def measurement_results_latest_get(self) -> 's':
+        # returns dictionary type
+        dict_rtn = measurement_channel_controller.measurement_results_latest_get(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def measurement_script_post(self, inline_object : 's') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_script_post(inline_object)
+        dict_rtn = measurement_channel_controller.measurement_script_post(self, inline_object)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def measurement_supported_consumables_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_supported_consumables_get()
+        dict_rtn = measurement_channel_controller.measurement_supported_consumables_get(self)
         # return a str to caller
         return str(dict_rtn)
 
@@ -187,14 +183,14 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def status_currently_activated_events_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = status_channel_controller.status_currently_activated_events_get()
+        dict_rtn = status_channel_controller.status_currently_activated_events_get(self)
         # return a str to caller
         return str(dict_rtn)
 
     @method()
     def status_operational_get(self) -> 's':
         # returns dictionary type
-        dict_rtn = status_channel_controller.status_operational_get()
+        dict_rtn = status_channel_controller.status_operational_get(self)
         # return a str to caller
         return str(dict_rtn)
 

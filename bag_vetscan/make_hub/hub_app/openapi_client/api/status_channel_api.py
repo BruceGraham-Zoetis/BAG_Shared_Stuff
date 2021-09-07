@@ -59,7 +59,7 @@ class StatusChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse2003
+        :rtype: InlineResponse2002
         """
         kwargs['_return_http_data_only'] = True
         return self.status_currently_activated_events_get_with_http_info(**kwargs)  # noqa: E501
@@ -94,7 +94,7 @@ class StatusChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse2003, status_code(int), headers(HTTPHeaderDict))
+        :rtype: tuple(InlineResponse2002, status_code(int), headers(HTTPHeaderDict))
         """
 
         local_var_params = locals()
@@ -140,11 +140,8 @@ class StatusChannelApi(object):
         auth_settings = []  # noqa: E501
         
         response_types_map = {
-            200: "InlineResponse2003",
+            200: "InlineResponse2002",
             400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
             503: "InlineResponse400",
         }
 
@@ -188,7 +185,7 @@ class StatusChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse2002
+        :rtype: InlineResponse2001
         """
         kwargs['_return_http_data_only'] = True
         return self.status_operational_get_with_http_info(**kwargs)  # noqa: E501
@@ -223,7 +220,7 @@ class StatusChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse2002, status_code(int), headers(HTTPHeaderDict))
+        :rtype: tuple(InlineResponse2001, status_code(int), headers(HTTPHeaderDict))
         """
 
         local_var_params = locals()
@@ -269,11 +266,8 @@ class StatusChannelApi(object):
         auth_settings = []  # noqa: E501
         
         response_types_map = {
-            200: "InlineResponse2002",
+            200: "InlineResponse2001",
             400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
             503: "InlineResponse400",
         }
 

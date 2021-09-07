@@ -36,48 +36,54 @@ class InlineResponse2001(object):
                             and the value is json key in definition.
     """
     openapi_types = {
-        'measurement_results': 'list[MeasurementResult]'
+        'status': 'str'
     }
 
     attribute_map = {
-        'measurement_results': 'measurement_results'
+        'status': 'status'
     }
 
-    def __init__(self, measurement_results=None, local_vars_configuration=None):  # noqa: E501
+    def __init__(self, status=None, local_vars_configuration=None):  # noqa: E501
         """InlineResponse2001 - a model defined in OpenAPI"""  # noqa: E501
         if local_vars_configuration is None:
             local_vars_configuration = Configuration.get_default_copy()
         self.local_vars_configuration = local_vars_configuration
 
-        self._measurement_results = None
+        self._status = None
         self.discriminator = None
 
-        self.measurement_results = measurement_results
+        self.status = status
 
     @property
-    def measurement_results(self):
-        """Gets the measurement_results of this InlineResponse2001.  # noqa: E501
+    def status(self):
+        """Gets the status of this InlineResponse2001.  # noqa: E501
 
-        An array of measurement result objects that were taken in between the times sent in the request.  If there are no historical results to report, this will return as an empty array  # noqa: E501
+        The status of the analyzer  # noqa: E501
 
-        :return: The measurement_results of this InlineResponse2001.  # noqa: E501
-        :rtype: list[MeasurementResult]
+        :return: The status of this InlineResponse2001.  # noqa: E501
+        :rtype: str
         """
-        return self._measurement_results
+        return self._status
 
-    @measurement_results.setter
-    def measurement_results(self, measurement_results):
-        """Sets the measurement_results of this InlineResponse2001.
+    @status.setter
+    def status(self, status):
+        """Sets the status of this InlineResponse2001.
 
-        An array of measurement result objects that were taken in between the times sent in the request.  If there are no historical results to report, this will return as an empty array  # noqa: E501
+        The status of the analyzer  # noqa: E501
 
-        :param measurement_results: The measurement_results of this InlineResponse2001.  # noqa: E501
-        :type measurement_results: list[MeasurementResult]
+        :param status: The status of this InlineResponse2001.  # noqa: E501
+        :type status: str
         """
-        if self.local_vars_configuration.client_side_validation and measurement_results is None:  # noqa: E501
-            raise ValueError("Invalid value for `measurement_results`, must not be `None`")  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and status is None:  # noqa: E501
+            raise ValueError("Invalid value for `status`, must not be `None`")  # noqa: E501
+        allowed_values = ["NotReady", "Ready", "Analyzing", "UserActionNeeded", "Advisory", "TestComplete"]  # noqa: E501
+        if self.local_vars_configuration.client_side_validation and status not in allowed_values:  # noqa: E501
+            raise ValueError(
+                "Invalid value for `status` ({0}), must be one of {1}"  # noqa: E501
+                .format(status, allowed_values)
+            )
 
-        self._measurement_results = measurement_results
+        self._status = status
 
     def to_dict(self, serialize=False):
         """Returns the model properties as a dict"""

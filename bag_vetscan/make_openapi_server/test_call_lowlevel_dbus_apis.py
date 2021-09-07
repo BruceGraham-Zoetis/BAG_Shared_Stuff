@@ -42,9 +42,6 @@ if __name__ == '__main__':
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_light_blink_put()
     print("control_light_blink_put()\n\t%s" % strRtn)
 
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_light_off_put()
-    print("control_light_off_put()\n\t%s" % strRtn)
-
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_power_off_put()
     print("control_power_off_put()\n\t%s" % strRtn)
 
@@ -54,22 +51,23 @@ if __name__ == '__main__':
 
     print("\nfile: measurement_channel_controller.py")
     print("=========================================")
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_cancel_delete()
-    print("measurement_cancel_delete()\n\t%s" % strRtn)
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_cancel_post()
+    print("measurement_cancel_post()\n\t%s" % strRtn)
 
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_consumable_consumable_uuid_post("consumable_uuid")
     print("measurement_consumable_consumable_uuid_post()\n\t%s" % strRtn)
 
-    #inline_object1 = inline_object1.InlineObject1(filename="dummy")
-    #strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post(inline_object1)
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post("dummy")
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post("file_x.abc")
     print("measurement_file_post()\n\t%s" % strRtn)
 
-    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_past_results_get("start_time", "start_date", "end_time", "end_date")
-    print("measurement_past_results_get()\n\t%s" % strRtn)
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_results_get("2020-11-05T13:15:30+00:00", "2020-12-02T14:29:27+00:00")
+    print("measurement_results_get()\n\t%s" % strRtn)
 
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_result_get()
     print("measurement_result_get()\n\t%s" % strRtn)
+
+    strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_results_latest_get()
+    print("measurement_results_latest_get()\n\t%s" % strRtn)
 
     strRtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_script_post("inline_object")
     print("measurement_script_post()\n\t%s" % strRtn)

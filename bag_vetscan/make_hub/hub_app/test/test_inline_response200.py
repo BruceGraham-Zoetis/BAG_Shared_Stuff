@@ -36,17 +36,27 @@ class TestInlineResponse200(unittest.TestCase):
         # model = openapi_client.models.inline_response200.InlineResponse200()  # noqa: E501
         if include_optional :
             return InlineResponse200(
-                measurement_id = '', 
-                elapsed_time_msec = 0, 
-                measurement_status = 'Initializing', 
-                status_detail = ''
+                measurement_results = [
+                    openapi_client.models.measurement_result.measurement_result(
+                        consumable_name = '', 
+                        start_datetime = '2020-11-05T13:15:30Z', 
+                        end_datetime = '2020-12-02T14:29:27Z', 
+                        duration_sec = 0, 
+                        result = 'Failed', 
+                        test_results = openapi_client.models.test_results.test_results(), )
+                    ]
             )
         else :
             return InlineResponse200(
-                measurement_id = '',
-                elapsed_time_msec = 0,
-                measurement_status = 'Initializing',
-                status_detail = '',
+                measurement_results = [
+                    openapi_client.models.measurement_result.measurement_result(
+                        consumable_name = '', 
+                        start_datetime = '2020-11-05T13:15:30Z', 
+                        end_datetime = '2020-12-02T14:29:27Z', 
+                        duration_sec = 0, 
+                        result = 'Failed', 
+                        test_results = openapi_client.models.test_results.test_results(), )
+                    ],
         )
 
     def testInlineResponse200(self):

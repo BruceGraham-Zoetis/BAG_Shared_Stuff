@@ -25,8 +25,8 @@ paths:
                 type: object
           description: Analyzer responds with the its configuration information
       tags:
-      - Configuration
-      x-openapi-router-controller: openapi_server.controllers.configuration_controller
+      - Configuration Channel
+      x-openapi-router-controller: openapi_server.controllers.configuration_channel_controller
     put:
       description: Set the configuration of the analyzer
       operationId: configuration_put
@@ -49,8 +49,8 @@ paths:
           description: This response is sent to a request that violates the predefined
             request schema
       tags:
-      - Configuration
-      x-openapi-router-controller: openapi_server.controllers.configuration_controller
+      - Configuration Channel
+      x-openapi-router-controller: openapi_server.controllers.configuration_channel_controller
   /configuration/factory_reset:
     put:
       description: Restore the analyzer to the state it was in when it left the factory.
@@ -60,8 +60,8 @@ paths:
         "200":
           description: Analyzer successfully began a factory reset
       tags:
-      - Configuration
-      x-openapi-router-controller: openapi_server.controllers.configuration_controller
+      - Configuration Channel
+      x-openapi-router-controller: openapi_server.controllers.configuration_channel_controller
   /configuration/schema:
     get:
       description: Request the configuration schema from the analyzer
@@ -77,8 +77,8 @@ paths:
         "501":
           description: The analyzer does not provide a schema for the configuration
       tags:
-      - Configuration
-      x-openapi-router-controller: openapi_server.controllers.configuration_controller
+      - Configuration Channel
+      x-openapi-router-controller: openapi_server.controllers.configuration_channel_controller
   /control/light/blink:
     put:
       description: Cause an analyzer to blink its light ring.  The purpose of this
@@ -89,52 +89,6 @@ paths:
       responses:
         "200":
           description: Analyzer was successful blinking the light ring
-        "503":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request that the analyzer is unable
-            to do at the time
-      tags:
-      - Control Channel
-      x-openapi-router-controller: openapi_server.controllers.control_channel_controller
-  /control/light/off:
-    put:
-      description: Cause an analyzer to turn off its light ring.
-      operationId: control_light_off_put
-      responses:
-        "200":
-          description: Analyzer was successful the light ring is off as requested
-            by the HUB
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request that violates the predefined
-            request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -169,19 +123,13 @@ paths:
       - Control Channel
       x-openapi-router-controller: openapi_server.controllers.control_channel_controller
   /measurement/cancel:
-    delete:
+    post:
       description: The HUB is requesting the analyzer cancel the measurement that
         is currently being performed
-      operationId: measurement_cancel_delete
+      operationId: measurement_cancel_post
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-          description: This response is sent to notify the HUB of the status of a
-            measurement that was requested to start, cancel, or whose status is being
-            queried
+          description: Analyzer successfully began cancelling the measurement
         "400":
           content:
             application/json:
@@ -189,27 +137,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -236,13 +163,7 @@ paths:
         style: simple
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-          description: This response is sent to notify the HUB of the status of a
-            measurement that was requested to start, cancel, or whose status is being
-            queried
+          description: Analyzer successfully began measurement
         "400":
           content:
             application/json:
@@ -250,27 +171,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -303,13 +203,7 @@ paths:
         required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-          description: This response is sent to notify the HUB of the status of a
-            measurement that was requested to start, cancel, or whose status is being
-            queried
+          description: Analyzer successfully began measurement
         "400":
           content:
             application/json:
@@ -317,27 +211,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -348,50 +221,32 @@ paths:
       tags:
       - Measurement Channel
       x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
-  /measurement/past_results:
+  /measurement/results:
     get:
-      description: The HUB is requesting the analyzer send past results between two
-        times
-      operationId: measurement_past_results_get
+      description: The client is requesting the analyzer to send past results between
+        two times
+      operationId: measurement_results_get
       parameters:
-      - description: The time to start looking for results to return
+      - allowEmptyValue: true
+        description: The earliest result. If missing, the analyzer must return the
+          results from as early as possible
         explode: true
         in: query
-        name: start_time
-        required: true
+        name: start_datetime
+        required: false
         schema:
-          description: HH:MM:SS
-          example: 23:13:01
+          format: date-time
           type: string
         style: form
-      - description: The date to start looking for results to return
+      - allowEmptyValue: true
+        description: The latest time for a result. If missing, the analyzer must return
+          all results from 'from' untill present time.
         explode: true
         in: query
-        name: start_date
-        required: true
+        name: end_datetime
+        required: false
         schema:
-          description: YYYY-MM-DD
-          example: 2021-05-13
-          type: string
-        style: form
-      - description: The time to stop looking for results to return
-        explode: true
-        in: query
-        name: end_time
-        required: true
-        schema:
-          description: HH:MM:SS
-          example: 06:05:23
-          type: string
-        style: form
-      - description: The date to stop looking for results to return
-        explode: true
-        in: query
-        name: end_date
-        required: true
-        schema:
-          description: YYYY-MM-DD
-          example: 2021-05-15
+          format: date-time
           type: string
         style: form
       responses:
@@ -399,7 +254,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_1'
+                $ref: '#/components/schemas/inline_response_200'
           description: Analyzer is responding with the results of all measurements
             taken between the times in the request
         "400":
@@ -409,27 +264,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -440,19 +274,19 @@ paths:
       tags:
       - Measurement Channel
       x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
-  /measurement/result:
+  /measurement/results/latest:
     get:
-      description: The HUB requests that the analyzer return the result of the most
-        recent measurement performed
-      operationId: measurement_result_get
+      description: The client requests that the analyzer return the result of the
+        most recent measurement performed
+      operationId: measurement_results_latest_get
       responses:
         "200":
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/measurement_result'
-          description: The analyzer is sending the HUB the results of the most recent
-            measurement performed
+          description: The analyzer is sending the client the results of the most
+            recent measurement performed
         "400":
           content:
             application/json:
@@ -460,27 +294,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -512,13 +325,7 @@ paths:
         required: true
       responses:
         "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-          description: This response is sent to notify the HUB of the status of a
-            measurement that was requested to start, cancel, or whose status is being
-            queried
+          description: Analyzer successfully began measurement
         "400":
           content:
             application/json:
@@ -526,72 +333,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
-        "503":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request that the analyzer is unable
-            to do at the time
-      tags:
-      - Measurement Channel
-      x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
-  /measurement/status:
-    get:
-      description: The HUB is requesting the analyzer return the status of the current
-        measurement being performed
-      operationId: channel_measurement_get_measurement_status
-      responses:
-        "200":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_200'
-          description: This response is sent to notify the HUB of the status of a
-            measurement that was requested to start, cancel, or whose status is being
-            queried
-        "400":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request that violates the predefined
-            request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -668,6 +409,136 @@ paths:
       tags:
       - Measurement Channel
       x-openapi-router-controller: openapi_server.controllers.measurement_channel_controller
+  /prompts/notification_ack:
+    post:
+      description: Hub is informing the analyzer a notification was acknowledged by
+        the operator in response to a websocket message named notification on the
+        prompts channel.
+      operationId: prompts_notification_ack_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_3'
+        content:
+          application/json:
+            schema:
+              properties:
+                correlation_id:
+                  description: A unique ID that can be used to correlate messages
+                    being sent and received
+                  type: string
+              required:
+              - correlation_id
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Hub received message successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-openapi-router-controller: openapi_server.controllers.prompts_channel_controller
+  /prompts/option_chosen:
+    post:
+      description: Hub is informing the analyzer of an option that was made by the
+        operator in response to a websocket message named choose_option on the prompts
+        channel.
+      operationId: prompts_option_chosen_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_2'
+        content:
+          application/json:
+            schema:
+              properties:
+                correlation_id:
+                  description: A unique ID that can be used to correlate messages
+                    being sent and received
+                  type: string
+                option_chosen:
+                  description: The option chosen by the operator
+                  example: "Yes"
+                  type: string
+              required:
+              - correlation_id
+              - option_chosen
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Hub received chosen option successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-openapi-router-controller: openapi_server.controllers.prompts_channel_controller
+  /prompts/qr_scanned:
+    post:
+      description: Hub is informing the analyzer of a QR scan attempt in response
+        to a websocket message named scan_qr on the prompts channel.
+      operationId: prompts_qr_scanned_post
+      requestBody:
+        $ref: '#/components/requestBodies/inline_object_4'
+        content:
+          application/json:
+            schema:
+              properties:
+                correlation_id:
+                  description: A unique ID that can be used to correlate messages
+                    being sent and received
+                  type: string
+                qr_contents:
+                  description: The contents of the QR that was scanned.  If scanning
+                    failed or was cancelled by operator, this will be an empty string
+                  example: '{"exp":"2022-05-27","name":"c","lot":"088222","data":"12.34"}'
+                  type: string
+              required:
+              - correlation_id
+              - qr_contents
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Hub received message successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/inline_response_400'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-openapi-router-controller: openapi_server.controllers.prompts_channel_controller
   /status/currently_activated_events:
     get:
       description: The HUB is requesting the analyzer respond with a list of all currently
@@ -678,7 +549,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_3'
+                $ref: '#/components/schemas/inline_response_200_2'
           description: Analyzer is responding with a list of all currently activated
             events
         "400":
@@ -688,27 +559,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -728,7 +578,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/inline_response_200_2'
+                $ref: '#/components/schemas/inline_response_200_1'
           description: Analyzer is responding with its status
         "400":
           content:
@@ -737,27 +587,6 @@ paths:
                 $ref: '#/components/schemas/inline_response_400'
           description: This response is sent to a request that violates the predefined
             request schema
-        "404":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to a request to a server endpoint that
-            is not defined
-        "405":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request sent to a valid location
-            but with an method that is not supported
-        "500":
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/inline_response_400'
-          description: This response is sent to any request whose subsequent server
-            response violates the predefined response schema
         "503":
           content:
             application/json:
@@ -828,14 +657,25 @@ components:
           schema:
             $ref: '#/components/schemas/inline_object'
       required: true
-  responses:
-    measurement_status:
+    inline_object_4:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_200'
-      description: This response is sent to notify the HUB of the status of a measurement
-        that was requested to start, cancel, or whose status is being queried
+            $ref: '#/components/schemas/inline_object_4'
+      required: true
+    inline_object_3:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_3'
+      required: true
+    inline_object_2:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/inline_object_2'
+      required: true
+  responses:
     "400_bad_request":
       content:
         application/json:
@@ -847,21 +687,63 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_400'
+            properties:
+              detail:
+                $ref: '#/components/schemas/error_detail'
+              status:
+                $ref: '#/components/schemas/error_status'
+              title:
+                $ref: '#/components/schemas/error_title'
+              type:
+                $ref: '#/components/schemas/error_type'
+            required:
+            - detail
+            - status
+            - title
+            - type
+            type: object
       description: This response is sent to a request to a server endpoint that is
         not defined
     "405_method_not_allowed":
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_400'
+            properties:
+              detail:
+                $ref: '#/components/schemas/error_detail'
+              status:
+                $ref: '#/components/schemas/error_status'
+              title:
+                $ref: '#/components/schemas/error_title'
+              type:
+                $ref: '#/components/schemas/error_type'
+            required:
+            - detail
+            - status
+            - title
+            - type
+            type: object
       description: This response is sent to any request sent to a valid location but
         with an method that is not supported
     "500_bad_request":
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/inline_response_400'
+            properties:
+              detail:
+                $ref: '#/components/schemas/error_detail'
+              status:
+                $ref: '#/components/schemas/error_status'
+              title:
+                $ref: '#/components/schemas/error_title'
+              type:
+                $ref: '#/components/schemas/error_type'
+            required:
+            - detail
+            - status
+            - title
+            - type
+            type: object
       description: This response is sent to any request whose subsequent server response
         violates the predefined response schema
     "503_service_unavailable":
@@ -911,6 +793,20 @@ components:
         error
       title: type
       type: string
+    channel:
+      description: The functional grouping of the message
+      type: string
+    message:
+      description: The name of the message that indicates the specific function
+      type: string
+    correlation_id:
+      description: A unique ID that can be used to correlate messages being sent and
+        received
+      type: string
+    payload:
+      description: This object serves as a wrapper for all data being sent in this
+        message
+      type: object
     consumable_name:
       description: A descriptive name of the consumable that can be used to uniquely
         identify it
@@ -921,8 +817,8 @@ components:
       example:
         result: Failed
         consumable_name: consumable_name
-        start_date_and_time: 05-05-2021 22:07:04
-        end_date_and_time: 05-05-2021 22:07:55
+        start_datetime: 2020-11-05T13:15:30Z
+        end_datetime: 2020-12-02T14:29:27Z
         test_results: '{}'
         duration_sec: 800.7481076419654
       properties:
@@ -931,17 +827,18 @@ components:
             identify it
           title: consumable_name
           type: string
-        start_date_and_time:
-          description: The local date and time the measurement was started in format
-            MM-DD-YYYY HH:MM:SS
-          example: 05-05-2021 22:07:04
-          title: start_date_and_time
+        start_datetime:
+          description: The date and time the measurement was started in date-time
+            format
+          example: 2020-11-05T13:15:30Z
+          format: date-time
+          title: start_datetime
           type: string
-        end_date_and_time:
-          description: The local date and time the measurement ended in format MM-DD-YYYY
-            HH:MM:SS
-          example: 05-05-2021 22:07:55
-          title: end_date_and_time
+        end_datetime:
+          description: The date and time the measurement ended in date-time format
+          example: 2020-12-02T14:29:27Z
+          format: date-time
+          title: end_datetime
           type: string
         duration_sec:
           description: The number of seconds the measurement took from start to end
@@ -964,31 +861,6 @@ components:
           type: object
       title: measurement_result
       type: object
-    measurement_id:
-      description: The ID value for a measurement
-      title: measurement_id
-      type: string
-    elapsed_time_msec:
-      description: The time the operation has taken so far
-      minimum: 0
-      title: elapsed_time_msec
-      type: number
-    measurement_status:
-      description: The status of the measurement
-      enum:
-      - Initializing
-      - Running
-      - Aborted
-      - Stopping
-      - Complete
-      title: measurement_status
-      type: string
-    status_detail:
-      description: Additional information in plain text that describes the value status
-        of the analyzer.  If no additional detail is available or necessary, this
-        will be an empty string
-      title: status_detail
-      type: string
     event_info:
       description: This object will contain information about an event that occurred
       example:
@@ -1059,36 +931,6 @@ components:
       required:
       - script
       type: object
-    inline_response_200:
-      example:
-        measurement_id: measurement_id
-        elapsed_time_msec: 0.08008281904610115
-        status_detail: status_detail
-      properties:
-        measurement_id:
-          description: The ID value for a measurement
-          title: measurement_id
-          type: string
-        elapsed_time_msec:
-          description: The time the operation has taken so far
-          minimum: 0
-          title: elapsed_time_msec
-          type: number
-        measurement_status:
-          $ref: '#/components/schemas/measurement_status'
-        status_detail:
-          description: Additional information in plain text that describes the value
-            status of the analyzer.  If no additional detail is available or necessary,
-            this will be an empty string
-          title: status_detail
-          type: string
-      required:
-      - elapsed_time_msec
-      - measurement_id
-      - measurement_status
-      - status_detail
-      title: inline_response_200
-      type: object
     inline_object_1:
       properties:
         filename:
@@ -1098,19 +940,19 @@ components:
       required:
       - filename
       type: object
-    inline_response_200_1:
+    inline_response_200:
       example:
         measurement_results:
         - result: Failed
           consumable_name: consumable_name
-          start_date_and_time: 05-05-2021 22:07:04
-          end_date_and_time: 05-05-2021 22:07:55
+          start_datetime: 2020-11-05T13:15:30Z
+          end_datetime: 2020-12-02T14:29:27Z
           test_results: '{}'
           duration_sec: 800.7481076419654
         - result: Failed
           consumable_name: consumable_name
-          start_date_and_time: 05-05-2021 22:07:04
-          end_date_and_time: 05-05-2021 22:07:55
+          start_datetime: 2020-11-05T13:15:30Z
+          end_datetime: 2020-12-02T14:29:27Z
           test_results: '{}'
           duration_sec: 800.7481076419654
       properties:
@@ -1124,9 +966,9 @@ components:
           type: array
       required:
       - measurement_results
-      title: inline_response_200_1
+      title: inline_response_200
       type: object
-    inline_response_200_2:
+    inline_response_200_1:
       example:
         status: NotReady
       properties:
@@ -1143,9 +985,9 @@ components:
           type: string
       required:
       - status
-      title: inline_response_200_2
+      title: inline_response_200_1
       type: object
-    inline_response_200_3:
+    inline_response_200_2:
       example:
         currently_activated_events:
         - severity: Notification
@@ -1165,5 +1007,43 @@ components:
           type: array
       required:
       - currently_activated_events
-      title: inline_response_200_3
+      title: inline_response_200_2
+      type: object
+    inline_object_2:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          type: string
+        option_chosen:
+          description: The option chosen by the operator
+          example: "Yes"
+          type: string
+      required:
+      - correlation_id
+      - option_chosen
+      type: object
+    inline_object_3:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          type: string
+      required:
+      - correlation_id
+      type: object
+    inline_object_4:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          type: string
+        qr_contents:
+          description: The contents of the QR that was scanned.  If scanning failed
+            or was cancelled by operator, this will be an empty string
+          example: '{"exp":"2022-05-27","name":"c","lot":"088222","data":"12.34"}'
+          type: string
+      required:
+      - correlation_id
+      - qr_contents
       type: object

@@ -17,9 +17,10 @@ from __future__ import absolute_import
 __version__ = "1.0.0"
 
 # import apis into sdk package
-from openapi_client.api.configuration_api import ConfigurationApi
+from openapi_client.api.configuration_channel_api import ConfigurationChannelApi
 from openapi_client.api.control_channel_api import ControlChannelApi
 from openapi_client.api.measurement_channel_api import MeasurementChannelApi
+from openapi_client.api.prompts_channel_api import PromptsChannelApi
 from openapi_client.api.status_channel_api import StatusChannelApi
 
 # import ApiClient
@@ -36,11 +37,12 @@ from openapi_client.models.analyzer_type import AnalyzerType
 from openapi_client.models.event_info import EventInfo
 from openapi_client.models.inline_object import InlineObject
 from openapi_client.models.inline_object1 import InlineObject1
+from openapi_client.models.inline_object2 import InlineObject2
+from openapi_client.models.inline_object3 import InlineObject3
+from openapi_client.models.inline_object4 import InlineObject4
 from openapi_client.models.inline_response200 import InlineResponse200
 from openapi_client.models.inline_response2001 import InlineResponse2001
 from openapi_client.models.inline_response2002 import InlineResponse2002
-from openapi_client.models.inline_response2003 import InlineResponse2003
 from openapi_client.models.inline_response400 import InlineResponse400
 from openapi_client.models.measurement_result import MeasurementResult
-from openapi_client.models.measurement_status import MeasurementStatus
 

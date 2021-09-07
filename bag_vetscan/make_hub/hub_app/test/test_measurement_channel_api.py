@@ -28,14 +28,8 @@ class TestMeasurementChannelApi(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test_channel_measurement_get_measurement_status(self):
-        """Test case for channel_measurement_get_measurement_status
-
-        """
-        pass
-
-    def test_measurement_cancel_delete(self):
-        """Test case for measurement_cancel_delete
+    def test_measurement_cancel_post(self):
+        """Test case for measurement_cancel_post
 
         """
         pass
@@ -52,14 +46,14 @@ class TestMeasurementChannelApi(unittest.TestCase):
         """
         pass
 
-    def test_measurement_past_results_get(self):
-        """Test case for measurement_past_results_get
+    def test_measurement_results_get(self):
+        """Test case for measurement_results_get
 
         """
         pass
 
-    def test_measurement_result_get(self):
-        """Test case for measurement_result_get
+    def test_measurement_results_latest_get(self):
+        """Test case for measurement_results_latest_get
 
         """
         pass

@@ -88,8 +88,7 @@ declare -a arrFiles=(
 	"openapi_server/models/measurement_result.py;openapi_server/models/measurement_result.py"
 	"openapi_server/models/event_info.py;openapi_server/models/event_info.py"
 	"openapi_server/models/inline_response2001.py;openapi_server/models/inline_response2001.py"
-	"openapi_server/models/inline_response200.py;openapi_server/models/inline_response200.py"
-	"openapi_server/models/measurement_status.py;openapi_server/models/measurement_status.py")
+	"openapi_server/models/inline_response200.py;openapi_server/models/inline_response200.py")
 
 ## now loop through the above array
 for files in "${arrFiles[@]}"

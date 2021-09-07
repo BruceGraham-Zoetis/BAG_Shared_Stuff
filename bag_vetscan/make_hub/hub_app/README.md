@@ -68,12 +68,12 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient(configuration) as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ConfigurationApi(api_client)
+    api_instance = openapi_client.ConfigurationChannelApi(api_client)
     
     try:
         api_instance.configuration_factory_reset_put()
     except ApiException as e:
-        print("Exception when calling ConfigurationApi->configuration_factory_reset_put: %s\n" % e)
+        print("Exception when calling ConfigurationChannelApi->configuration_factory_reset_put: %s\n" % e)
     
 ```
 
@@ -83,22 +83,23 @@ All URIs are relative to *http://localhost*
 
 Class | Method | HTTP request | Description
 ------------ | ------------- | ------------- | -------------
-*ConfigurationApi* | [**configuration_factory_reset_put**](docs/ConfigurationApi.md#configuration_factory_reset_put) | **PUT** /configuration/factory_reset | 
-*ConfigurationApi* | [**configuration_get**](docs/ConfigurationApi.md#configuration_get) | **GET** /configuration | 
-*ConfigurationApi* | [**configuration_put**](docs/ConfigurationApi.md#configuration_put) | **PUT** /configuration | 
-*ConfigurationApi* | [**configuration_schema_get**](docs/ConfigurationApi.md#configuration_schema_get) | **GET** /configuration/schema | 
+*ConfigurationChannelApi* | [**configuration_factory_reset_put**](docs/ConfigurationChannelApi.md#configuration_factory_reset_put) | **PUT** /configuration/factory_reset | 
+*ConfigurationChannelApi* | [**configuration_get**](docs/ConfigurationChannelApi.md#configuration_get) | **GET** /configuration | 
+*ConfigurationChannelApi* | [**configuration_put**](docs/ConfigurationChannelApi.md#configuration_put) | **PUT** /configuration | 
+*ConfigurationChannelApi* | [**configuration_schema_get**](docs/ConfigurationChannelApi.md#configuration_schema_get) | **GET** /configuration/schema | 
 *ControlChannelApi* | [**control_light_blink_put**](docs/ControlChannelApi.md#control_light_blink_put) | **PUT** /control/light/blink | 
-*ControlChannelApi* | [**control_light_off_put**](docs/ControlChannelApi.md#control_light_off_put) | **PUT** /control/light/off | 
 *ControlChannelApi* | [**control_power_off_put**](docs/ControlChannelApi.md#control_power_off_put) | **PUT** /control/power/off | 
 *ControlChannelApi* | [**control_power_reboot_put**](docs/ControlChannelApi.md#control_power_reboot_put) | **PUT** /control/power/reboot | 
-*MeasurementChannelApi* | [**channel_measurement_get_measurement_status**](docs/MeasurementChannelApi.md#channel_measurement_get_measurement_status) | **GET** /measurement/status | 
-*MeasurementChannelApi* | [**measurement_cancel_delete**](docs/MeasurementChannelApi.md#measurement_cancel_delete) | **DELETE** /measurement/cancel | 
+*MeasurementChannelApi* | [**measurement_cancel_post**](docs/MeasurementChannelApi.md#measurement_cancel_post) | **POST** /measurement/cancel | 
 *MeasurementChannelApi* | [**measurement_consumable_consumable_uuid_post**](docs/MeasurementChannelApi.md#measurement_consumable_consumable_uuid_post) | **POST** /measurement/consumable/{consumable_uuid} | 
 *MeasurementChannelApi* | [**measurement_file_post**](docs/MeasurementChannelApi.md#measurement_file_post) | **POST** /measurement/file | 
-*MeasurementChannelApi* | [**measurement_past_results_get**](docs/MeasurementChannelApi.md#measurement_past_results_get) | **GET** /measurement/past_results | 
-*MeasurementChannelApi* | [**measurement_result_get**](docs/MeasurementChannelApi.md#measurement_result_get) | **GET** /measurement/result | 
+*MeasurementChannelApi* | [**measurement_results_get**](docs/MeasurementChannelApi.md#measurement_results_get) | **GET** /measurement/results | 
+*MeasurementChannelApi* | [**measurement_results_latest_get**](docs/MeasurementChannelApi.md#measurement_results_latest_get) | **GET** /measurement/results/latest | 
 *MeasurementChannelApi* | [**measurement_script_post**](docs/MeasurementChannelApi.md#measurement_script_post) | **POST** /measurement/script | 
 *MeasurementChannelApi* | [**measurement_supported_consumables_get**](docs/MeasurementChannelApi.md#measurement_supported_consumables_get) | **GET** /measurement/supported_consumables | 
+*PromptsChannelApi* | [**prompts_notification_ack_post**](docs/PromptsChannelApi.md#prompts_notification_ack_post) | **POST** /prompts/notification_ack | 
+*PromptsChannelApi* | [**prompts_option_chosen_post**](docs/PromptsChannelApi.md#prompts_option_chosen_post) | **POST** /prompts/option_chosen | 
+*PromptsChannelApi* | [**prompts_qr_scanned_post**](docs/PromptsChannelApi.md#prompts_qr_scanned_post) | **POST** /prompts/qr_scanned | 
 *StatusChannelApi* | [**status_currently_activated_events_get**](docs/StatusChannelApi.md#status_currently_activated_events_get) | **GET** /status/currently_activated_events | 
 *StatusChannelApi* | [**status_operational_get**](docs/StatusChannelApi.md#status_operational_get) | **GET** /status/operational | 
 
@@ -109,13 +110,14 @@ Class | Method | HTTP request | Description
  - [EventInfo](docs/EventInfo.md)
  - [InlineObject](docs/InlineObject.md)
  - [InlineObject1](docs/InlineObject1.md)
+ - [InlineObject2](docs/InlineObject2.md)
+ - [InlineObject3](docs/InlineObject3.md)
+ - [InlineObject4](docs/InlineObject4.md)
  - [InlineResponse200](docs/InlineResponse200.md)
  - [InlineResponse2001](docs/InlineResponse2001.md)
  - [InlineResponse2002](docs/InlineResponse2002.md)
- - [InlineResponse2003](docs/InlineResponse2003.md)
  - [InlineResponse400](docs/InlineResponse400.md)
  - [MeasurementResult](docs/MeasurementResult.md)
- - [MeasurementStatus](docs/MeasurementStatus.md)
 
 
 ## Documentation For Authorization

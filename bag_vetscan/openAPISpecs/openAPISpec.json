@@ -99,6 +99,22 @@
                 "type": "string",
                 "description": "Additional error information if available describing the type of error"
             },
+            "channel": {
+                "type": "string",
+                "description": "The functional grouping of the message"
+            },
+            "message": {
+                "type": "string",
+                "description": "The name of the message that indicates the specific function"
+            },
+            "correlation_id": {
+                "type": "string",
+                "description": "A unique ID that can be used to correlate messages being sent and received"
+            },
+            "payload": {
+                "type": "object",
+                "description": "This object serves as a wrapper for all data being sent in this message"
+            },
             "consumable_name": {
                 "type": "string",
                 "description": "A descriptive name of the consumable that can be used to uniquely identify it"
@@ -110,15 +126,17 @@
                     "consumable_name": {
                         "$ref": "#/components/schemas/consumable_name"
                     },
-                    "start_date_and_time": {
+                    "start_datetime": {
                         "type": "string",
-                        "description": "The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS",
-                        "example": "05-05-2021 22:07:04"
+                        "format": "date-time",
+                        "description": "The date and time the measurement was started in date-time format",
+                        "example": "2020-11-05T13:15:30Z"
                     },
-                    "end_date_and_time": {
+                    "end_datetime": {
                         "type": "string",
-                        "description": "The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS",
-                        "example": "05-05-2021 22:07:55"
+                        "format": "date-time",
+                        "description": "The date and time the measurement ended in date-time format",
+                        "example": "2020-12-02T14:29:27Z"
                     },
                     "duration_sec": {
                         "type": "number",
@@ -140,24 +158,6 @@
                         "description": "The test results.  Will need to flush this out as we go on as to what this looks like"
                     }
                 }
-            },
-            "measurement_id": {
-                "type": "string",
-                "description": "The ID value for a measurement"
-            },
-            "elapsed_time_msec": {
-                "type":  "number",
-                "description": "The time the operation has taken so far",
-                "minimum": 0
-            },
-            "measurement_status": {
-                "type": "string",
-                "description": "The status of the measurement",
-                "enum": ["Initializing", "Running", "Aborted", "Stopping", "Complete"]
-            },
-            "status_detail": {
-                "type": "string",
-                "description": "Additional information in plain text that describes the value status of the analyzer.  If no additional detail is available or necessary, this will be an empty string"
             },
             "event_info":{
                 "type": "object",
@@ -185,36 +185,6 @@
             }
         },
         "responses": {
-            "measurement_status": {
-                "description": "This response is sent to notify the HUB of the status of a measurement that was requested to start, cancel, or whose status is being queried",
-                "content": {
-                    "application/json": {
-                        "schema": {
-                            "type": "object",
-                            "properties": {
-                                "measurement_id":{
-                                    "$ref": "#/components/schemas/measurement_id"
-                                },
-                                "elapsed_time_msec":{
-                                    "$ref": "#/components/schemas/elapsed_time_msec"
-                                },
-                                "measurement_status":{
-                                    "$ref": "#/components/schemas/measurement_status"
-                                },
-                                "status_detail":{
-                                    "$ref": "#/components/schemas/status_detail"
-                                }
-                            },
-                            "required": [
-                                "measurement_id",
-                                "elapsed_time_msec",
-                                "measurement_status",
-                                "status_detail"
-                            ]
-                        }
-                    }
-                }
-            },
             "400_bad_request": {
                 "description": "This response is sent to a request that violates the predefined request schema",
                 "content": {
@@ -381,7 +351,7 @@
         "/configuration": {
             "get": {
                 "tags": [
-                    "Configuration"
+                    "Configuration Channel"
                 ],
                 "description": "Request the configuration from the analyzer",
                 "responses": {
@@ -399,7 +369,7 @@
             },
             "put": {
                 "tags": [
-                    "Configuration"
+                    "Configuration Channel"
                 ],
                 "description": "Set the configuration of the analyzer",
                 "requestBody": {
@@ -426,7 +396,7 @@
         "/configuration/schema": {
             "get": {
                 "tags": [
-                    "Configuration"
+                    "Configuration Channel"
                 ],
                 "description": "Request the configuration schema from the analyzer",
                 "responses": {
@@ -449,7 +419,7 @@
         "/configuration/factory_reset": {
             "put": {
                 "tags": [
-                    "Configuration"
+                    "Configuration Channel"
                 ],
                 "description": "Restore the analyzer to the state it was in when it left the factory. All settings and data are removed.",
                 "responses": {
@@ -468,34 +438,6 @@
                 "responses": {
                     "200": {
                         "description": "Analyzer was successful blinking the light ring"
-                    },
-                    "503": {
-                        "$ref": "#/components/responses/503_service_unavailable"
-                    }
-                }
-            }
-        },
-        "/control/light/off": {
-            "put": {
-                "tags": [
-                    "Control Channel"
-                ],
-                "description": "Cause an analyzer to turn off its light ring.",
-                "responses": {
-                    "200": {
-                        "description": "Analyzer was successful the light ring is off as requested by the HUB"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -630,19 +572,10 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/measurement_status"
+                        "description": "Analyzer successfully began measurement"
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -677,19 +610,10 @@
                 },
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/measurement_status"
+                        "description": "Analyzer successfully began measurement"
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -699,12 +623,13 @@
         },
         "/measurement/consumable/{consumable_uuid}": {
             "parameters": [
-                {"name": "consumable_uuid",
-                "description": "The UUID of the consumable",
-                "in" :"path",
-                "required": true,
-                "schema" : { "type" : "string", "format": "UUID"}
-            }
+                {
+                    "name": "consumable_uuid",
+                    "description": "The UUID of the consumable",
+                    "in" :"path",
+                    "required": true,
+                    "schema" : { "type" : "string", "format": "UUID"}
+                }
             ],
             "post": {
                 "tags": [
@@ -713,19 +638,10 @@
                 "description": "Start an analyzer measurement with a specific consumable",
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/measurement_status"
+                        "description": "Analyzer successfully began measurement"
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -733,53 +649,19 @@
                 }
             }
         },
-        "/measurement/status": {
-            "get": {
-                "operationId": "channel_measurement.get_measurement_status",
-                "tags": [
-                    "Measurement Channel"
-                ],
-                "description": "The HUB is requesting the analyzer return the status of the current measurement being performed",
-                "responses": {
-                    "200": {
-                        "$ref": "#/components/responses/measurement_status"
-                    },
-                    "400": {
-                        "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
-                    },
-                    "503": {
-                        "$ref": "#/components/responses/503_service_unavailable"
-                    }
-                }
-            }
-        },
+        
         "/measurement/cancel": {
-            "delete": {
+            "post": {
                 "tags": [
                     "Measurement Channel"
                 ],
                 "description": "The HUB is requesting the analyzer cancel the measurement that is currently being performed",
                 "responses": {
                     "200": {
-                        "$ref": "#/components/responses/measurement_status"
+                        "description": "Analyzer successfully began cancelling the measurement"
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -787,15 +669,15 @@
                 }
             }
         },
-        "/measurement/result": {
+        "/measurement/results/latest": {
             "get": {
                 "tags": [
                     "Measurement Channel"
                 ],
-                "description": "The HUB requests that the analyzer return the result of the most recent measurement performed",
+                "description": "The client requests that the analyzer return the result of the most recent measurement performed",
                 "responses": {
                     "200": {
-                        "description": "The analyzer is sending the HUB the results of the most recent measurement performed",
+                        "description": "The analyzer is sending the client the results of the most recent measurement performed",
                         "content": {
                             "application/json": {
                                 "schema": {
@@ -807,39 +689,34 @@
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
                     },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
-                    },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
                     }
                 }
             }
         },
-        "/measurement/past_results": {
+        "/measurement/results": {
             "get": {
                 "tags": [
                     "Measurement Channel"
                 ],
-                "description": "The HUB is requesting the analyzer send past results between two times",
+                "description": "The client is requesting the analyzer to send past results between two times",
                 "parameters": [
                     {
-                        "$ref": "#/components/parameters/start_time"
+                        "name" : "start_datetime",
+                        "in": "query",
+                        "allowEmptyValue": true,
+                        "required": false,
+                        "description": "The earliest result. If missing, the analyzer must return the results from as early as possible",
+                        "schema": {"type": "string", "format": "date-time"}
                     },
                     {
-                        "$ref": "#/components/parameters/start_date"
-                    },
-                    {
-                        "$ref": "#/components/parameters/end_time"
-                    },
-                    {
-                        "$ref": "#/components/parameters/end_date"
+                        "name" : "end_datetime",
+                        "in": "query",
+                        "allowEmptyValue": true,
+                        "required": false,
+                        "description": "The latest time for a result. If missing, the analyzer must return all results from 'from' untill present time.",
+                        "schema": {"type": "string", "format": "date-time"}
                     }
                 ],
                 "responses": {
@@ -867,15 +744,6 @@
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
-                    },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
@@ -920,15 +788,6 @@
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
                     },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
-                    },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
-                    },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
-                    },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"
                     }
@@ -967,14 +826,128 @@
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
                     },
-                    "404": {
-                        "$ref": "#/components/responses/404_bad_request"
+                    "503": {
+                        "$ref": "#/components/responses/503_service_unavailable"
+                    }
+                }
+            }
+        },
+        "/prompts/option_chosen":{
+            "post": {
+                "tags": [
+                    "Prompts Channel"
+                ],
+                "description": "Hub is informing the analyzer of an option that was made by the operator in response to a websocket message named choose_option on the prompts channel.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "correlation_id": {
+                                        "$ref": "#/components/schemas/correlation_id"
+                                    },
+                                    "option_chosen": {
+                                        "type": "string",
+                                        "description": "The option chosen by the operator",
+                                        "example": "Yes"
+                                    }
+                                },
+                                "required": [
+                                    "correlation_id",
+                                    "option_chosen"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Hub received chosen option successfully"
                     },
-                    "405": {
-                        "$ref": "#/components/responses/405_method_not_allowed"
+                    "400": {
+                        "$ref": "#/components/responses/400_bad_request"
                     },
-                    "500": {
-                        "$ref": "#/components/responses/500_bad_request"
+                    "503": {
+                        "$ref": "#/components/responses/503_service_unavailable"
+                    }
+                }
+            }
+        },
+        "/prompts/notification_ack":{
+            "post": {
+                "tags": [
+                    "Prompts Channel"
+                ],
+                "description": "Hub is informing the analyzer a notification was acknowledged by the operator in response to a websocket message named notification on the prompts channel.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "correlation_id": {
+                                        "$ref": "#/components/schemas/correlation_id"
+                                    }
+                                },
+                                "required": [
+                                    "correlation_id"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Hub received message successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_bad_request"
+                    },
+                    "503": {
+                        "$ref": "#/components/responses/503_service_unavailable"
+                    }
+                }
+            }
+        },
+        "/prompts/qr_scanned":{
+            "post": {
+                "tags": [
+                    "Prompts Channel"
+                ],
+                "description": "Hub is informing the analyzer of a QR scan attempt in response to a websocket message named scan_qr on the prompts channel.",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "correlation_id": {
+                                        "$ref": "#/components/schemas/correlation_id"
+                                    },
+                                    "qr_contents": {
+                                        "type": "string",
+                                        "description": "The contents of the QR that was scanned.  If scanning failed or was cancelled by operator, this will be an empty string",
+                                        "example": "{\"exp\":\"2022-05-27\",\"name\":\"c\",\"lot\":\"088222\",\"data\":\"12.34\"}"
+                                    }
+                                },
+                                "required": [
+                                    "correlation_id",
+                                    "qr_contents"
+                                ]
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Hub received message successfully"
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400_bad_request"
                     },
                     "503": {
                         "$ref": "#/components/responses/503_service_unavailable"

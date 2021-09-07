@@ -28,21 +28,6 @@ class TestControlChannelController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def test_control_light_off_put(self):
-        """Test case for control_light_off_put
-
-        
-        """
-        headers = { 
-            'Accept': 'application/json',
-        }
-        response = self.client.open(
-            '/control/light/off',
-            method='PUT',
-            headers=headers)
-        self.assert200(response,
-                       'Response body is : ' + response.data.decode('utf-8'))
-
     def test_control_power_off_put(self):
         """Test case for control_power_off_put
 

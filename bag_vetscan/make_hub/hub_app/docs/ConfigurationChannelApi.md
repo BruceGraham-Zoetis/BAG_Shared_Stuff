@@ -1,13 +1,13 @@
-# openapi_client.ConfigurationApi
+# openapi_client.ConfigurationChannelApi
 
 All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**configuration_factory_reset_put**](ConfigurationApi.md#configuration_factory_reset_put) | **PUT** /configuration/factory_reset | 
-[**configuration_get**](ConfigurationApi.md#configuration_get) | **GET** /configuration | 
-[**configuration_put**](ConfigurationApi.md#configuration_put) | **PUT** /configuration | 
-[**configuration_schema_get**](ConfigurationApi.md#configuration_schema_get) | **GET** /configuration/schema | 
+[**configuration_factory_reset_put**](ConfigurationChannelApi.md#configuration_factory_reset_put) | **PUT** /configuration/factory_reset | 
+[**configuration_get**](ConfigurationChannelApi.md#configuration_get) | **GET** /configuration | 
+[**configuration_put**](ConfigurationChannelApi.md#configuration_put) | **PUT** /configuration | 
+[**configuration_schema_get**](ConfigurationChannelApi.md#configuration_schema_get) | **GET** /configuration/schema | 
 
 
 # **configuration_factory_reset_put**
@@ -35,12 +35,12 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ConfigurationApi(api_client)
+    api_instance = openapi_client.ConfigurationChannelApi(api_client)
     
     try:
         api_instance.configuration_factory_reset_put()
     except ApiException as e:
-        print("Exception when calling ConfigurationApi->configuration_factory_reset_put: %s\n" % e)
+        print("Exception when calling ConfigurationChannelApi->configuration_factory_reset_put: %s\n" % e)
 ```
 
 ### Parameters
@@ -91,13 +91,13 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ConfigurationApi(api_client)
+    api_instance = openapi_client.ConfigurationChannelApi(api_client)
     
     try:
         api_response = api_instance.configuration_get()
         pprint(api_response)
     except ApiException as e:
-        print("Exception when calling ConfigurationApi->configuration_get: %s\n" % e)
+        print("Exception when calling ConfigurationChannelApi->configuration_get: %s\n" % e)
 ```
 
 ### Parameters
@@ -148,13 +148,13 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ConfigurationApi(api_client)
+    api_instance = openapi_client.ConfigurationChannelApi(api_client)
     body = None # object | 
 
     try:
         api_instance.configuration_put(body)
     except ApiException as e:
-        print("Exception when calling ConfigurationApi->configuration_put: %s\n" % e)
+        print("Exception when calling ConfigurationChannelApi->configuration_put: %s\n" % e)
 ```
 
 ### Parameters
@@ -209,13 +209,13 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ConfigurationApi(api_client)
+    api_instance = openapi_client.ConfigurationChannelApi(api_client)
     
     try:
         api_response = api_instance.configuration_schema_get()
         pprint(api_response)
     except ApiException as e:
-        print("Exception when calling ConfigurationApi->configuration_schema_get: %s\n" % e)
+        print("Exception when calling ConfigurationChannelApi->configuration_schema_get: %s\n" % e)
 ```
 
 ### Parameters

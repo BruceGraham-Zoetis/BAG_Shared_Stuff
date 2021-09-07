@@ -6,8 +6,8 @@ import unittest
 from flask import json
 from six import BytesIO
 
+from openapi_server.models.inline_response2001 import InlineResponse2001  # noqa: E501
 from openapi_server.models.inline_response2002 import InlineResponse2002  # noqa: E501
-from openapi_server.models.inline_response2003 import InlineResponse2003  # noqa: E501
 from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
 from openapi_server.test import BaseTestCase
 

@@ -1,20 +1,20 @@
-# openapi_client.ControlChannelApi
+# openapi_client.PromptsChannelApi
 
 All URIs are relative to *http://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**control_light_blink_put**](ControlChannelApi.md#control_light_blink_put) | **PUT** /control/light/blink | 
-[**control_power_off_put**](ControlChannelApi.md#control_power_off_put) | **PUT** /control/power/off | 
-[**control_power_reboot_put**](ControlChannelApi.md#control_power_reboot_put) | **PUT** /control/power/reboot | 
+[**prompts_notification_ack_post**](PromptsChannelApi.md#prompts_notification_ack_post) | **POST** /prompts/notification_ack | 
+[**prompts_option_chosen_post**](PromptsChannelApi.md#prompts_option_chosen_post) | **POST** /prompts/option_chosen | 
+[**prompts_qr_scanned_post**](PromptsChannelApi.md#prompts_qr_scanned_post) | **POST** /prompts/qr_scanned | 
 
 
-# **control_light_blink_put**
-> control_light_blink_put()
+# **prompts_notification_ack_post**
+> prompts_notification_ack_post(inline_object3)
 
 
 
-Cause an analyzer to blink its light ring.  The purpose of this is to identify an analyzer. If you have multiple analyzers of the same kind it is nice to have a way to get a visual que which is which instead of having to read the serial number of each analyzer to identify it.
+Hub is informing the analyzer a notification was acknowledged by the operator in response to a websocket message named notification on the prompts channel.
 
 ### Example
 
@@ -34,16 +34,20 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ControlChannelApi(api_client)
-    
+    api_instance = openapi_client.PromptsChannelApi(api_client)
+    inline_object3 = openapi_client.InlineObject3() # InlineObject3 | 
+
     try:
-        api_instance.control_light_blink_put()
+        api_instance.prompts_notification_ack_post(inline_object3)
     except ApiException as e:
-        print("Exception when calling ControlChannelApi->control_light_blink_put: %s\n" % e)
+        print("Exception when calling PromptsChannelApi->prompts_notification_ack_post: %s\n" % e)
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **inline_object3** | [**InlineObject3**](InlineObject3.md)|  | 
 
 ### Return type
 
@@ -55,23 +59,24 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
+ - **Content-Type**: application/json
  - **Accept**: application/json
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Analyzer was successful blinking the light ring |  -  |
+**200** | Hub received message successfully |  -  |
+**400** | This response is sent to a request that violates the predefined request schema |  -  |
 **503** | This response is sent to any request that the analyzer is unable to do at the time |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **control_power_off_put**
-> control_power_off_put()
+# **prompts_option_chosen_post**
+> prompts_option_chosen_post(inline_object2)
 
 
 
-Go from a state of powered to no power. This behavior of this action will depend on what a particular analyzer supports. If it doesn't support power off, go to 'deep sleep' mode
+Hub is informing the analyzer of an option that was made by the operator in response to a websocket message named choose_option on the prompts channel.
 
 ### Example
 
@@ -91,16 +96,20 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ControlChannelApi(api_client)
-    
+    api_instance = openapi_client.PromptsChannelApi(api_client)
+    inline_object2 = openapi_client.InlineObject2() # InlineObject2 | 
+
     try:
-        api_instance.control_power_off_put()
+        api_instance.prompts_option_chosen_post(inline_object2)
     except ApiException as e:
-        print("Exception when calling ControlChannelApi->control_power_off_put: %s\n" % e)
+        print("Exception when calling PromptsChannelApi->prompts_option_chosen_post: %s\n" % e)
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **inline_object2** | [**InlineObject2**](InlineObject2.md)|  | 
 
 ### Return type
 
@@ -112,22 +121,24 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Analyzer successfully began to power off or go to sleep |  -  |
+**200** | Hub received chosen option successfully |  -  |
+**400** | This response is sent to a request that violates the predefined request schema |  -  |
+**503** | This response is sent to any request that the analyzer is unable to do at the time |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
-# **control_power_reboot_put**
-> control_power_reboot_put()
+# **prompts_qr_scanned_post**
+> prompts_qr_scanned_post(inline_object4)
 
 
 
-Request sent from a client to reboot the analyzer (power off and power back on), leaving all settings and data intact
+Hub is informing the analyzer of a QR scan attempt in response to a websocket message named scan_qr on the prompts channel.
 
 ### Example
 
@@ -147,16 +158,20 @@ configuration = openapi_client.Configuration(
 # Enter a context with an instance of the API client
 with openapi_client.ApiClient() as api_client:
     # Create an instance of the API class
-    api_instance = openapi_client.ControlChannelApi(api_client)
-    
+    api_instance = openapi_client.PromptsChannelApi(api_client)
+    inline_object4 = openapi_client.InlineObject4() # InlineObject4 | 
+
     try:
-        api_instance.control_power_reboot_put()
+        api_instance.prompts_qr_scanned_post(inline_object4)
     except ApiException as e:
-        print("Exception when calling ControlChannelApi->control_power_reboot_put: %s\n" % e)
+        print("Exception when calling PromptsChannelApi->prompts_qr_scanned_post: %s\n" % e)
 ```
 
 ### Parameters
-This endpoint does not need any parameter.
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **inline_object4** | [**InlineObject4**](InlineObject4.md)|  | 
 
 ### Return type
 
@@ -168,13 +183,15 @@ No authorization required
 
 ### HTTP request headers
 
- - **Content-Type**: Not defined
- - **Accept**: Not defined
+ - **Content-Type**: application/json
+ - **Accept**: application/json
 
 ### HTTP response details
 | Status code | Description | Response headers |
 |-------------|-------------|------------------|
-**200** | Analyzer successfully initiated a reboot |  -  |
+**200** | Hub received message successfully |  -  |
+**400** | This response is sent to a request that violates the predefined request schema |  -  |
+**503** | This response is sent to any request that the analyzer is unable to do at the time |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 

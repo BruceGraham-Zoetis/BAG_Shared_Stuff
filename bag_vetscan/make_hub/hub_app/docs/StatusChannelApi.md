@@ -9,7 +9,7 @@ Method | HTTP request | Description
 
 
 # **status_currently_activated_events_get**
-> InlineResponse2003 status_currently_activated_events_get()
+> InlineResponse2002 status_currently_activated_events_get()
 
 
 
@@ -47,7 +47,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**InlineResponse2003**](InlineResponse2003.md)
+[**InlineResponse2002**](InlineResponse2002.md)
 
 ### Authorization
 
@@ -63,15 +63,12 @@ No authorization required
 |-------------|-------------|------------------|
 **200** | Analyzer is responding with a list of all currently activated events |  -  |
 **400** | This response is sent to a request that violates the predefined request schema |  -  |
-**404** | This response is sent to a request to a server endpoint that is not defined |  -  |
-**405** | This response is sent to any request sent to a valid location but with an method that is not supported |  -  |
-**500** | This response is sent to any request whose subsequent server response violates the predefined response schema |  -  |
 **503** | This response is sent to any request that the analyzer is unable to do at the time |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 # **status_operational_get**
-> InlineResponse2002 status_operational_get()
+> InlineResponse2001 status_operational_get()
 
 
 
@@ -109,7 +106,7 @@ This endpoint does not need any parameter.
 
 ### Return type
 
-[**InlineResponse2002**](InlineResponse2002.md)
+[**InlineResponse2001**](InlineResponse2001.md)
 
 ### Authorization
 
@@ -125,9 +122,6 @@ No authorization required
 |-------------|-------------|------------------|
 **200** | Analyzer is responding with its status |  -  |
 **400** | This response is sent to a request that violates the predefined request schema |  -  |
-**404** | This response is sent to a request to a server endpoint that is not defined |  -  |
-**405** | This response is sent to any request sent to a valid location but with an method that is not supported |  -  |
-**500** | This response is sent to any request whose subsequent server response violates the predefined response schema |  -  |
 **503** | This response is sent to any request that the analyzer is unable to do at the time |  -  |
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

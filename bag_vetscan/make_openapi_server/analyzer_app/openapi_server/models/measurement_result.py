@@ -15,15 +15,15 @@ class MeasurementResult(Model):
     Do not edit the class manually.
     """
 
-    def __init__(self, consumable_name=None, start_date_and_time=None, end_date_and_time=None, duration_sec=None, result=None, test_results=None):  # noqa: E501
+    def __init__(self, consumable_name=None, start_datetime=None, end_datetime=None, duration_sec=None, result=None, test_results=None):  # noqa: E501
         """MeasurementResult - a model defined in OpenAPI
 
         :param consumable_name: The consumable_name of this MeasurementResult.  # noqa: E501
         :type consumable_name: str
-        :param start_date_and_time: The start_date_and_time of this MeasurementResult.  # noqa: E501
-        :type start_date_and_time: str
-        :param end_date_and_time: The end_date_and_time of this MeasurementResult.  # noqa: E501
-        :type end_date_and_time: str
+        :param start_datetime: The start_datetime of this MeasurementResult.  # noqa: E501
+        :type start_datetime: datetime
+        :param end_datetime: The end_datetime of this MeasurementResult.  # noqa: E501
+        :type end_datetime: datetime
         :param duration_sec: The duration_sec of this MeasurementResult.  # noqa: E501
         :type duration_sec: float
         :param result: The result of this MeasurementResult.  # noqa: E501
@@ -33,8 +33,8 @@ class MeasurementResult(Model):
         """
         self.openapi_types = {
             'consumable_name': str,
-            'start_date_and_time': str,
-            'end_date_and_time': str,
+            'start_datetime': datetime,
+            'end_datetime': datetime,
             'duration_sec': float,
             'result': str,
             'test_results': object
@@ -42,16 +42,16 @@ class MeasurementResult(Model):
 
         self.attribute_map = {
             'consumable_name': 'consumable_name',
-            'start_date_and_time': 'start_date_and_time',
-            'end_date_and_time': 'end_date_and_time',
+            'start_datetime': 'start_datetime',
+            'end_datetime': 'end_datetime',
             'duration_sec': 'duration_sec',
             'result': 'result',
             'test_results': 'test_results'
         }
 
         self._consumable_name = consumable_name
-        self._start_date_and_time = start_date_and_time
-        self._end_date_and_time = end_date_and_time
+        self._start_datetime = start_datetime
+        self._end_datetime = end_datetime
         self._duration_sec = duration_sec
         self._result = result
         self._test_results = test_results
@@ -91,50 +91,50 @@ class MeasurementResult(Model):
         self._consumable_name = consumable_name
 
     @property
-    def start_date_and_time(self):
-        """Gets the start_date_and_time of this MeasurementResult.
+    def start_datetime(self):
+        """Gets the start_datetime of this MeasurementResult.
 
-        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The date and time the measurement was started in date-time format  # noqa: E501
 
-        :return: The start_date_and_time of this MeasurementResult.
-        :rtype: str
+        :return: The start_datetime of this MeasurementResult.
+        :rtype: datetime
         """
-        return self._start_date_and_time
+        return self._start_datetime
 
-    @start_date_and_time.setter
-    def start_date_and_time(self, start_date_and_time):
-        """Sets the start_date_and_time of this MeasurementResult.
+    @start_datetime.setter
+    def start_datetime(self, start_datetime):
+        """Sets the start_datetime of this MeasurementResult.
 
-        The local date and time the measurement was started in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The date and time the measurement was started in date-time format  # noqa: E501
 
-        :param start_date_and_time: The start_date_and_time of this MeasurementResult.
-        :type start_date_and_time: str
+        :param start_datetime: The start_datetime of this MeasurementResult.
+        :type start_datetime: datetime
         """
 
-        self._start_date_and_time = start_date_and_time
+        self._start_datetime = start_datetime
 
     @property
-    def end_date_and_time(self):
-        """Gets the end_date_and_time of this MeasurementResult.
+    def end_datetime(self):
+        """Gets the end_datetime of this MeasurementResult.
 
-        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The date and time the measurement ended in date-time format  # noqa: E501
 
-        :return: The end_date_and_time of this MeasurementResult.
-        :rtype: str
+        :return: The end_datetime of this MeasurementResult.
+        :rtype: datetime
         """
-        return self._end_date_and_time
+        return self._end_datetime
 
-    @end_date_and_time.setter
-    def end_date_and_time(self, end_date_and_time):
-        """Sets the end_date_and_time of this MeasurementResult.
+    @end_datetime.setter
+    def end_datetime(self, end_datetime):
+        """Sets the end_datetime of this MeasurementResult.
 
-        The local date and time the measurement ended in format MM-DD-YYYY HH:MM:SS  # noqa: E501
+        The date and time the measurement ended in date-time format  # noqa: E501
 
-        :param end_date_and_time: The end_date_and_time of this MeasurementResult.
-        :type end_date_and_time: str
+        :param end_datetime: The end_datetime of this MeasurementResult.
+        :type end_datetime: datetime
         """
 
-        self._end_date_and_time = end_date_and_time
+        self._end_datetime = end_datetime
 
     @property
     def duration_sec(self):

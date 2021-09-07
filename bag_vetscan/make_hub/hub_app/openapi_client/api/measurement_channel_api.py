@@ -36,14 +36,14 @@ class MeasurementChannelApi(object):
             api_client = ApiClient()
         self.api_client = api_client
 
-    def channel_measurement_get_measurement_status(self, **kwargs):  # noqa: E501
-        """channel_measurement_get_measurement_status  # noqa: E501
+    def measurement_cancel_post(self, **kwargs):  # noqa: E501
+        """measurement_cancel_post  # noqa: E501
 
-        The HUB is requesting the analyzer return the status of the current measurement being performed  # noqa: E501
+        The HUB is requesting the analyzer cancel the measurement that is currently being performed  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.channel_measurement_get_measurement_status(async_req=True)
+        >>> thread = api.measurement_cancel_post(async_req=True)
         >>> result = thread.get()
 
         :param async_req: Whether to execute the request asynchronously.
@@ -59,19 +59,19 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse200
+        :rtype: None
         """
         kwargs['_return_http_data_only'] = True
-        return self.channel_measurement_get_measurement_status_with_http_info(**kwargs)  # noqa: E501
+        return self.measurement_cancel_post_with_http_info(**kwargs)  # noqa: E501
 
-    def channel_measurement_get_measurement_status_with_http_info(self, **kwargs):  # noqa: E501
-        """channel_measurement_get_measurement_status  # noqa: E501
+    def measurement_cancel_post_with_http_info(self, **kwargs):  # noqa: E501
+        """measurement_cancel_post  # noqa: E501
 
-        The HUB is requesting the analyzer return the status of the current measurement being performed  # noqa: E501
+        The HUB is requesting the analyzer cancel the measurement that is currently being performed  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.channel_measurement_get_measurement_status_with_http_info(async_req=True)
+        >>> thread = api.measurement_cancel_post_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req: Whether to execute the request asynchronously.
@@ -94,7 +94,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
+        :rtype: None
         """
 
         local_var_params = locals()
@@ -115,7 +115,7 @@ class MeasurementChannelApi(object):
             if key not in all_params:
                 raise ApiTypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method channel_measurement_get_measurement_status" % key
+                    " to method measurement_cancel_post" % key
                 )
             local_var_params[key] = val
         del local_var_params['kwargs']
@@ -139,145 +139,10 @@ class MeasurementChannelApi(object):
         # Authentication setting
         auth_settings = []  # noqa: E501
         
-        response_types_map = {
-            200: "InlineResponse200",
-            400: "InlineResponse400",
-            404: "InlineResponse400",
-            500: "InlineResponse400",
-            503: "InlineResponse400",
-        }
+        response_types_map = {}
 
         return self.api_client.call_api(
-            '/measurement/status', 'GET',
-            path_params,
-            query_params,
-            header_params,
-            body=body_params,
-            post_params=form_params,
-            files=local_var_files,
-            response_types_map=response_types_map,
-            auth_settings=auth_settings,
-            async_req=local_var_params.get('async_req'),
-            _return_http_data_only=local_var_params.get('_return_http_data_only'),  # noqa: E501
-            _preload_content=local_var_params.get('_preload_content', True),
-            _request_timeout=local_var_params.get('_request_timeout'),
-            collection_formats=collection_formats,
-            _request_auth=local_var_params.get('_request_auth'))
-
-    def measurement_cancel_delete(self, **kwargs):  # noqa: E501
-        """measurement_cancel_delete  # noqa: E501
-
-        The HUB is requesting the analyzer cancel the measurement that is currently being performed  # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.measurement_cancel_delete(async_req=True)
-        >>> result = thread.get()
-
-        :param async_req: Whether to execute the request asynchronously.
-        :type async_req: bool, optional
-        :param _preload_content: if False, the urllib3.HTTPResponse object will
-                                 be returned without reading/decoding response
-                                 data. Default is True.
-        :type _preload_content: bool, optional
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :return: Returns the result object.
-                 If the method is called asynchronously,
-                 returns the request thread.
-        :rtype: InlineResponse200
-        """
-        kwargs['_return_http_data_only'] = True
-        return self.measurement_cancel_delete_with_http_info(**kwargs)  # noqa: E501
-
-    def measurement_cancel_delete_with_http_info(self, **kwargs):  # noqa: E501
-        """measurement_cancel_delete  # noqa: E501
-
-        The HUB is requesting the analyzer cancel the measurement that is currently being performed  # noqa: E501
-        This method makes a synchronous HTTP request by default. To make an
-        asynchronous HTTP request, please pass async_req=True
-
-        >>> thread = api.measurement_cancel_delete_with_http_info(async_req=True)
-        >>> result = thread.get()
-
-        :param async_req: Whether to execute the request asynchronously.
-        :type async_req: bool, optional
-        :param _return_http_data_only: response data without head status code
-                                       and headers
-        :type _return_http_data_only: bool, optional
-        :param _preload_content: if False, the urllib3.HTTPResponse object will
-                                 be returned without reading/decoding response
-                                 data. Default is True.
-        :type _preload_content: bool, optional
-        :param _request_timeout: timeout setting for this request. If one
-                                 number provided, it will be total request
-                                 timeout. It can also be a pair (tuple) of
-                                 (connection, read) timeouts.
-        :param _request_auth: set to override the auth_settings for an a single
-                              request; this effectively ignores the authentication
-                              in the spec for a single request.
-        :type _request_auth: dict, optional
-        :return: Returns the result object.
-                 If the method is called asynchronously,
-                 returns the request thread.
-        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
-        """
-
-        local_var_params = locals()
-
-        all_params = [
-        ]
-        all_params.extend(
-            [
-                'async_req',
-                '_return_http_data_only',
-                '_preload_content',
-                '_request_timeout',
-                '_request_auth'
-            ]
-        )
-
-        for key, val in six.iteritems(local_var_params['kwargs']):
-            if key not in all_params:
-                raise ApiTypeError(
-                    "Got an unexpected keyword argument '%s'"
-                    " to method measurement_cancel_delete" % key
-                )
-            local_var_params[key] = val
-        del local_var_params['kwargs']
-
-        collection_formats = {}
-
-        path_params = {}
-
-        query_params = []
-
-        header_params = {}
-
-        form_params = []
-        local_var_files = {}
-
-        body_params = None
-        # HTTP header `Accept`
-        header_params['Accept'] = self.api_client.select_header_accept(
-            ['application/json'])  # noqa: E501
-
-        # Authentication setting
-        auth_settings = []  # noqa: E501
-        
-        response_types_map = {
-            200: "InlineResponse200",
-            400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
-            503: "InlineResponse400",
-        }
-
-        return self.api_client.call_api(
-            '/measurement/cancel', 'DELETE',
+            '/measurement/cancel', 'POST',
             path_params,
             query_params,
             header_params,
@@ -318,7 +183,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse200
+        :rtype: None
         """
         kwargs['_return_http_data_only'] = True
         return self.measurement_consumable_consumable_uuid_post_with_http_info(consumable_uuid, **kwargs)  # noqa: E501
@@ -355,7 +220,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
+        :rtype: None
         """
 
         local_var_params = locals()
@@ -407,14 +272,7 @@ class MeasurementChannelApi(object):
         # Authentication setting
         auth_settings = []  # noqa: E501
         
-        response_types_map = {
-            200: "InlineResponse200",
-            400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
-            503: "InlineResponse400",
-        }
+        response_types_map = {}
 
         return self.api_client.call_api(
             '/measurement/consumable/{consumable_uuid}', 'POST',
@@ -458,7 +316,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse200
+        :rtype: None
         """
         kwargs['_return_http_data_only'] = True
         return self.measurement_file_post_with_http_info(inline_object1, **kwargs)  # noqa: E501
@@ -495,7 +353,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
+        :rtype: None
         """
 
         local_var_params = locals()
@@ -551,14 +409,7 @@ class MeasurementChannelApi(object):
         # Authentication setting
         auth_settings = []  # noqa: E501
         
-        response_types_map = {
-            200: "InlineResponse200",
-            400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
-            503: "InlineResponse400",
-        }
+        response_types_map = {}
 
         return self.api_client.call_api(
             '/measurement/file', 'POST',
@@ -577,24 +428,20 @@ class MeasurementChannelApi(object):
             collection_formats=collection_formats,
             _request_auth=local_var_params.get('_request_auth'))
 
-    def measurement_past_results_get(self, start_time, start_date, end_time, end_date, **kwargs):  # noqa: E501
-        """measurement_past_results_get  # noqa: E501
+    def measurement_results_get(self, **kwargs):  # noqa: E501
+        """measurement_results_get  # noqa: E501
 
-        The HUB is requesting the analyzer send past results between two times  # noqa: E501
+        The client is requesting the analyzer to send past results between two times  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.measurement_past_results_get(start_time, start_date, end_time, end_date, async_req=True)
+        >>> thread = api.measurement_results_get(async_req=True)
         >>> result = thread.get()
 
-        :param start_time: The time to start looking for results to return (required)
-        :type start_time: str
-        :param start_date: The date to start looking for results to return (required)
-        :type start_date: str
-        :param end_time: The time to stop looking for results to return (required)
-        :type end_time: str
-        :param end_date: The date to stop looking for results to return (required)
-        :type end_date: str
+        :param start_datetime: The earliest result. If missing, the analyzer must return the results from as early as possible
+        :type start_datetime: datetime
+        :param end_datetime: The latest time for a result. If missing, the analyzer must return all results from 'from' untill present time.
+        :type end_datetime: datetime
         :param async_req: Whether to execute the request asynchronously.
         :type async_req: bool, optional
         :param _preload_content: if False, the urllib3.HTTPResponse object will
@@ -608,29 +455,25 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse2001
+        :rtype: InlineResponse200
         """
         kwargs['_return_http_data_only'] = True
-        return self.measurement_past_results_get_with_http_info(start_time, start_date, end_time, end_date, **kwargs)  # noqa: E501
+        return self.measurement_results_get_with_http_info(**kwargs)  # noqa: E501
 
-    def measurement_past_results_get_with_http_info(self, start_time, start_date, end_time, end_date, **kwargs):  # noqa: E501
-        """measurement_past_results_get  # noqa: E501
+    def measurement_results_get_with_http_info(self, **kwargs):  # noqa: E501
+        """measurement_results_get  # noqa: E501
 
-        The HUB is requesting the analyzer send past results between two times  # noqa: E501
+        The client is requesting the analyzer to send past results between two times  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.measurement_past_results_get_with_http_info(start_time, start_date, end_time, end_date, async_req=True)
+        >>> thread = api.measurement_results_get_with_http_info(async_req=True)
         >>> result = thread.get()
 
-        :param start_time: The time to start looking for results to return (required)
-        :type start_time: str
-        :param start_date: The date to start looking for results to return (required)
-        :type start_date: str
-        :param end_time: The time to stop looking for results to return (required)
-        :type end_time: str
-        :param end_date: The date to stop looking for results to return (required)
-        :type end_date: str
+        :param start_datetime: The earliest result. If missing, the analyzer must return the results from as early as possible
+        :type start_datetime: datetime
+        :param end_datetime: The latest time for a result. If missing, the analyzer must return all results from 'from' untill present time.
+        :type end_datetime: datetime
         :param async_req: Whether to execute the request asynchronously.
         :type async_req: bool, optional
         :param _return_http_data_only: response data without head status code
@@ -651,16 +494,14 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse2001, status_code(int), headers(HTTPHeaderDict))
+        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
         """
 
         local_var_params = locals()
 
         all_params = [
-            'start_time',
-            'start_date',
-            'end_time',
-            'end_date'
+            'start_datetime',
+            'end_datetime'
         ]
         all_params.extend(
             [
@@ -676,40 +517,20 @@ class MeasurementChannelApi(object):
             if key not in all_params:
                 raise ApiTypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method measurement_past_results_get" % key
+                    " to method measurement_results_get" % key
                 )
             local_var_params[key] = val
         del local_var_params['kwargs']
-        # verify the required parameter 'start_time' is set
-        if self.api_client.client_side_validation and ('start_time' not in local_var_params or  # noqa: E501
-                                                        local_var_params['start_time'] is None):  # noqa: E501
-            raise ApiValueError("Missing the required parameter `start_time` when calling `measurement_past_results_get`")  # noqa: E501
-        # verify the required parameter 'start_date' is set
-        if self.api_client.client_side_validation and ('start_date' not in local_var_params or  # noqa: E501
-                                                        local_var_params['start_date'] is None):  # noqa: E501
-            raise ApiValueError("Missing the required parameter `start_date` when calling `measurement_past_results_get`")  # noqa: E501
-        # verify the required parameter 'end_time' is set
-        if self.api_client.client_side_validation and ('end_time' not in local_var_params or  # noqa: E501
-                                                        local_var_params['end_time'] is None):  # noqa: E501
-            raise ApiValueError("Missing the required parameter `end_time` when calling `measurement_past_results_get`")  # noqa: E501
-        # verify the required parameter 'end_date' is set
-        if self.api_client.client_side_validation and ('end_date' not in local_var_params or  # noqa: E501
-                                                        local_var_params['end_date'] is None):  # noqa: E501
-            raise ApiValueError("Missing the required parameter `end_date` when calling `measurement_past_results_get`")  # noqa: E501
 
         collection_formats = {}
 
         path_params = {}
 
         query_params = []
-        if 'start_time' in local_var_params and local_var_params['start_time'] is not None:  # noqa: E501
-            query_params.append(('start_time', local_var_params['start_time']))  # noqa: E501
-        if 'start_date' in local_var_params and local_var_params['start_date'] is not None:  # noqa: E501
-            query_params.append(('start_date', local_var_params['start_date']))  # noqa: E501
-        if 'end_time' in local_var_params and local_var_params['end_time'] is not None:  # noqa: E501
-            query_params.append(('end_time', local_var_params['end_time']))  # noqa: E501
-        if 'end_date' in local_var_params and local_var_params['end_date'] is not None:  # noqa: E501
-            query_params.append(('end_date', local_var_params['end_date']))  # noqa: E501
+        if 'start_datetime' in local_var_params and local_var_params['start_datetime'] is not None:  # noqa: E501
+            query_params.append(('start_datetime', local_var_params['start_datetime']))  # noqa: E501
+        if 'end_datetime' in local_var_params and local_var_params['end_datetime'] is not None:  # noqa: E501
+            query_params.append(('end_datetime', local_var_params['end_datetime']))  # noqa: E501
 
         header_params = {}
 
@@ -725,16 +546,13 @@ class MeasurementChannelApi(object):
         auth_settings = []  # noqa: E501
         
         response_types_map = {
-            200: "InlineResponse2001",
+            200: "InlineResponse200",
             400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
             503: "InlineResponse400",
         }
 
         return self.api_client.call_api(
-            '/measurement/past_results', 'GET',
+            '/measurement/results', 'GET',
             path_params,
             query_params,
             header_params,
@@ -750,14 +568,14 @@ class MeasurementChannelApi(object):
             collection_formats=collection_formats,
             _request_auth=local_var_params.get('_request_auth'))
 
-    def measurement_result_get(self, **kwargs):  # noqa: E501
-        """measurement_result_get  # noqa: E501
+    def measurement_results_latest_get(self, **kwargs):  # noqa: E501
+        """measurement_results_latest_get  # noqa: E501
 
-        The HUB requests that the analyzer return the result of the most recent measurement performed  # noqa: E501
+        The client requests that the analyzer return the result of the most recent measurement performed  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.measurement_result_get(async_req=True)
+        >>> thread = api.measurement_results_latest_get(async_req=True)
         >>> result = thread.get()
 
         :param async_req: Whether to execute the request asynchronously.
@@ -776,16 +594,16 @@ class MeasurementChannelApi(object):
         :rtype: MeasurementResult
         """
         kwargs['_return_http_data_only'] = True
-        return self.measurement_result_get_with_http_info(**kwargs)  # noqa: E501
+        return self.measurement_results_latest_get_with_http_info(**kwargs)  # noqa: E501
 
-    def measurement_result_get_with_http_info(self, **kwargs):  # noqa: E501
-        """measurement_result_get  # noqa: E501
+    def measurement_results_latest_get_with_http_info(self, **kwargs):  # noqa: E501
+        """measurement_results_latest_get  # noqa: E501
 
-        The HUB requests that the analyzer return the result of the most recent measurement performed  # noqa: E501
+        The client requests that the analyzer return the result of the most recent measurement performed  # noqa: E501
         This method makes a synchronous HTTP request by default. To make an
         asynchronous HTTP request, please pass async_req=True
 
-        >>> thread = api.measurement_result_get_with_http_info(async_req=True)
+        >>> thread = api.measurement_results_latest_get_with_http_info(async_req=True)
         >>> result = thread.get()
 
         :param async_req: Whether to execute the request asynchronously.
@@ -829,7 +647,7 @@ class MeasurementChannelApi(object):
             if key not in all_params:
                 raise ApiTypeError(
                     "Got an unexpected keyword argument '%s'"
-                    " to method measurement_result_get" % key
+                    " to method measurement_results_latest_get" % key
                 )
             local_var_params[key] = val
         del local_var_params['kwargs']
@@ -856,14 +674,11 @@ class MeasurementChannelApi(object):
         response_types_map = {
             200: "MeasurementResult",
             400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
             503: "InlineResponse400",
         }
 
         return self.api_client.call_api(
-            '/measurement/result', 'GET',
+            '/measurement/results/latest', 'GET',
             path_params,
             query_params,
             header_params,
@@ -904,7 +719,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: InlineResponse200
+        :rtype: None
         """
         kwargs['_return_http_data_only'] = True
         return self.measurement_script_post_with_http_info(inline_object, **kwargs)  # noqa: E501
@@ -941,7 +756,7 @@ class MeasurementChannelApi(object):
         :return: Returns the result object.
                  If the method is called asynchronously,
                  returns the request thread.
-        :rtype: tuple(InlineResponse200, status_code(int), headers(HTTPHeaderDict))
+        :rtype: None
         """
 
         local_var_params = locals()
@@ -997,14 +812,7 @@ class MeasurementChannelApi(object):
         # Authentication setting
         auth_settings = []  # noqa: E501
         
-        response_types_map = {
-            200: "InlineResponse200",
-            400: "InlineResponse400",
-            404: "InlineResponse400",
-            405: "InlineResponse400",
-            500: "InlineResponse400",
-            503: "InlineResponse400",
-        }
+        response_types_map = {}
 
         return self.api_client.call_api(
             '/measurement/script', 'POST',

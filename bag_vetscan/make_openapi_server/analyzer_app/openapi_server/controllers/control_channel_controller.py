@@ -17,10 +17,6 @@ def control_light_blink_put():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_light_blink_put()
     return str_rtn
 
-def control_light_off_put():
-    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_light_off_put()
-    return str_rtn
-
 def control_power_off_put():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_power_off_put()
     return str_rtn
@@ -28,3 +24,4 @@ def control_power_off_put():
 def control_power_reboot_put():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.control_power_reboot_put()
     return str_rtn
+

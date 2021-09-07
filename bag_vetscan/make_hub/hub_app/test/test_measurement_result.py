@@ -37,8 +37,8 @@ class TestMeasurementResult(unittest.TestCase):
         if include_optional :
             return MeasurementResult(
                 consumable_name = '', 
-                start_date_and_time = '05-05-2021 22:07:04', 
-                end_date_and_time = '05-05-2021 22:07:55', 
+                start_datetime = '2020-11-05T13:15:30Z', 
+                end_datetime = '2020-12-02T14:29:27Z', 
                 duration_sec = 0, 
                 result = 'Failed', 
                 test_results = None

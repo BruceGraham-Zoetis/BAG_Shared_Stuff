@@ -1,10 +1,11 @@
-# InlineResponse2002
+# InlineObject2
 
 
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**currently_activated_events** | [**list[EventInfo]**](EventInfo.md) | An array of all events that are currently activated | 
+**correlation_id** | **str** | A unique ID that can be used to correlate messages being sent and received | 
+**option_chosen** | **str** | The option chosen by the operator | 
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

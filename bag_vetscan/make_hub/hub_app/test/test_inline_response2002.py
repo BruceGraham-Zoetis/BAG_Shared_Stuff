@@ -36,11 +36,23 @@ class TestInlineResponse2002(unittest.TestCase):
         # model = openapi_client.models.inline_response2002.InlineResponse2002()  # noqa: E501
         if include_optional :
             return InlineResponse2002(
-                status = 'NotReady'
+                currently_activated_events = [
+                    openapi_client.models.event_info.event_info(
+                        activation_time = '05-05-2021 22:07:04', 
+                        severity = 'Notification', 
+                        event_name = '', 
+                        event_additional_information = '', )
+                    ]
             )
         else :
             return InlineResponse2002(
-                status = 'NotReady',
+                currently_activated_events = [
+                    openapi_client.models.event_info.event_info(
+                        activation_time = '05-05-2021 22:07:04', 
+                        severity = 'Notification', 
+                        event_name = '', 
+                        event_additional_information = '', )
+                    ],
         )
 
     def testInlineResponse2002(self):

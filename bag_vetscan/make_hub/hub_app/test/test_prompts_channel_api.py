@@ -15,33 +15,33 @@ from __future__ import absolute_import
 import unittest
 
 import openapi_client
-from openapi_client.api.control_channel_api import ControlChannelApi  # noqa: E501
+from openapi_client.api.prompts_channel_api import PromptsChannelApi  # noqa: E501
 from openapi_client.rest import ApiException
 
 
-class TestControlChannelApi(unittest.TestCase):
-    """ControlChannelApi unit test stubs"""
+class TestPromptsChannelApi(unittest.TestCase):
+    """PromptsChannelApi unit test stubs"""
 
     def setUp(self):
-        self.api = openapi_client.api.control_channel_api.ControlChannelApi()  # noqa: E501
+        self.api = openapi_client.api.prompts_channel_api.PromptsChannelApi()  # noqa: E501
 
     def tearDown(self):
         pass
 
-    def test_control_light_blink_put(self):
-        """Test case for control_light_blink_put
+    def test_prompts_notification_ack_post(self):
+        """Test case for prompts_notification_ack_post
 
         """
         pass
 
-    def test_control_power_off_put(self):
-        """Test case for control_power_off_put
+    def test_prompts_option_chosen_post(self):
+        """Test case for prompts_option_chosen_post
 
         """
         pass
 
-    def test_control_power_reboot_put(self):
-        """Test case for control_power_reboot_put
+    def test_prompts_qr_scanned_post(self):
+        """Test case for prompts_qr_scanned_post
 
         """
         pass
