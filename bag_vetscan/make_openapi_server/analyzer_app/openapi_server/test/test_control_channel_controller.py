@@ -6,6 +6,9 @@ import unittest
 from flask import json
 from six import BytesIO
 
+import sys
+sys.path.append("../..") # Adds higher directory to python modules path.
+
 from openapi_server.models.inline_response400 import InlineResponse400  # noqa: E501
 from openapi_server.test import BaseTestCase
 

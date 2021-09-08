@@ -85,9 +85,9 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         return str(dict_rtn)
 
     @method()
-    def configuration_put(self, body : 's') -> 's':
+    def configuration_put(self, str_request_body : 's') -> 's':
         # returns dictionary type
-        dict_rtn = configuration_channel_controller.configuration_put(self, body)
+        dict_rtn = configuration_channel_controller.configuration_put(self, str_request_body)
         # return a str to caller
         return str(dict_rtn)
 

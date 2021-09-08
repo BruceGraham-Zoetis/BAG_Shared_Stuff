@@ -22,9 +22,18 @@ def configuration_get():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_get()
     return str_rtn
 
+"""
+TODO - Why does the type need to be unspecified for body?
+"""
 def configuration_put(body):
-    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_put(body)
+    if (str == type(body)):
+        str_request_body = body
+    else:
+        str_request_body = str(body)
+
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_put(str_request_body)
     return str_rtn
+
 
 def configuration_schema_get():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.configuration_schema_get()

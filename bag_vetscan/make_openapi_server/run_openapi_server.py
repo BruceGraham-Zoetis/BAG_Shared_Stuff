@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 # 
-# File: run_analyzer_app.py
+"""
+File: run_analyzer_app.py
+
+pip3 install flask
+pip3 install connexion
+
+"""
 
 from __future__ import absolute_import
 

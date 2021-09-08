@@ -37,7 +37,7 @@ def configuration_get(self):
     return dict_rtn
 
 
-def configuration_put(self, body):
+def configuration_put(self, str_request_body : str):
     """configuration_put
 
     Set the configuration of the analyzer # noqa: E501

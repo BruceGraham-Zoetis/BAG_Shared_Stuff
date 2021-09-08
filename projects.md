@@ -49,7 +49,7 @@ bag_vetscan\
         make_openapi_server.sh		Rebuild the "Dracula" analyzer server.
         templates\				Files copied to analyzer_app.
         					Copied when the analyzer server is rebuilt.
-        analyzer_app\				The generated analyzer server.
+        analyzer_app\				The generated analyzer openapi server.
         openapi_server.code-workspace	Visual Studio Code - workspace
         test_run_openapi_server.py		Runs the "Dracula" analyzer server.
         
@@ -60,7 +60,7 @@ bag_vetscan\
     make_hub\					openAPI client, webserver, GUI: "Hub"
         make_hub.sh				Rebuild the "Hub" app.
         hub_app.code-workspace		Visual Studio Code - workspace
-        hub_app\				The generated analyzer client.
+        hub_app\				The generated analyzer openapi client.
         templates\				Files copied to hub_app.
         					Copied when the hub client is rebuilt.
         hub_app_gui\				
