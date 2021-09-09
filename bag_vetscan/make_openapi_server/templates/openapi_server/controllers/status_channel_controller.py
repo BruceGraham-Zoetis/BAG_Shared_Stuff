@@ -21,4 +21,3 @@ def status_currently_activated_events_get():
 def status_operational_get():
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.status_operational_get()
     return str_rtn
-    

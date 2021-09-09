@@ -1,8 +1,9 @@
 ======================
 	TO DO
 ======================
-
-pull new openAPI.json
+finish openapi_server tests
+save tests to templates
+save all controller files to templates
 java version of openAPI client
 
 
