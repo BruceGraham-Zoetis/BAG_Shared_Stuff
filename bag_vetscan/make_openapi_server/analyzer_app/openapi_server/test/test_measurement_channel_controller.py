@@ -124,7 +124,7 @@ class TestMeasurementChannelController(BaseTestCase):
 
         
         """
-        # TypeError: measurement_script_post() missing 1 required positional argument: 'inline_object'
+        # Internal Server Error
         inline_object = InlineObject(script="this is a script")
         headers = { 
             'Accept': 'application/json',

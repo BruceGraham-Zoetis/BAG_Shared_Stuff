@@ -21,7 +21,7 @@ def measurement_cancel_post(self : CAnalyzer):
     return dict_rtn
 
 
-def measurement_consumable_consumable_uuid_post(self, consumable_uuid):
+def measurement_consumable_consumable_uuid_post(self : CAnalyzer, consumable_uuid):
     """measurement_consumable_consumable_uuid_post
 
     Start an analyzer measurement with a specific consumable # noqa: E501
@@ -41,7 +41,7 @@ def measurement_consumable_consumable_uuid_post(self, consumable_uuid):
     return dict_rtn
 
 
-def measurement_file_post(self, inline_object1):
+def measurement_file_post(self : CAnalyzer, inline_object1):
     """measurement_file_post
 
     Start an analyzer measurement script as described in a file stored on the analyzer.  This is intended for R&amp;D use only and should not be used during normal operation # noqa: E501
@@ -65,7 +65,7 @@ def measurement_results_get(self : CAnalyzer, start_datetime, end_datetime):
     return dict_rtn
 
 
-def measurement_result_get(self):
+def measurement_result_get(self : CAnalyzer):
     """measurement_result_get
 
     The HUB requests that the analyzer return the result of the most recent measurement performed # noqa: E501
@@ -78,12 +78,12 @@ def measurement_result_get(self):
     return dict_rtn
 
 
-def measurement_results_latest_get(self):
+def measurement_results_latest_get(self : CAnalyzer):
     dict_rtn = self.operation_current.get_status()
     return dict_rtn
 
 
-def measurement_script_post(self, inline_object):
+def measurement_script_post(self : CAnalyzer, inline_object):
     """measurement_script_post
 
     Start an analyzer measurement script sent as a string.  This is intended for R&amp;D use only and should not be used during normal operation # noqa: E501
@@ -103,7 +103,7 @@ def measurement_script_post(self, inline_object):
     return dict_rtn
 
 
-def measurement_supported_consumables_get(self):
+def measurement_supported_consumables_get(self : CAnalyzer):
     """measurement_supported_consumables_get
 
     Return a list (Python dict) of all consumable types the analyzer supports. Each consumable returned will include a universally unique identifier, which will be used by the IC when starting a measurement. Any information required to run a consumable will be described in the response using the JSON Schema format (https://json-schema.org/). # noqa: E501

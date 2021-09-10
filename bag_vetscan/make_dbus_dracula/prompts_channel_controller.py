@@ -5,7 +5,10 @@ File: prompts_channel_controller.py
 Purpose: DBus service interface for the dracula analyzer app.
 """
 
-def prompts_notification_ack_post(inline_object3):  # noqa: E501
+import CAnalyzer
+
+
+def prompts_notification_ack_post(self : CAnalyzer, inline_object3):  # noqa: E501
     """prompts_notification_ack_post
 
     Hub is informing the analyzer a notification was acknowledged by the operator in response to a websocket message named notification on the prompts channel. # noqa: E501
@@ -22,7 +25,7 @@ def prompts_notification_ack_post(inline_object3):  # noqa: E501
     return dict_rtn
 
 
-def prompts_option_chosen_post(inline_object2):  # noqa: E501
+def prompts_option_chosen_post(self : CAnalyzer, inline_object2):  # noqa: E501
     """prompts_option_chosen_post
 
     Hub is informing the analyzer of an option that was made by the operator in response to a websocket message named choose_option on the prompts channel. # noqa: E501
@@ -39,7 +42,7 @@ def prompts_option_chosen_post(inline_object2):  # noqa: E501
     return dict_rtn
 
 
-def prompts_qr_scanned_post(inline_object4):  # noqa: E501
+def prompts_qr_scanned_post(self : CAnalyzer, inline_object4):  # noqa: E501
     """prompts_qr_scanned_post
 
     Hub is informing the analyzer of a QR scan attempt in response to a websocket message named scan_qr on the prompts channel. # noqa: E501
