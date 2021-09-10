@@ -17,8 +17,12 @@ def measurement_consumable_consumable_uuid_post(consumable_uuid):  # noqa: E501
     str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_consumable_consumable_uuid_post(consumable_uuid)
     return str_rtn
 
-def measurement_file_post(inline_object1):  # noqa: E501
-    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post(inline_object1)
+#def measurement_file_post(inline_object1):  # noqa: E501
+#    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post(inline_object1)
+#    return str_rtn
+
+def measurement_file_post(body):  # noqa: E501
+    str_rtn = CDBusDraculaService.g_dbus_dracula_service.draculad.measurement_file_post(body)
     return str_rtn
 
 def measurement_results_get(start_datetime=None, end_datetime=None):  # noqa: E501

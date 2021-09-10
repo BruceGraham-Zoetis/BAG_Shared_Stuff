@@ -58,8 +58,21 @@ class TestMeasurementChannelController(BaseTestCase):
         """
         # TypeError: measurement_file_post() missing 1 required positional argument: 'inline_object1'
         inline_object1 = InlineObject1(filename = "test_file_name.abc")
-        print(inline_object1)
-        print("test_measurement_file_post() inline_object1 type: %s" % (type(inline_object1)))
+        
+        # TypeError: measurement_file_post() missing 1 required positional argument: 'inline_object1'
+        #data_param = json.dumps(inline_object1)
+
+        # AttributeError: 'InlineObject1' object has no attribute 'items'
+        data_param = inline_object1
+        #<class 'openapi_server.models.inline_object1.InlineObject1'>
+        #{'filename': 'test_file_name.abc'}
+
+
+        print("test_measurement_file_post()")
+        print("\tdata_param")
+        print("\t%s" % type(data_param))
+        print("\t%s" % data_param)
+
         headers = { 
             'Accept': 'application/json',
             'Content-Type': 'application/json',
@@ -68,7 +81,7 @@ class TestMeasurementChannelController(BaseTestCase):
             '/measurement/file',
             method='POST',
             headers=headers,
-            data=json.dumps(inline_object1),
+            data=data_param,
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))

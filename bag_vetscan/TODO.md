@@ -1,13 +1,15 @@
 ======================
 	TO DO
 ======================
-finish openapi_server tests
-save tests to templates
-save all controller files to templates
 java version of openAPI client
+diagram data flow dbus app <--> web app
 
 
 
+===========================
+	TO DO - suspended
+===========================
+finish openapi_server tests
 
 
 
@@ -21,8 +23,6 @@ dbus_dracula
 
 openapi_server
 ==================
-* run copy_modified_files_to_templates.sh
-
 * security_controller_.py ? why no functions?
 
 

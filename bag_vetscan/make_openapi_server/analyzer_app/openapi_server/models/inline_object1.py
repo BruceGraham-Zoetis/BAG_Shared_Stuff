@@ -66,3 +66,7 @@ class InlineObject1(Model):
             raise ValueError("Invalid value for `filename`, must not be `None`")  # noqa: E501
 
         self._filename = filename
+
+#    def items(self):
+#        obj = {"filename": self._filename}
+#        return obj.items()

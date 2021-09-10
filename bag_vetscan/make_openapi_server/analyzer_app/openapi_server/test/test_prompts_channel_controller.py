@@ -25,32 +25,67 @@ class TestPromptsChannelController(BaseTestCase):
 
         
         """
-        # validation error: 'correlation_id' is a required property
-        #inline_object3 = InlineObject3()
 
-        # validation error: {'correlation_id': 123} is not of type 'string' - 'correlation_id'
-        #inline_object3 = InlineObject3({'correlation_id': 123})
-        
         # TypeError: prompts_notification_ack_post() missing 1 required positional argument: 'inline_object3'
-        #str_x = "{'correlation_id': 123}"
-        #inline_object3 = InlineObject3(str_x)
+        #data_param=json.dumps(InlineObject3(correlation_id= '123'))
+        #{"correlation_id": "123"}
+        #<class 'str'>
+
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        #data_param=InlineObject3()
+        #{'correlation_id': None}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
+
+        # AttributeError: 'list' object has no attribute 'items'
+        #data_param=['correlation_id', '123']
+        #['correlation_id', '123']
+        #<class 'list'>
+
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        #data_param=InlineObject3({'correlation_id', '123'})
+        #{'correlation_id': {'123', 'correlation_id'}}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
+
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        #data_param=InlineObject3(correlation_id= '123')
+        #{'correlation_id': '123'}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
+
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        #data_param=InlineObject3(correlation_id={'correlation_id':'123'})
+        #{'correlation_id': {'correlation_id': '123'}}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
+
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        #ob = InlineObject3()
+        #ob.correlation_id = 123
+        #data_param = ob
+        #{'correlation_id': 123}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
 
         # validation error: 123 is not of type 'string' - 'correlation_id'
-        # inline_object3 = InlineObject3(correlation_id = 123)
+        #ob = InlineObject3()
+        #ob.correlation_id = 123
+        #data_param=json.dumps(ob)
+        #{"correlation_id": 123}
+        #<class 'str'>
 
-        # TypeError: prompts_notification_ack_post() missing 1 required positional argument: 'inline_object3'
-        #inline_object3 = InlineObject3(correlation_id = "123")
-        #data=json.dumps(inline_object3),
+        # missing 1 required positional argument: 'inline_object3'
+        #ob = InlineObject3()
+        #ob.correlation_id = "123"
+        #data_param=json.dumps(ob)
+        #{"correlation_id": "123"}
+        #<class 'str'>
 
-        # TypeError: prompts_notification_ack_post() missing 1 required positional argument: 'inline_object3'
-        #str_x = "correlation_id=123"
-        #inline_object3 = InlineObject3(str_x)
+        # AttributeError: 'InlineObject3' object has no attribute 'items'
+        ob = InlineObject3()
+        data_param = ob.from_dict({'correlation_id': '123'})
+        #{'correlation_id': '123'}
+        #<class 'openapi_server.models.inline_object3.InlineObject3'>
 
-        # TypeError: prompts_notification_ack_post() missing 1 required positional argument: 'inline_object3'
-        inline_objectx = InlineObject3(correlation_id = "123")
-        data=json.dumps(inline_objectx)
-        print(type(data)) # <class 'str'>
-        print(data)       # {"correlation_id": "123"}
+
+        print(data_param)
+        print(type(data_param))
 
         headers = { 
             'Accept': 'application/json',
@@ -60,13 +95,12 @@ class TestPromptsChannelController(BaseTestCase):
             '/prompts/notification_ack',
             method='POST',
             headers=headers,
-            #data=json.dumps(inline_object3),
-            data=json.dumps(inline_objectx),
+            data=data_param,
             content_type='application/json')
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def TODO_test_prompts_option_chosen_post(self):
+    def test_prompts_option_chosen_post(self):
         """Test case for prompts_option_chosen_post
 
         
@@ -85,7 +119,7 @@ class TestPromptsChannelController(BaseTestCase):
         self.assert200(response,
                        'Response body is : ' + response.data.decode('utf-8'))
 
-    def TODO_test_prompts_qr_scanned_post(self):
+    def test_prompts_qr_scanned_post(self):
         """Test case for prompts_qr_scanned_post
 
         
