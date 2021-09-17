@@ -1,23 +1,11 @@
 ======================
 	TO DO
 ======================
-remove non-volume control files from checkin.
-
-$ uname -n
-    mockup lubuntu & virtual machine:  mixer -D pulse set Master 50%
-​
-    mockup lubuntu & yocto on D0: mixer set Master 50%
-
-
-Add types to parameters and return types.
-
-        @return: int - Range [0 - 100] the master volume, as a percent of max volume.
-        @return: int - -1 there was an error
-
-Add doxygen style comments to test functions
-
-test values: -100, -1, 0, 1, 100, 10
-
+define printer queue name vs. printer URI
+use printer_queue_name
+select_printer_queue
+set_default_printer_queue(printer_queue_name, uri)
+set_printing_options(dict_options : dict):
 
 Unittest print results to log file.
 

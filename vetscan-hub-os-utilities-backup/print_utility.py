@@ -3,51 +3,19 @@
 """
 @file print_utility.py
 
-$ pip3 install pycups
-
-VMWare Linux
-===================
+@brief This class uses the CUPS.
 CUPS - open source printing system
 Originally standing for Common Unix Printing System.
 CUPS allows a computer to act as a print server.
 
-Uniform Resource Identifier (URI)
 
+Printer Queue: A logical device name that is logically linked to a printer URI.
+    Example: CUPS-BRF-Printer
 
-# Setup the printer
-# -p Specifies the name of the printer to add.
-# -E Enables the destination and accepts jobs.
-# -v Sets the device-uri attribute of the print queue.
-$ lpadmin -p HPOfficejetPro -E -v cups-brf:/
+Printer URI: Uniform Resource Identifier. 
+    Example: serial:/dev/ttyS0
 
-
-# list drivers and related information.
-
-$ lpinfo -v
-serial serial:/dev/ttyS0?baud=115200
-network https
-file cups-brf:/
-network beh
-network http
-network lpd
-network socket
-network ipps
-network ipp
-direct hp
-direct hpfax
-
-# display the status of a printer
-$ lpstat -p
-lpstat: No destinations added.
-
-# lists available printers
-$ lpstat -d
-no system default destination
-
-# print queue status
-$ lpq
-lpq: Error - no default destination available.
-
+$ pip3 install pycups
 
 """
 
@@ -74,7 +42,7 @@ class class_vetscan_print_utility():
         self.__debug = False # True: enable printing when an error occurs
         self.__user_name = user_name
         self.__user_password = user_password
-        self.__str_default_printer_name = cups_connection.getDefault()
+        self.__str_printer_queue_name = cups_connection.getDefault()
         self.__print_options = {"page-left":"30", "cpi":"12"} # TODO Add function to get and set options
         self.__dict_printers = {}
         self.__print_job_id = -1
@@ -93,7 +61,7 @@ class class_vetscan_print_utility():
         # To abort the operation it may return the empty string ('').
         cups.setPasswordCB(self.password_callback)
 
-        self.update_known_printers()
+        self.update_current_printer_queue_names()
 
         
 
@@ -109,24 +77,31 @@ class class_vetscan_print_utility():
         return self.__user_password
 
 
-    def update_known_printers(self):
+    def update_current_printer_queue_names(self):
         cups_connection = cups.Connection()
         printers = cups_connection.getPrinters()
 
         # determine the currently selected printer
-        self.__str_default_printer_name = cups_connection.getDefault()
+        self.__str_printer_queue_name = cups_connection.getDefault()
         self.__dict_printers = {}
 
         # add each known printer
         for str_printer_uri in printers:
             self.__dict_printers[str_printer_uri] = printers[str_printer_uri]["device-uri"]
-            if (0 == len(self.__str_default_printer_name)):
+            if (0 == len(self.__str_printer_queue_name)):
                 self.__default_printer = str_printer_uri
 
 
-    def get_printers_name_list(self) -> list:
+    def get_printers_queue_name_list(self) -> list:
+        """! Get a list of the system printer queue names.
+
+        @param[in] None
+
+        @return list of printer queue names
+        """
+
         if (0 == len(self.__dict_printers)):
-            self.update_known_printers()
+            self.update_current_printer_queue_names()
 
         list_uri = []
 
@@ -136,57 +111,60 @@ class class_vetscan_print_utility():
         return list_uri
 
 
-    def get_printer_info_dict(self) -> dict:
-        self.update_known_printers()
+    def get_current_printer_queue_info_dict(self) -> dict:
+        """! Get a dictionary of the system printers.
+
+        @param[in] None
+
+        @return dictionary of the system printers
+        """
+
+        self.update_current_printer_queue_names()
         return self.__dict_printers
 
 
-    def is_valid_printer_name(self, str_default_printer_name : str) -> bool:
-        list_names = self.get_printers_name_list()
+    def is_valid_printer_name(self, str_printer_queue_name : str) -> bool:
+        list_names = self.get_printers_queue_name_list()
 
         for device_name in list_names:
-            if (device_name == str_default_printer_name):
+            if (device_name == str_printer_queue_name):
                 return True
         
         return False
 
 
-    def set_default_printer(self, str_default_printer_name : str) -> bool:
-        """! Set the default printer to use by given printer name.
-        If a default system printer has been set, and you want to use it, then you can use 'default'.
-        The name must be a printer name. Use get_printers_name_list() to get configured system printer names.
+    def set_default_printer(self, str_printer_queue_name : str) -> bool:
+        """! Set the default printer to use by given printer's print queue name.
+        
+        The name must be a printer queue name that is already setup.
+        
+        Use get_printers_queue_name_list() to get configured system printer queue names.
 
         Example:
-            set_default_printer('default')
             set_default_printer('HPSuperjet')
 
-        @param[in] str str_default_printer_name = Printer name
+        @param[in] str str_printer_queue_name = Printer name
         """
 
         try:
             cups_connection = cups.Connection()
 
-            if ('default' == str_default_printer_name):
-                str_default = cups_connection.getDefault()
-                if (None != str_default):
-                    str_default_printer_name = str_default
-                    cups_connection.setDefault(str_default_printer_name)
-                    return True
-                else:
-                    if (self.__debug):
-                        print("ERROR: No default printer in CUPS (see http://localhost:631)")
-                    return False
+            b_valid = self.is_valid_printer_name(str_printer_queue_name)
+            if (not b_valid):
+                if (self.__debug):
+                    print("ERROR: No printer named '%s' in CUPS (see http://localhost:631)" % str_printer_queue_name)
+                return False
             else:
-                b_valid = self.is_valid_printer_name(str_default_printer_name)
-                if (not b_valid):
-                    if (self.__debug):
-                        print("ERROR: No printer named '%s' in CUPS (see http://localhost:631)" % str_default_printer_name)
-                    return False
-                else:
+                cups_connection.setDefault(str_printer_queue_name)
+                # verify it got set to the default
+                str_default = cups_connection.getDefault()
+                if (str_default == str_printer_queue_name):
                     return True
+                else:
+                    return False
         except Exception as e:
             if (self.__debug):
-                print("ERROR %s %s" % (inspect.currentframe().f_code.co_name, str_default_printer_name))
+                print("ERROR %s %s" % (inspect.currentframe().f_code.co_name, str_printer_queue_name))
                 print(e)
             return False
 
@@ -213,7 +191,7 @@ class class_vetscan_print_utility():
             if (0 == len(self.__default_printer)):
                 self.__default_printer = cups_connection.getDefault()
             
-            if (0 == len(self.str_default_printer_name)):
+            if (0 == len(self.str_printer_queue_name)):
                 if (self.__debug):
                     print("ERROR: print_file() default printer not set")
                 return 0
@@ -225,8 +203,8 @@ class class_vetscan_print_utility():
                 return 0
 
             if (self.__debug):
-                print("print_file(%s) to the default printer %s" % (str_path_file_name, self.__str_default_printer_name))
-            self.__print_job_id = cups_connection.printFile(self.__str_default_printer_name, str_path_file_name, " ", self.__print_options)
+                print("print_file(%s) to the default printer %s" % (str_path_file_name, self.__str_printer_queue_name))
+            self.__print_job_id = cups_connection.printFile(self.__str_printer_queue_name, str_path_file_name, " ", self.__print_options)
             return self.__print_job_id
 
         except Exception as e:
@@ -333,12 +311,12 @@ if __name__ == '__main__':
     print_util = class_vetscan_print_utility()
     print_util.debug_on()
 
-    dict_printers_info = print_util.get_printer_info_dict()
+    dict_printers_info = print_util.get_current_printer_queue_info_dict()
     print("printer info:")
     print(dict_printers_info)
     print("")
 
-    list_printer_uri = print_util.get_printers_name_list()
+    list_printer_uri = print_util.get_printers_queue_name_list()
     print("printers name list:")
     print(list_printer_uri)
     print("")
