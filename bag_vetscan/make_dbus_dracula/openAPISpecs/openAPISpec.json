@@ -60,6 +60,23 @@
                     }
                 }
             },
+            "body_correlation_id": {
+                "required": true,
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "type": "object",
+                            "properties": {},
+                            "required": [
+                                "correlation_id"
+                            ],
+                            "example": {
+                                "correlation_id": "123"
+                            }
+                        }
+                    }
+                }
+            },
             "body_prompts_option_chosen": {
                 "required": true,
                 "content": {
@@ -127,6 +144,35 @@
             }
         },
         "schemas": {
+            "post_qr_code_scanned": {
+                "type": "object",
+                "description": "The contents of the QR that was scanned.  If scanning failed or was cancelled by operator, this will be an empty string",
+                "properties": {
+                    "correlation_id": {
+                        "$ref": "#/components/schemas/correlation_id"
+                    },
+                    "exp": {
+                        "type": "string",
+                        "description": "experation date",
+                        "example": "2022-05-27"
+                    },
+                    "name": {
+                        "type": "string",
+                        "description": "consubale name",
+                        "example": "cPL"
+                    },
+                    "lot": {
+                        "type": "string",
+                        "description": "lot number",
+                        "example": "088222"
+                    },
+                    "data": {
+                        "type": "string",
+                        "description": "data",
+                        "example": "12345678901029384756"
+                    }
+                }
+            },
             "body_script_json": {
                 "type": "object",
                 "description": "JSON with a script name"
@@ -946,32 +992,18 @@
                 "description": "Hub is informing the analyzer of a QR scan attempt in response to a websocket message named scan_qr on the prompts channel.",
                 "x-codegen-request-body-name": "body",
                 "requestBody": {
-                    "required": true,
-                    "content": {
-                        "application/json": {
-                            "schema": {
-                                "type": "object",
-                                "properties": {
-                                    "correlation_id": {
-                                        "$ref": "#/components/schemas/correlation_id"
-                                    },
-                                    "qr_contents": {
-                                        "type": "string",
-                                        "description": "The contents of the QR that was scanned.  If scanning failed or was cancelled by operator, this will be an empty string",
-                                        "example": "{\"exp\":\"2022-05-27\",\"name\":\"c\",\"lot\":\"088222\",\"data\":\"12.34\"}"
-                                    }
-                                },
-                                "required": [
-                                    "correlation_id",
-                                    "qr_contents"
-                                ]
-                            }
-                        }
-                    }
+                    "$ref": "#/components/requestBodies/body_correlation_id"
                 },
                 "responses": {
                     "200": {
-                        "description": "Hub received message successfully"
+                        "description": "Hub received message successfully",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/post_qr_code_scanned"
+                                }
+                            }
+                        }
                     },
                     "400": {
                         "$ref": "#/components/responses/400_bad_request"
