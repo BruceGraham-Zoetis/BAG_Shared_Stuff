@@ -14,9 +14,28 @@ import operator
 
 class Payload(object):
     def __init__(self, str_file):
+        self.__str_function =  "\tdef {name}(self{path_parameters}):\n"
+        self.__str_function += "\t\t\"\"\"{path_desciption}\n"
+        self.__str_function += "{param_decription}\n"
+        self.__str_function += "\t\t\"\"\"\n"
+        self.__str_function += "\t\treturn \"OK\"\n\n"
+
+        self.__str_path_parameters_format = "{name} : {type}"
+            
+        self.__str_parameter_description_format = "@param[{direction}] {name} - {type} {decription}"
+        self.clear_func_vars()
+
         f = open(str_file, "r")
         self.__spec = json.loads(f.read())
         f.close()
+
+    def clear_func_vars(self):
+        self.__str_func_name = ""
+        self.__str_path_parameters = ""
+        self.__str_parameter_description = ""
+        self.__str_path_desciption = ""
+
+
 
     def get_paths(self) -> dict:
         return self.__spec['paths']
@@ -36,125 +55,153 @@ class Payload(object):
 
         return str_name
 
+    def set_parameter_descriptions(self, list_params):
+        i_count = len(list_params)
+        i_n = 1
+
+        for param in list_params:
+            self.__str_parameter_description += "\t\t"
+            str_type = self.get_dbus_data_type(param['type'])
+
+            self.__str_parameter_description += self.__str_parameter_description_format.format(
+                                            direction=param['direction'],
+                                            name=param['name'],
+                                            type=param['type'],
+                                            decription=param['decription'])
+            if (i_n < i_count):
+                self.__str_parameter_description += "\n"
+
+            if (1 == i_n):
+                self.__str_path_parameters += ", "
+            self.__str_path_parameters += self.__str_path_parameters_format.format(
+                                            name=param['name'],
+                                            type=str_type)
+            if (i_n < i_count):
+                self.__str_path_parameters += ", "
+            
+            i_n += 1
+
+
+
     def make_function_get(self, path) -> str:
-        str_get = self.__spec['paths'][path].get('get', '')
-        if (0 < len(str_get)):
-            str_function =  "\tdef {name}(self, {path_parameters}):\n"
-            str_function += "\t\t\"\"\"{desciption}\n"
-            str_function += "{param_decription}"
-            str_function += "\t\t\"\"\"\n"
-            str_function += "\t\treturn \"OK\"\n\n"
+        self.clear_func_vars()
 
-            func_name = self.build_function_name(path)
-            func_name += "_get"
+        dict_verb = self.__spec['paths'][path].get('get', '')
+        if (0 < len(dict_verb)):
+            self.__str_func_name = self.build_function_name(path)
+            self.__str_func_name += "_get"
 
-            str_params = "name1 : TODO_type, name2 : TODO_type"
+            self.__str_path_desciption = dict_verb['description']
 
-            str_desciption = "TODO:path_description"
+            list_params = self.get_path_request_parameters(path, 'get')
+            self.set_parameter_descriptions(list_params)
 
-            return str_function.format(name = func_name, path_parameters = str_params, desciption = str_desciption)
+            rtn_str = self.__str_function.format(
+                        name = self.__str_func_name,
+                        path_parameters = self.__str_path_parameters,
+                        param_decription = self.__str_parameter_description,
+                        path_desciption = self.__str_path_desciption)
+            return rtn_str
         else:
             return ""
+
 
     def make_function_put(self, path) -> str:
-        str_get = self.__spec['paths'][path].get('put', '')
-        if (0 < len(str_get)):
-            str_function =  "\tdef {name}(self, {path_parameters}):\n"
-            str_function += "\t\t\"\"\"{desciption}\n"
-            str_function += "{param_decription}"
-            str_function += "\t\t\"\"\"\n"
-            str_function += "\t\treturn \"OK\"\n\n"
+        self.clear_func_vars()
 
-            func_name = self.build_function_name(path)
-            func_name += "_put"
+        dict_verb = self.__spec['paths'][path].get('put', '')
+        if (0 < len(dict_verb)):
+            self.__str_func_name = self.build_function_name(path)
+            self.__str_func_name += "_put"
 
-            str_params = "name1 : TODO_type, name2 : TODO_type"
+            self.__str_path_desciption = dict_verb['description']
 
-            str_desciption = "TODO:path_description"
+            list_params = self.get_path_request_parameters(path, 'put')
+            self.set_parameter_descriptions(list_params)
 
-            return str_function.format(name = func_name, path_parameters = str_params, desciption = str_desciption)
+            rtn_str = self.__str_function.format(
+                        name = self.__str_func_name,
+                        path_parameters = self.__str_path_parameters,
+                        param_decription = self.__str_parameter_description,
+                        path_desciption = self.__str_path_desciption)
+            return rtn_str
         else:
             return ""
 
+
     def make_function_post(self, path) -> str:
-        str_get = self.__spec['paths'][path].get('post', '')
-        if (0 < len(str_get)):
-            str_function =  "\tdef {name}(self, {path_parameters}):\n"
-            str_function += "\t\t\"\"\"{path_desciption}\n"
-            str_function += "{param_decription}\n"
-            str_function += "\t\t\"\"\"\n"
-            str_function += "\t\treturn \"OK\"\n\n"
+        self.clear_func_vars()
 
-            func_name = self.build_function_name(path)
-            func_name += "_post"
+        dict_verb = self.__spec['paths'][path].get('post', '')
+        if (0 < len(dict_verb)):
+            self.__str_func_name = self.build_function_name(path)
+            self.__str_func_name += "_post"
 
-            str_path_parameters_format = "{name} : {type}"
-            str_path_parameters = ""
-            
-            str_parmeter_description_format = "@param[{direction}] {name} - {type} {decription}"
-            str_parmeter_description = ""
+            self.__str_path_desciption = dict_verb['description']
 
             # Ex: path "/measurement/consumable/{consumable_uuid}"
             # remove /{consumable_uuid}
             i_pos = path.find("/{")
             if (-1 != i_pos):
                 # get the parameter info from the parameters list
-                list_params = self.get_path_parameters(path, 'post')
+                list_params = self.get_path_parameters(path)
             else:
                 # get the parameter info from the requestBody 
                 list_params = self.get_path_request_parameters(path, 'post')
 
-            i_count = len(list_params)
-            i_n = 1
+            self.set_parameter_descriptions(list_params)
 
-            for param in list_params:
-                str_parmeter_description += "\t\t"
-                str_parmeter_description += str_parmeter_description_format.format(
-                                                direction=param['direction'],
-                                                name=param['name'],
-                                                type=param['type'],
-                                                decription=param['decription'])
-                if (i_n < i_count):
-                    str_parmeter_description += "\n"
-
-                str_path_parameters += str_path_parameters_format.format(
-                                                name=param['name'],
-                                                type=param['type'])
-                if (i_n < i_count):
-                    str_path_parameters += ", "
-                
-                i_n += 1
-
-            str_path_desciption = "TODO:path_description"
-
-            rtn_str = str_function.format(
-                        name = func_name,
-                        path_parameters = str_path_parameters,
-                        param_decription = str_parmeter_description,
-                        path_desciption = str_path_desciption)
+            rtn_str = self.__str_function.format(
+                        name = self.__str_func_name,
+                        path_parameters = self.__str_path_parameters,
+                        param_decription = self.__str_parameter_description,
+                        path_desciption = self.__str_path_desciption)
             return rtn_str
         else:
             return ""
 
 
-    def get_path_parameters(self, path, verb) -> list:
+    def get_path_parameters(self, path) -> list:
         """
         
         """
-        str_ref = self.__spec['paths'][path][verb].get('parameters', '')
-        print("str_ref: %s" % str_ref)
-        # TODO - BUILD list_params from parameters
+        list_params = []
+        str_name = ""
+        str_type = ""
+        str_description = ""
+
+        list_parameters = self.__spec['paths'][path].get('parameters', '')
+        
+        try:
+            for dict_parameter in list_parameters:
+                str_name = dict_parameter.get('name', '')
+                str_description = dict_parameter.get('description', '')
+                
+                dict_schema = dict_parameter.get('schema', '')
+                str_type = dict_schema.get('type', '')
+                str_type = self.get_dbus_data_type(str_type)
+        except Exception as e:
+            print(e)
+            return list_params
 
         list_params = [
             {
-                "name": "consumable_uuid",
+                "name": str_name,
                 "direction": "in",
-                    "type": str_type,
-                    "decription": str_description
+                "type": str_type,
+                "decription": str_description
             }
         ]
 
         return list_params
+
+
+    def get_dbus_data_type(self, str_json_type : str) -> str:
+        if ("string" == str_json_type.lower()):
+            return "str"
+        else:
+            print("TODO - define a DBus type for JSON type: %s" % str_json_type)
+            return str_json_type
 
 
     def get_path_request_parameters(self, path, verb) -> list:
@@ -162,22 +209,31 @@ class Payload(object):
         
         """
         list_params = []
+        str_type = ""
+        str_description = ""
 
         dict_requestbody = self.__spec['paths'][path][verb].get('requestBody', '')
+        if (0 == len(dict_requestbody)):
+            return list_params
+
         value = dict_requestbody.get('$ref')
-        if ("" != value):
+        if (None != value):
             # Ex requestBody "$ref": "#/components/requestBodies/body_script_json"
             str_path = value[2:] # drop the leading #/
         else:
             str_path = value
 
-        # append the rest of the expected path
-        dict_description = self.get_object_from_path(str_path)
-        str_description = dict_description.get('description', '')
-        
-        str_schema = str_path + "/content/application*json/schema"
-        dict_schema = self.get_object_from_path(str_schema)
-        str_type = dict_schema.get('type', '')
+        try:
+            # append the rest of the expected path
+            dict_description = self.get_object_from_path(str_path)
+            str_description = dict_description.get('description', '')
+            
+            str_schema = str_path + "/content/application*json/schema"
+            dict_schema = self.get_object_from_path(str_schema)
+            str_type = dict_schema.get('type', '')
+        except Exception as e:
+            print(e)
+            return list_params
 
         list_params = [
             {
@@ -202,7 +258,8 @@ class Payload(object):
 
         try:
             dict_rtn = reduce(operator.getitem, mapList, self.__spec)
-        except e:
+        except Exception as e:
+            print(e)
             dict_rtn = {}
 
         return dict_rtn
@@ -229,7 +286,6 @@ def main():
     f.write("class CAnalyzerX():\n")
 
     for path in paths:
-        """
         str_func = spec.make_function_get(path)
         if (0 < len(str_func)):
             print(str_func)
@@ -239,8 +295,7 @@ def main():
         if (0 < len(str_func)):
             print(str_func)
             f.write(str_func)
-        """
-        
+
         str_func = spec.make_function_post(path)
         if (0 < len(str_func)):
             print(str_func)
