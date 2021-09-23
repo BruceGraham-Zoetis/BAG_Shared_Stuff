@@ -8,7 +8,7 @@ Purpose: DBus service interface for the dracula analyzer app.
 import CAnalyzer
 
 
-def prompts_notification_ack_post(self : CAnalyzer, inline_object3):  # noqa: E501
+def prompts_notification_ack_post(self : CAnalyzer, body_notification_ack):  # noqa: E501
     """prompts_notification_ack_post
 
     Hub is informing the analyzer a notification was acknowledged by the operator in response to a websocket message named notification on the prompts channel. # noqa: E501

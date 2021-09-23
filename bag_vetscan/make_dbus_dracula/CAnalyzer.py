@@ -140,9 +140,9 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         return str(dict_rtn)
 
     @method()
-    def measurement_file_post(self, inline_object1 : 's') -> 's':
+    def measurement_file_post(self, body_file_json : 'a{ss}') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_file_post(self, inline_object1)
+        dict_rtn = measurement_channel_controller.measurement_file_post(self, body_file_json)
         # return a str to caller
         return str(dict_rtn)
 
@@ -168,9 +168,9 @@ class CZoetisAnalyzerInterface(ServiceInterface):
         return str(dict_rtn)
 
     @method()
-    def measurement_script_post(self, inline_object : 's') -> 's':
+    def measurement_script_post(self, body_script_json : 'a{ss}') -> 's':
         # returns dictionary type
-        dict_rtn = measurement_channel_controller.measurement_script_post(self, inline_object)
+        dict_rtn = measurement_channel_controller.measurement_script_post(self, body_script_json)
         # return a str to caller
         return str(dict_rtn)
 
@@ -205,9 +205,9 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     ########################################################
     # TODO Pass inline_object3
     @method()
-    def prompts_notification_ack_post(self) -> 's':
+    def prompts_notification_ack_post(self, body_notification_ack : 'a{ss}') -> 's':
         # returns dictionary type
-        dict_rtn = configuration_channel_controller.prompts_notification_ack_post(self)
+        dict_rtn = prompts_channel_controller.prompts_notification_ack_post(self, body_notification_ack)
         # return a str to caller
         return str(dict_rtn)
 
@@ -215,7 +215,7 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def prompts_option_chosen_post(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_channel_controller.prompts_option_chosen_post(self)
+        dict_rtn = prompts_channel_controller.prompts_option_chosen_post(self)
         # return a str to caller
         return str(dict_rtn)
 
@@ -223,7 +223,7 @@ class CZoetisAnalyzerInterface(ServiceInterface):
     @method()
     def prompts_qr_scanned_post(self) -> 's':
         # returns dictionary type
-        dict_rtn = configuration_channel_controller.prompts_qr_scanned_post(self)
+        dict_rtn = prompts_channel_controller.prompts_qr_scanned_post(self)
         # return a str to caller
         return str(dict_rtn)
 

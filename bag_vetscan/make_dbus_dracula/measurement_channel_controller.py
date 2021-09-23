@@ -41,7 +41,7 @@ def measurement_consumable_consumable_uuid_post(self : CAnalyzer, consumable_uui
     return dict_rtn
 
 
-def measurement_file_post(self : CAnalyzer, inline_object1):
+def measurement_file_post(self : CAnalyzer, body_file_json):
     """measurement_file_post
 
     Start an analyzer measurement script as described in a file stored on the analyzer.  This is intended for R&amp;D use only and should not be used during normal operation # noqa: E501
@@ -83,7 +83,7 @@ def measurement_results_latest_get(self : CAnalyzer):
     return dict_rtn
 
 
-def measurement_script_post(self : CAnalyzer, inline_object):
+def measurement_script_post(self : CAnalyzer, body_script_json):
     """measurement_script_post
 
     Start an analyzer measurement script sent as a string.  This is intended for R&amp;D use only and should not be used during normal operation # noqa: E501
