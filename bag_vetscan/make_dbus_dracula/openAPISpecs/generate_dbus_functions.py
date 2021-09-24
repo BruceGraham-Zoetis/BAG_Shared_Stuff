@@ -84,6 +84,15 @@ class Payload(object):
             
             i_n += 1
 
+    def get_function_body(self) -> str:
+        rtn_str = self.__str_function.format(
+                    func_decorator = self.__str_func_decorator,
+                    func_name = self.__str_func_name,
+                    path_parameters = self.__str_path_parameters,
+                    param_decription = self.__str_parameter_description,
+                    path_desciption = self.__str_path_desciption,
+                    func_return_type = self.__str_func_return_type)
+        return rtn_str
 
 
     def make_function_get(self, path) -> str:
@@ -99,14 +108,8 @@ class Payload(object):
             list_params = self.get_path_request_parameters(path, 'get')
             self.set_parameter_descriptions(list_params)
 
-            rtn_str = self.__str_function.format(
-                        func_decorator = self.__str_func_decorator,
-                        func_name = self.__str_func_name,
-                        path_parameters = self.__str_path_parameters,
-                        param_decription = self.__str_parameter_description,
-                        path_desciption = self.__str_path_desciption,
-                        func_return_type = self.__str_func_return_type)
-            return rtn_str
+            return self.get_function_body()
+
         else:
             return ""
 
@@ -124,14 +127,8 @@ class Payload(object):
             list_params = self.get_path_request_parameters(path, 'put')
             self.set_parameter_descriptions(list_params)
 
-            rtn_str = self.__str_function.format(
-                        func_decorator = self.__str_func_decorator,
-                        func_name = self.__str_func_name,
-                        path_parameters = self.__str_path_parameters,
-                        param_decription = self.__str_parameter_description,
-                        path_desciption = self.__str_path_desciption,
-                        func_return_type = self.__str_func_return_type)
-            return rtn_str
+            return self.get_function_body()
+
         else:
             return ""
 
@@ -158,14 +155,8 @@ class Payload(object):
 
             self.set_parameter_descriptions(list_params)
 
-            rtn_str = self.__str_function.format(
-                        func_decorator = self.__str_func_decorator,
-                        func_name = self.__str_func_name,
-                        path_parameters = self.__str_path_parameters,
-                        param_decription = self.__str_parameter_description,
-                        path_desciption = self.__str_path_desciption,
-                        func_return_type = self.__str_func_return_type)
-            return rtn_str
+            return self.get_function_body()
+
         else:
             return ""
 
@@ -290,12 +281,21 @@ def main():
     f.write("@breif CAnalyzerBase.py\n")
     f.write("\n")
     f.write("Purpose: DBus service interface for the analyzer app.\n")
+    f.write("\n")
+    f.write("Notes:\n")
+    f.write("The parameters and return types must be type cast. For example: use 's' for str type.\n")
+    f.write("See https://python-dbus-next.readthedocs.io/en/latest/type-system\n")
+    f.write("\n")
+
     f.write("\"\"\"\n")
     f.write("\n")
-    f.write("from dbus_next.service import (ServiceInterface, method, dbus_property, signal)\n")
+    f.write("from dbus_next.service import (ServiceInterface, method)\n")
     f.write("\n")
     f.write("# ServiceInterface exports Methods: @method(), Properties: @property, Signals:@signal()\n")
     f.write("class CAnalyzerBase(ServiceInterface):\n")
+    f.write("\tdef __init__(self, str_analyzer_name):\n")
+    f.write("\t\tsuper().__init__(str_analyzer_name)\n")
+    f.write("\n")
 
     spec = Payload(str_path_json)
     paths = spec.get_paths()

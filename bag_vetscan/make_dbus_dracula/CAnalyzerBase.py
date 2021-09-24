@@ -3,12 +3,20 @@
 @breif CAnalyzerBase.py
 
 Purpose: DBus service interface for the analyzer app.
+
+Notes:
+The parameters and return types must be type cast. For example: use 's' for str type.
+See https://python-dbus-next.readthedocs.io/en/latest/type-system
+
 """
 
-from dbus_next.service import (ServiceInterface, method, dbus_property, signal)
+from dbus_next.service import (ServiceInterface, method)
 
 # ServiceInterface exports Methods: @method(), Properties: @property, Signals:@signal()
 class CAnalyzerBase(ServiceInterface):
+	def __init__(self, str_analyzer_name):
+		super().__init__(str_analyzer_name)
+
 	@method()
 	def configuration_get(self) -> 's':
 		"""Request the configuration from the analyzer
