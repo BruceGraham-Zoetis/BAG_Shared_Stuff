@@ -2,9 +2,26 @@
 	TO DO
 ======================
 
-CAnalyzerDBusService
-========================
-pass in DBus request name, analyzer name
+openAPISpec.json object types
+================================
+The data type is "object" in CAnalyzerBase.py
+Need to expose the object's type so that the type can be 
+used in the generated DBus service interface type.
+Ex: configuration_put(self, body)
+openAPISpec.json:
+        "/configuration": {
+        ...
+            "put": {
+        	...
+        	"requestBody": {
+                    "required": true,
+                    "content": {
+			application/json": {
+                            "schema": {
+                                "type": "object",
+                                "description": "An object containing the full configuration for the analyzer"
+                            }
+                        }
 
 ==================
 Models

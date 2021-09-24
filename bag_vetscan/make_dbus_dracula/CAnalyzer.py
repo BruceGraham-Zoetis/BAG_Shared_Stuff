@@ -190,19 +190,19 @@ class CZoetisAnalyzerInterface(CAnalyzerBase):
 
     # TODO Pass inline_object2
     @method()
-    def prompts_option_chosen_post(self) -> 's':
+    def prompts_option_chosen_post(self, body : 'a{ss}') -> 's':
         # over-ride CAnalyzerBase
 
-        dict_rtn = prompts_channel_controller.prompts_option_chosen_post(self)
+        dict_rtn = prompts_channel_controller.prompts_option_chosen_post(self, body)
         # return a str to caller
         return str(dict_rtn)
 
     # TODO Pass inline_object4
     @method()
-    def prompts_qr_scanned_post(self) -> 's':
+    def prompts_qr_scanned_post(self, body : 'a{ss}') -> 's':
         # over-ride CAnalyzerBase
 
-        dict_rtn = prompts_channel_controller.prompts_qr_scanned_post(self)
+        dict_rtn = prompts_channel_controller.prompts_qr_scanned_post(self, body)
         # return a str to caller
         return str(dict_rtn)
 

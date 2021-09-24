@@ -11,6 +11,8 @@ import os
 from functools import reduce  # forward compatibility for Python 3
 import operator
 
+from dbus_next_data_types import class_dbus_next_types
+
 
 class Payload(object):
     def __init__(self, str_file):
@@ -19,7 +21,7 @@ class Payload(object):
         self.__str_function += "\t\t\"\"\"{path_desciption}\n"
         self.__str_function += "{param_decription}\n"
         self.__str_function += "\t\t\"\"\"\n"
-        self.__str_function += "\t\treturn \"OK\"\n\n"
+        self.__str_function += "\t\treturn {default_return}\n\n"
 
         self.__str_path_parameters_format = "{name} : {type}"
             
@@ -37,7 +39,19 @@ class Payload(object):
         self.__str_parameter_description = ""
         self.__str_path_desciption = ""
         self.__str_func_return_type = "'s'"
+        self.__default_return = "str({\"response\":\"not implimented\"})"
 
+
+    def get_function_body(self) -> str:
+        rtn_str = self.__str_function.format(
+                    func_decorator = self.__str_func_decorator,
+                    func_name = self.__str_func_name,
+                    path_parameters = self.__str_path_parameters,
+                    param_decription = self.__str_parameter_description,
+                    path_desciption = self.__str_path_desciption,
+                    func_return_type = self.__str_func_return_type,
+                    default_return = self.__default_return)
+        return rtn_str
 
 
     def get_paths(self) -> dict:
@@ -64,7 +78,7 @@ class Payload(object):
 
         for param in list_params:
             self.__str_parameter_description += "\t\t"
-            str_dbus_type = self.get_dbus_data_type(param['type'])
+            str_dbus_type = class_dbus_next_types.get_dbus_data_type(param['type'])
 
             self.__str_parameter_description += self.__str_parameter_description_format.format(
                                             direction=param['direction'],
@@ -83,16 +97,6 @@ class Payload(object):
                 self.__str_path_parameters += ", "
             
             i_n += 1
-
-    def get_function_body(self) -> str:
-        rtn_str = self.__str_function.format(
-                    func_decorator = self.__str_func_decorator,
-                    func_name = self.__str_func_name,
-                    path_parameters = self.__str_path_parameters,
-                    param_decription = self.__str_parameter_description,
-                    path_desciption = self.__str_path_desciption,
-                    func_return_type = self.__str_func_return_type)
-        return rtn_str
 
 
     def make_function_get(self, path) -> str:
@@ -193,18 +197,6 @@ class Payload(object):
         ]
 
         return list_params
-
-
-    def get_dbus_data_type(self, str_json_type : str) -> str:
-        str_dbus_type = ""
-
-        if ("string" == str_json_type.lower()):
-            str_dbus_type = "'s'"
-        else:
-            print("TODO - define a DBus type for JSON type: %s" % str_json_type)
-            str_dbus_type = "'a{ss}'"
-            
-        return str_dbus_type
 
 
     def get_path_request_parameters(self, path, verb) -> list:
