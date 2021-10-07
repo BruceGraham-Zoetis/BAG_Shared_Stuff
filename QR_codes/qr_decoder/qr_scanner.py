@@ -478,12 +478,12 @@ def create_csv_for_tests():
 
     g_bCameraIsRotated = isCameraRotated()
 
-    """
     str_filename = input("Enter file name (without extension): ")
     if (0 == len(str_filename)):
         exit()
     """
     str_filename = "abc"
+    """
 
     strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
     if ('a' == strAutoFocus):
