@@ -266,7 +266,7 @@ def main():
     dir_path = os.path.dirname(os.path.realpath(__file__))
     str_path_json = dir_path + '/openAPISpec.json'
 
-    str_path_class = dir_path + '/../CAnalyzerBase.py'
+    str_path_class = dir_path + '/../CAnalyzerBasex.py'
     f = open(str_path_class, "w")
     f.write("#!/usr/bin/env python3\n")
     f.write("\"\"\"\n")

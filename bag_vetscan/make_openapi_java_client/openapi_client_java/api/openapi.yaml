@@ -1,0 +1,874 @@
+openapi: 3.0.1
+info:
+  description: "The definition of the software interface between analyzers and the\
+    \ HUB.  The interface will be implemented as a RESTful interface with all server\
+    \ endpoints hosted on the Analyzer.\n\nThe following requirements will be met\
+    \ by all interfaces: \n1. All data passed back from server shall be in JSON format.\n\
+    2. All query parameters and JSON data properties shall be named using snake case\
+    \ and be all lower case.\n4. All data types that describe a measurement value\
+    \ shall end with an underscore followed by the unit of that physical value.  i.e.\
+    \ motor_current_ma."
+  title: Analyzer and HUB API
+  version: "1.0"
+servers:
+- url: /
+paths:
+  /configuration:
+    get:
+      description: Request the configuration from the analyzer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Analyzer responds with the its configuration information
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+      tags:
+      - Configuration Channel
+      x-accepts: application/json
+    put:
+      description: Set the configuration of the analyzer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: An object containing the full configuration for the analyzer
+              type: object
+        required: true
+      responses:
+        "200":
+          description: Analyzer successfully made configuration changes requested
+            by the client
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+      tags:
+      - Configuration Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+  /configuration/schema:
+    get:
+      description: Request the configuration schema from the analyzer
+      operationId: configuration_schema_get
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: object
+          description: Analyzer responds with the configuration schema that is used
+            to validate the configuration
+        "501":
+          description: The analyzer does not provide a schema for the configuration
+      tags:
+      - Configuration Channel
+      x-accepts: application/json
+  /configuration/factory_reset:
+    put:
+      description: Restore the analyzer to the state it was in when it left the factory.
+        All settings and data are removed.
+      operationId: configuration_factory_reset_put
+      responses:
+        "200":
+          description: Analyzer successfully began a factory reset
+      tags:
+      - Configuration Channel
+      x-accepts: application/json
+  /control/light/blink:
+    put:
+      description: Cause an analyzer to blink its light ring.  The purpose of this
+        is to identify an analyzer. If you have multiple analyzers of the same kind
+        it is nice to have a way to get a visual que which is which instead of having
+        to read the serial number of each analyzer to identify it.
+      responses:
+        "200":
+          description: Analyzer was successful blinking the light ring
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Control Channel
+      x-accepts: application/json
+  /control/power/reboot:
+    put:
+      description: Request sent from a client to reboot the analyzer (power off and
+        power back on), leaving all settings and data intact
+      responses:
+        "200":
+          description: Analyzer successfully initiated a reboot
+      tags:
+      - Control Channel
+      x-accepts: application/json
+  /control/power/off:
+    put:
+      description: Go from a state of powered to no power. This behavior of this action
+        will depend on what a particular analyzer supports. If it doesn't support
+        power off, go to 'deep sleep' mode
+      responses:
+        "200":
+          description: Analyzer successfully began to power off or go to sleep
+      tags:
+      - Control Channel
+      x-accepts: application/json
+  /measurement/supported_consumables:
+    get:
+      description: Return a list of all consumable types the analyzer supports. Each
+        consumable returned will include a universally unique identifier, which will
+        be used by the IC when starting a measurement. Any information required to
+        run a consumable will be described in the response using the JSON Schema format
+        (https://json-schema.org/).
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_supported_consumables'
+          description: Analyzer is responding to the client with a detailed list of
+            all supported consumables.
+      tags:
+      - Measurement Channel
+      x-accepts: application/json
+  /measurement/script:
+    post:
+      description: Start an analyzer measurement script sent as a string.  This is
+        intended for R&D use only and should not be used during normal operation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_script_json'
+        required: true
+      responses:
+        "200":
+          description: Analyzer successfully began measurement
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+  /measurement/file:
+    post:
+      description: Start an analyzer measurement script as described in a file stored
+        on the analyzer.  This is intended for R&D use only and should not be used
+        during normal operation
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_file_json'
+        required: true
+      responses:
+        "200":
+          description: Analyzer successfully began measurement
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+  /measurement/consumable/{consumable_uuid}:
+    post:
+      description: Start an analyzer measurement with a specific consumable
+      parameters:
+      - description: The UUID of the consumable
+        explode: false
+        in: path
+        name: consumable_uuid
+        required: true
+        schema:
+          format: UUID
+          type: string
+        style: simple
+      responses:
+        "200":
+          description: Analyzer successfully began measurement
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-accepts: application/json
+  /measurement/cancel:
+    post:
+      description: The HUB is requesting the analyzer cancel the measurement that
+        is currently being performed
+      responses:
+        "200":
+          description: Analyzer successfully began cancelling the measurement
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-accepts: application/json
+  /measurement/results/latest:
+    get:
+      description: The client requests that the analyzer return the result of the
+        most recent measurement performed
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_measurement_result'
+          description: The analyzer is sending the client the results of the most
+            recent measurement performed
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-accepts: application/json
+  /measurement/results:
+    get:
+      description: The client is requesting the analyzer to send past results between
+        two times
+      parameters:
+      - allowEmptyValue: true
+        description: The earliest result. If missing, the analyzer must return the
+          results from as early as possible
+        explode: true
+        in: query
+        name: start_datetime
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      - allowEmptyValue: true
+        description: The latest time for a result. If missing, the analyzer must return
+          all results from 'from' untill present time.
+        explode: true
+        in: query
+        name: end_datetime
+        required: false
+        schema:
+          format: date-time
+          type: string
+        style: form
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_measurement_results'
+          description: Analyzer is responding with the results of all measurements
+            taken between the times in the request
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Measurement Channel
+      x-accepts: application/json
+  /status:
+    get:
+      description: The HUB can use send this message to get the status of an analyzer
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_status_operational_200'
+          description: Analyzer is responding with its status
+      tags:
+      - Status Channel
+      x-accepts: application/json
+  /prompts/option_chosen:
+    post:
+      description: Hub is informing the analyzer of an option that was made by the
+        operator in response to a websocket message named choose_option on the prompts
+        channel.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_prompts_option_chosen'
+        required: true
+      responses:
+        "200":
+          description: Hub received chosen option successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+  /prompts/notification_ack:
+    post:
+      description: Hub is informing the analyzer a notification was acknowledged by
+        the operator in response to a websocket message named notification on the
+        prompts channel.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_notification_ack'
+        required: true
+      responses:
+        "200":
+          description: Hub received message successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+  /prompts/qr_scanned:
+    post:
+      description: Hub is informing the analyzer of a QR scan attempt in response
+        to a websocket message named scan_qr on the prompts channel.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/body_prompts_qr_scanned'
+        required: true
+      responses:
+        "200":
+          description: Hub received message successfully
+        "400":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_bad_request_400'
+          description: This response is sent to a request that violates the predefined
+            request schema
+        "503":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/response_service_unavailable_503'
+          description: This response is sent to any request that the analyzer is unable
+            to do at the time
+      tags:
+      - Prompts Channel
+      x-codegen-request-body-name: body
+      x-contentType: application/json
+      x-accepts: application/json
+components:
+  headers: {}
+  parameters: {}
+  responses:
+    "400_bad_request":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/response_bad_request_400'
+      description: This response is sent to a request that violates the predefined
+        request schema
+    "404_bad_request":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/response_bad_request_404'
+      description: This response is sent to a request to a server endpoint that is
+        not defined
+    "405_method_not_allowed":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/response_method_not_allowed_405'
+      description: This response is sent to any request sent to a valid location but
+        with an method that is not supported
+    "500_bad_request":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/response_bad_request_500'
+      description: This response is sent to any request whose subsequent server response
+        violates the predefined response schema
+    "503_service_unavailable":
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/response_service_unavailable_503'
+      description: This response is sent to any request that the analyzer is unable
+        to do at the time
+  schemas:
+    consumable:
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+        uuid:
+          format: uuid
+          type: string
+        type:
+          type: string
+        species:
+          items:
+            type: string
+          type: array
+        duration:
+          format: duration
+          type: string
+        assays:
+          items:
+            type: string
+          type: array
+        schema:
+          type: object
+      type: object
+    response_supported_consumables:
+      example:
+        consumables:
+        - name: Coagulation (PT/aPTT) (Coag Combo)
+          uuid: 0b7ec890-3960-11eb-a081-2790e47ff2f4
+          type: cartridge
+          species:
+          - '*'
+          duration: PT7M
+          assays:
+          - PT
+          - aPTT
+          schema: {}
+        - name: Feline bloodtyping
+          uuid: 5ed688be-4376-11eb-8136-3345982818db
+          type: cartridge
+          species:
+          - Feline
+          duration: PT5M
+          assays:
+          - ""
+          schema: {}
+      properties:
+        consumables:
+          items:
+            $ref: '#/components/schemas/consumable'
+          type: array
+      type: object
+    response_bad_request_400:
+      properties:
+        detail:
+          description: A description of the problem with the request
+          type: string
+        status:
+          description: The number of the HTTP error code
+          enum:
+          - 400
+          type: number
+        title:
+          description: The title of the error indicated by the status
+          enum:
+          - Bad Request
+          type: string
+        type:
+          description: Additional error information if available describing the type
+            of error
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      - type
+      type: object
+    response_bad_request_404:
+      properties:
+        detail:
+          description: A description of the problem with the request
+          type: string
+        status:
+          description: The number of the HTTP error code
+          enum:
+          - 404
+          type: number
+        title:
+          description: The title of the error indicated by the status
+          enum:
+          - Not Found
+          type: string
+        type:
+          description: Additional error information if available describing the type
+            of error
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      - type
+      type: object
+    response_method_not_allowed_405:
+      properties:
+        detail:
+          description: A description of the problem with the request
+          type: string
+        status:
+          description: The number of the HTTP error code
+          enum:
+          - 405
+          type: number
+        title:
+          description: The title of the error indicated by the status
+          enum:
+          - Method Not Allowed
+          type: string
+        type:
+          description: Additional error information if available describing the type
+            of error
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      - type
+      type: object
+    response_bad_request_500:
+      properties:
+        detail:
+          description: A description of the problem with the request
+          type: string
+        status:
+          description: The number of the HTTP error code
+          enum:
+          - 500
+          type: number
+        title:
+          description: The title of the error indicated by the status
+          enum:
+          - Response body does not conform to specification
+          type: string
+        type:
+          description: Additional error information if available describing the type
+            of error
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      - type
+      type: object
+    response_service_unavailable_503:
+      properties:
+        detail:
+          description: A description of the problem with the request
+          type: string
+        status:
+          description: The number of the HTTP error code
+          enum:
+          - 503
+          type: number
+        title:
+          description: The title of the error indicated by the status
+          enum:
+          - Service Unavailable
+          type: string
+        type:
+          description: Additional error information if available describing the type
+            of error
+          type: string
+      required:
+      - detail
+      - status
+      - title
+      - type
+      type: object
+    response_status_operational_200:
+      example:
+        status: Busy
+      properties:
+        status:
+          description: The status of the analyzer
+          enum:
+          - Busy
+          - Idle
+          - Intest
+          - Advisory
+          - Result
+          type: string
+      required:
+      - status
+      type: object
+    response_currently_activated_events_200:
+      properties:
+        currently_activated_events:
+          description: An array of all events that are currently activated
+          items:
+            $ref: '#/components/schemas/event_info'
+          type: array
+      required:
+      - currently_activated_events
+      type: object
+    body_script_json:
+      properties:
+        script:
+          description: This string will contain a script that the analyzer will consume
+            and begin the execution of
+          example: /home/script_files/CPL.xyz
+          type: string
+      required:
+      - script
+      type: object
+    body_file_json:
+      properties:
+        filename:
+          description: This string will the full path to the file that stores the
+            measurement script as it is stored on the analyzer
+          example: /home/files/CPL.txt
+          type: string
+      required:
+      - filename
+      type: object
+    body_notification_ack:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          example: ABC123
+          type: string
+      required:
+      - correlation_id
+      type: object
+    body_prompts_option_chosen:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          example: ABC123
+          type: string
+        option_chosen:
+          description: The option chosen by the operator
+          example: "Yes"
+          type: string
+      required:
+      - correlation_id
+      - option_chosen
+      type: object
+    body_prompts_qr_scanned:
+      properties:
+        correlation_id:
+          description: A unique ID that can be used to correlate messages being sent
+            and received
+          example: ABC123
+          type: string
+        qr_contents:
+          description: The contents of the QR that was scanned.  If scanning failed
+            or was cancelled by operator, this will be an empty string
+          example: '{"exp":"2022-05-27","name":"c","lot":"088222","data":"12.34"}'
+          type: string
+      required:
+      - correlation_id
+      - qr_contents
+      type: object
+    error_detail:
+      description: A description of the problem with the request
+      type: string
+    error_type:
+      description: Additional error information if available describing the type of
+        error
+      type: string
+    correlation_id:
+      description: A unique ID that can be used to correlate messages being sent and
+        received
+      example: ABC123
+      type: string
+    consumable_name:
+      description: A descriptive name of the consumable that can be used to uniquely
+        identify it
+      type: string
+    response_measurement_result:
+      description: This object will contain results of the most recent measurement
+      example:
+        result: Failed
+        consumable_name: consumable_name
+        start_datetime: 2020-11-05T13:15:30Z
+        end_datetime: 2020-12-02T14:29:27Z
+        test_results: '{}'
+        duration_sec: 800.7481076419654
+      properties:
+        consumable_name:
+          description: A descriptive name of the consumable that can be used to uniquely
+            identify it
+          type: string
+        start_datetime:
+          description: The date and time the measurement was started in date-time
+            format
+          example: 2020-11-05T13:15:30Z
+          format: date-time
+          type: string
+        end_datetime:
+          description: The date and time the measurement ended in date-time format
+          example: 2020-12-02T14:29:27Z
+          format: date-time
+          type: string
+        duration_sec:
+          description: The number of seconds the measurement took from start to end
+          maximum: 9999
+          minimum: 0
+          type: number
+        result:
+          description: The overall result of the measurement
+          enum:
+          - Failed
+          - Cancelled
+          - Completed
+          type: string
+        test_results:
+          description: The test results.  Will need to flush this out as we go on
+            as to what this looks like
+          type: object
+      type: object
+    response_measurement_results:
+      description: An array of measurement result objects that were taken in between
+        the times sent in the request.  If there are no historical results to report,
+        this will return as an empty array
+      example:
+        results:
+        - result: Failed
+          consumable_name: consumable_name
+          start_datetime: 2020-11-05T13:15:30Z
+          end_datetime: 2020-12-02T14:29:27Z
+          test_results: '{}'
+          duration_sec: 800.7481076419654
+        - result: Failed
+          consumable_name: consumable_name
+          start_datetime: 2020-11-05T13:15:30Z
+          end_datetime: 2020-12-02T14:29:27Z
+          test_results: '{}'
+          duration_sec: 800.7481076419654
+      properties:
+        results:
+          items:
+            $ref: '#/components/schemas/response_measurement_result'
+          type: array
+      required:
+      - results
+      type: object
+    event_info:
+      description: This object will contain information about an event that occurred
+      properties:
+        activation_time:
+          description: The local date and time the event was activated in format MM-DD-YYYY
+            HH:MM:SS
+          example: 05-05-2021 22:07:04
+          type: string
+        severity:
+          description: A string value indicating the severity of the event
+          enum:
+          - Notification
+          - Warning
+          - Error
+          - Halt
+          type: string
+        event_name:
+          description: The name of the event
+          type: string
+        event_additional_information:
+          description: Additional information to describe the event that has occurred.  This
+            can be anything that will help the operator understand in more detail
+            the event
+          type: string
+      type: object
+
