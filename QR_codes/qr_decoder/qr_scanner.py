@@ -39,8 +39,8 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
-DEBUG_TEST_CSV_GENERATION = True
-#DEBUG_TEST_CSV_GENERATION = False
+#DEBUG_TEST_CSV_GENERATION = True
+DEBUG_TEST_CSV_GENERATION = False
 
 if (not DEBUG_TEST_CSV_GENERATION):
     TIME_TILL_TIMEOUT = 30
