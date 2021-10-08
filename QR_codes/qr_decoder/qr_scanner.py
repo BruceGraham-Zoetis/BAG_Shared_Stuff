@@ -376,11 +376,6 @@ def create_csv_for_tests():
         int_qr_version = dict_size_qr_records[irecord]['version']
         int_qr_size    = dict_size_qr_records[irecord]['size']
 
-        print(irecord)
-        print("size", int_qr_size)
-        print("version", int_qr_version)
-        print("timings", dict_size_qr_records[irecord]['timings'])
-
         for irun in range(1, max_test_attempts + 1, 1):
             timing = runTestForVersionAndSize(irun, int_qr_version, int_qr_size)
             dict_size_qr_records[irecord]['timings'][irun - 1] = timing
