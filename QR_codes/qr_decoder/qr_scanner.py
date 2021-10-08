@@ -195,7 +195,6 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
     print("Remove QR code")
     strWaitChar = '/'
 
-    nFound = 1
     bFound = False
 
     if (1 == iRun):
@@ -203,7 +202,7 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
     else:
         timeEnd = time.time() + TIME_TO_PREPARE_NEXT
 
-    while((0 < nFound) and (not bFound) and (time.time() < timeEnd)):
+    while(time.time() < timeEnd):
         if (not g_bCameraIsRotated):
                 ret, frameIn = g_camera.read()
         else:
@@ -212,11 +211,11 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
 
         bFound, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
-            nFound += 1
             if (1 == iRun):
                 timeEnd = time.time() + TIME_TO_PREPARE_FIRST
             else:
                 timeEnd = time.time() + TIME_TO_PREPARE_NEXT
+
             if (strWaitChar == '/'):
                 strWaitChar = '-'
             elif (strWaitChar == '-'):
@@ -226,20 +225,17 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
             print('\r' + strWaitChar, end = '')
             frameIn = printMessageToWindow(frameIn, "Remove QR code")
         else:
-            if (10 < nFound):
-                timeRemaining = timeEnd - time.time()
-                strRemaining = format(timeRemaining, ".2f")
-                listLines = [
-                        "Get ready to scan label",
-                        "  Version: %d" % int_qr_version,
-                        "     Size: %dx%d" % (iSize, iSize),
-                        "",
-                        "Run: " + str(iRun),
-                        "Count down " + strRemaining
-                    ]
-                frameIn = printMessagesToWindow(frameIn, listLines)
-            elif (0 < nFound):
-                nFound += -1
+            timeRemaining = timeEnd - time.time()
+            strRemaining = format(timeRemaining, ".2f")
+            listLines = [
+                    "Get ready to scan label",
+                    "  Version: %d" % int_qr_version,
+                    "     Size: %dx%d" % (iSize, iSize),
+                    "",
+                    "Run: " + str(iRun),
+                    "Count down " + strRemaining
+                ]
+            frameIn = printMessagesToWindow(frameIn, listLines)
 
         cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) # delay - workaround for bug in cv2.imshow()
