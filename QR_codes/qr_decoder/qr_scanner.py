@@ -45,11 +45,13 @@ DEBUG_TEST_CSV_GENERATION = False
 if (not DEBUG_TEST_CSV_GENERATION):
     TIME_TILL_TIMEOUT = 30
     TIME_PAUSE_TO_DISPLAY_RESULTS = 10
-    TIME_TO_PREPARE = 10
+    TIME_TO_PREPARE_FIRST = 10
+    TIME_TO_PREPARE_NEXT = 5
 else:
     TIME_TILL_TIMEOUT = 0
     TIME_PAUSE_TO_DISPLAY_RESULTS = 0
-    TIME_TO_PREPARE = 0
+    TIME_TO_PREPARE_FIRST = 0
+    TIME_TO_PREPARE_NEXT = 0
 
 debug_decode_data_matrix = False
 
@@ -178,7 +180,6 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
     g_camera.set(cv2.CAP_PROP_AUTOFOCUS, 0)
     g_camera.set(cv2.CAP_PROP_FOCUS, fixed_focus_near_lens) # Move focus near the lens.
 
-    bFound = False
     dicContents = {}
 
     bTestWasCancelled = False
@@ -192,11 +193,17 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
         g_camera.set(cv2.CAP_PROP_FOCUS, fixed_focus_setting)
 
     print("Remove QR code")
-    nNotFound = 0
     strWaitChar = '/'
 
-    timeEnd = time.time() + TIME_TO_PREPARE
-    while(time.time() < timeEnd):
+    nFound = 1
+    bFound = False
+
+    if (1 == iRun):
+        timeEnd = time.time() + TIME_TO_PREPARE_FIRST
+    else:
+        timeEnd = time.time() + TIME_TO_PREPARE_NEXT
+
+    while((0 < nFound) and (not bFound) and (time.time() < timeEnd)):
         if (not g_bCameraIsRotated):
                 ret, frameIn = g_camera.read()
         else:
@@ -205,8 +212,11 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
 
         bFound, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
-            timeEnd = time.time() + 5.0
-            nNotFound = 0
+            nFound += 1
+            if (1 == iRun):
+                timeEnd = time.time() + TIME_TO_PREPARE_FIRST
+            else:
+                timeEnd = time.time() + TIME_TO_PREPARE_NEXT
             if (strWaitChar == '/'):
                 strWaitChar = '-'
             elif (strWaitChar == '-'):
@@ -216,12 +226,7 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
             print('\r' + strWaitChar, end = '')
             frameIn = printMessageToWindow(frameIn, "Remove QR code")
         else:
-            nNotFound += 1
-            if (60 < nNotFound):
-                print("\nQR code not detected\n")
-                frameIn = printMessageToWindow(frameIn, "QR code not detected")
-                break
-            else:
+            if (10 < nFound):
                 timeRemaining = timeEnd - time.time()
                 strRemaining = format(timeRemaining, ".2f")
                 listLines = [
@@ -233,6 +238,8 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
                         "Count down " + strRemaining
                     ]
                 frameIn = printMessagesToWindow(frameIn, listLines)
+            elif (0 < nFound):
+                nFound += -1
 
         cv2.imshow(strWindowtitle, frameIn)
         cv2.waitKey(10) # delay - workaround for bug in cv2.imshow()
@@ -241,6 +248,8 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
     print("Test will fail in %d seconds." % TIME_TILL_TIMEOUT)
     print("  Version: %d" % int_qr_version)
     print("     Size: %dx%d" % (iSize, iSize))
+    print("Run: " + str(iRun))
+
     t_startFocus = time.time()
 
     i_time_till_timeout = int(TIME_TILL_TIMEOUT)
@@ -263,7 +272,8 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
                 "Place QR code to be scanned.",
                 "Test will fail in " + str(i_time_till_timeout) + " seconds.",
                 "Version: " + str(int_qr_version),
-                "   Size: " + str(iSize) + "x" + str(iSize)
+                "   Size: " + str(iSize) + "x" + str(iSize),
+                "Run: " + str(iRun)
             ]
         frameIn = printMessagesToWindow(frameIn, listLines)
         cv2.imshow(strWindowtitle, frameIn)
