@@ -39,8 +39,8 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
-#DEBUG_TEST_CSV_GENERATION = True
-DEBUG_TEST_CSV_GENERATION = False
+DEBUG_TEST_CSV_GENERATION = True
+#DEBUG_TEST_CSV_GENERATION = False
 
 if (not DEBUG_TEST_CSV_GENERATION):
     TIME_TILL_TIMEOUT = 30
@@ -384,59 +384,55 @@ def create_csv_for_tests():
         for irun in range(1, max_test_attempts + 1, 1):
             timing = runTestForVersionAndSize(irun, int_qr_version, int_qr_size)
             dict_size_qr_records[irecord]['timings'][irun - 1] = timing
-            if (timing < 0):
-                break
     
-    if (0 < timing):
-        str_dir = os.path.dirname(__file__)
+    str_dir = os.path.dirname(__file__)
 
-        if (not os.path.isdir(str_dir + "/test_runs/")):
-            os.mkdir(str_dir + "/test_runs/")
+    if (not os.path.isdir(str_dir + "/test_runs/")):
+        os.mkdir(str_dir + "/test_runs/")
 
-        str_path_filename = str_dir + "/test_runs/" + str_filename + '.csv'
+    str_path_filename = str_dir + "/test_runs/" + str_filename + '.csv'
 
-        csvfile = open(str_path_filename, 'w', newline='')
+    csvfile = open(str_path_filename, 'w', newline='')
 
-        """ write the timings to a CSV file.
-        QR Version	Size (mm x mm)	Scan Times (sec)	            Avg (sec)
-        5	        10 x 10	18.41	0.94	1.68	5.38	6.25	6.53
-        ...
-        29	        50 x 50	15.64	2.26	3.66	5.28	2.03	5.77
-        """
-        spamwriter = csv.writer(csvfile, delimiter=' ',
-                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
-        spamwriter.writerow([''])
+    """ write the timings to a CSV file.
+    QR Version	Size (mm x mm)	Scan Times (sec)	            Avg (sec)
+    5	        10 x 10	18.41	0.94	1.68	5.38	6.25	6.53
+    ...
+    29	        50 x 50	15.64	2.26	3.66	5.28	2.03	5.77
+    """
+    spamwriter = csv.writer(csvfile, delimiter=' ',
+                            quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    spamwriter.writerow([''])
 
-        fieldnames = ['QR_Version', 'Size', 't1', 't2', 't3', 't4', 't5', 'average']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+    fieldnames = ['QR_Version', 'Size', 't1', 't2', 't3', 't4', 't5', 'average']
+    writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-        # writer.writeheader()
-        spamwriter.writerow(['QR Version', "Size (mm x mm)", "Scan Times (sec)", "", "", "", "", "Avg (sec)"])
+    # writer.writeheader()
+    spamwriter.writerow(['QR Version', "Size (mm x mm)", "Scan Times (sec)", "", "", "", "", "Avg (sec)"])
 
-        for irecord in dict_size_qr_records:
-            int_qr_version = dict_size_qr_records[irecord]['version']
-            int_qr_size = dict_size_qr_records[irecord]['size']
-            str_size = str(int_qr_size) + "x" + str(int_qr_size)
+    for irecord in dict_size_qr_records:
+        int_qr_version = dict_size_qr_records[irecord]['version']
+        int_qr_size = dict_size_qr_records[irecord]['size']
+        str_size = str(int_qr_size) + "x" + str(int_qr_size)
 
-            for iRun in range(1, max_test_attempts + 1, 1):
-                dict_timings = dict_size_qr_records[iRun]['timings']
+        dict_timings = dict_size_qr_records[irecord]['timings']
 
-                fTimeSum = 0.0
-                for ftime in dict_timings.values():
-                    fTimeSum += ftime
+        fTimeSum = 0.0
+        for ftime in dict_timings.values():
+            fTimeSum += ftime
 
-                faverage = fTimeSum / max_test_attempts
-                writer.writerow(
-                    {'QR_Version': int_qr_version,
-                    'Size': str_size, 
-                    't1': "{:.2f}".format(dict_timings[0]),
-                    't2': "{:.2f}".format(dict_timings[1]),
-                    't3': "{:.2f}".format(dict_timings[2]),
-                    't4': "{:.2f}".format(dict_timings[3]),
-                    't5': "{:.2f}".format(dict_timings[4]),
-                    'average': "{:.2f}".format(faverage)})
+        faverage = fTimeSum / max_test_attempts
+        writer.writerow(
+            {'QR_Version': int_qr_version,
+            'Size': str_size, 
+            't1': "{:.2f}".format(dict_timings[0]),
+            't2': "{:.2f}".format(dict_timings[1]),
+            't3': "{:.2f}".format(dict_timings[2]),
+            't4': "{:.2f}".format(dict_timings[3]),
+            't5': "{:.2f}".format(dict_timings[4]),
+            'average': "{:.2f}".format(faverage)})
 
-        csvfile.close()
+    csvfile.close()
     
     # close output window
     g_camera.release()
