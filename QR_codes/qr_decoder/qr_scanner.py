@@ -193,7 +193,6 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
         g_camera.set(cv2.CAP_PROP_FOCUS, fixed_focus_setting)
 
     print("Remove QR code")
-    strWaitChar = '/'
 
     bFound = False
 
