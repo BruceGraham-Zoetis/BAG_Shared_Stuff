@@ -39,6 +39,15 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
+#TIME_TILL_TIMEOUT = 30
+TIME_TILL_TIMEOUT = 0
+
+#TIME_PAUSE_TO_DISPLAY_RESULTS = 10
+TIME_PAUSE_TO_DISPLAY_RESULTS = 0
+
+#TIME_TO_PREPARE = 10
+TIME_TO_PREPARE = 0
+
 debug_decode_data_matrix = False
 
 if (debug_decode_data_matrix):
@@ -59,21 +68,8 @@ fixed_focus_near_lens = 900
 global strWindowtitle
 strWindowtitle = 'Barcode/QR code reader'
 
-
 global max_test_attempts
 max_test_attempts = 5
-
-global g_iTestAttempts
-g_iTestAttempts = 0
-
-global g_fTimeSum
-g_fTimeSum = 0
-
-global g_strAttemptTimings
-g_strAttemptTimings = ""
-
-global g_list_attempt_timings
-g_list_attempt_timings = []
 
 global g_camera
 
@@ -172,7 +168,7 @@ def printMessagesToWindow(frameIn, Contents):
     return frameIn
 
 
-def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
+def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> float:
     global g_bCameraIsRotated
 
     # turn off the camera auto-focus
@@ -196,7 +192,7 @@ def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
     nNotFound = 0
     strWaitChar = '/'
 
-    timeEnd = time.time() + 10.0
+    timeEnd = time.time() + TIME_TO_PREPARE
     while(time.time() < timeEnd):
         if (not g_bCameraIsRotated):
                 ret, frameIn = g_camera.read()
@@ -227,7 +223,7 @@ def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
                 strRemaining = format(timeRemaining, ".2f")
                 listLines = [
                         "Get ready to scan label",
-                        "  Version: %d" % iVerison,
+                        "  Version: %d" % int_qr_version,
                         "     Size: %dx%d" % (iSize, iSize),
                         "",
                         "Run: " + str(iRun),
@@ -239,13 +235,16 @@ def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
         cv2.waitKey(10) # delay - workaround for bug in cv2.imshow()
 
     print("Place QR code to be scanned.")
-    print("Press Esc to fail the test.")
-    print("  Version: %d" % iVerison)
+    print("Test will fail in %d seconds." % TIME_TILL_TIMEOUT)
+    print("  Version: %d" % int_qr_version)
     print("     Size: %dx%d" % (iSize, iSize))
     t_startFocus = time.time()
 
+    i_time_till_timeout = int(TIME_TILL_TIMEOUT)
+
     bFound = False
-    while (not bFound):
+    t_diff = 0.0
+    while (not bFound and (0 < i_time_till_timeout)):
         if (not g_bCameraIsRotated):
                 ret, frameIn = g_camera.read()
         else:
@@ -259,8 +258,8 @@ def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
 
         listLines = [
                 "Place QR code to be scanned.",
-                "Press Esc to fail the test.",
-                "Version: " + str(iVerison),
+                "Test will fail in " + str(i_time_till_timeout) + " seconds.",
+                "Version: " + str(int_qr_version),
                 "   Size: " + str(iSize) + "x" + str(iSize)
             ]
         frameIn = printMessagesToWindow(frameIn, listLines)
@@ -274,185 +273,19 @@ def runTestForVersionAndSize(iRun : int, iVerison : int, iSize : int) -> bool:
         if (bFound):
             break
 
-    if (bTestWasCancelled):
-        print("!!! Cancelled !!!")
-        return bTestWasCancelled
+        t_diff = time.time() - t_startFocus
+        i_time_till_timeout = int(TIME_TILL_TIMEOUT - t_diff)
 
     t_diff = time.time() - t_startFocus
-    print("\ntime to decode: %f" % t_diff)
-
-    # save results: g_fTimeSum, g_iTestAttempts, g_strAttemptTimings
-    global g_fTimeSum
-    g_fTimeSum += t_diff
-
-    global g_iTestAttempts
-    g_iTestAttempts += 1
-
-    global g_strAttemptTimings
-    g_strAttemptTimings += " " + "{:5.2f}".format(t_diff)
-
-    global g_list_attempt_timings
-    g_list_attempt_timings.append(t_diff)
-
-    strBeepFile = os.getcwd()
-    if (os.name == 'nt'):
-        strBeepFile += '\\'
+    if (bTestWasCancelled):
+        print("!!! Cancelled !!!")
+        t_diff = -1.0
+    elif (0 < i_time_till_timeout):
+        print("\ntime to decode: %f" % t_diff)
     else:
-        strBeepFile += '/'
-    strBeepFile += 'beep-08b.wav'
-    try:
-        audio_play.playWaveFileNoBlock(strBeepFile)
-    except Exception as e:
-        pass
+        print("\ntimeout - tested failed")
 
-    if (isinstance(dicContentsCaptured, dict)):
-        dicContents = dicContentsCaptured
-
-        # Print to the console, the key:Value of dicContents, one line per key
-        keys = dicContents.keys()
-        for key in keys:
-            if (str == type(key)):
-                strKey = key
-            else:
-                strKey = str(key)
-
-            if (str == type(dicContents[key])):
-                strValue = dicContents[key]
-            else:
-                strValue = str(dicContents[key])
-            txtDisplay = strKey + ": " + strValue
-            print("  " + txtDisplay)
-        print("")
-
-
-        # Print to the window, the key:Value of dicContents, one line per key
-        timeEnd = time.time() + 5.0
-        while(time.time() < timeEnd):
-            ret, frameRotated = g_camera.read()
-            frameIn = cv2.flip(frameRotated, -1)
-
-            dicContents = {"Scan Time" : "{:5.2f}".format(t_diff) + " sec", "" : ""}
-            dicContents.update(dicContentsCaptured)
-            timeRemaining = timeEnd - time.time()
-            strRemaining = format(timeRemaining, ".2f")
-            dicContents.update({strRemaining : ""})
-
-            frameIn = printMessagesToWindow(frameIn, dicContents)
-            cv2.imshow(strWindowtitle, frameIn)
-            cv2.waitKey(10) # delay - workaround for bug in cv2.imshow()
-
-    return bTestWasCancelled
-
-
-def PrintAndLog(f, strIn : str):
-    print(strIn)
-    f.write(strIn + "\n")
-
-
-
-#debugSkipInput = True
-debugSkipInput = False
-
-def make_file_per_run():
-    iWidth = 0
-
-    if (not os.path.isdir("./test_runs/")):
-        os.mkdir("./test_runs/")
-
-    print("============================================")
-    print("============================================")
-    print("")
-    if (debugSkipInput):
-        strHuman = "bruce"
-    else:
-        strHuman = input("Enter human name: ")
-        if (0 == len(strHuman)):
-            exit()
-
-    while(True):
-        if (0 != iWidth):
-            print("============================================")
-            print("============================================")
-            print("")
-        if (debugSkipInput):
-            test_parameter_auto_focus = False
-        else:
-            strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
-            if ('a' == strAutoFocus):
-                test_parameter_auto_focus = True
-            elif ('f' == strAutoFocus):
-                test_parameter_auto_focus = False
-            else:
-                break
-
-        if (debugSkipInput):
-            iWidth = 20
-        else:
-            while(True):
-                strWidth = input("Enter QR code width cm (10, 20, 50): ")
-                try:
-                    iWidth = int(strWidth)
-                    if ((10 == iWidth) or (20 == iWidth) or (50 == iWidth)):
-                        break
-                except Exception as e:
-                    pass
-
-        if (debugSkipInput):
-            iVersion = 14
-        else:
-            while(True):
-                strVersion = input("Enter QR code version (1 - 40): ")
-                try:
-                    iVersion = int(strVersion)
-                    if ((1 <= iVersion) and (iVersion <= 40)):
-                        break
-                except Exception as e:
-                    pass
-
-        if (test_parameter_auto_focus):
-            strFocus = "Auto"
-        else:
-            strFocus = "Fixed"
-        strFileName = "./test_runs/" + strHuman + "_" + strFocus + "_" + str(iWidth) + "_" + str(iVersion) + ".txt"
-        f = open(strFileName, "w")
-
-        g_strAttemptTimings = ""
-        g_fTimeSum = 0.0
-
-        # open output window
-        g_camera = cv2.VideoCapture(0)
-
-        for iRun in range(1, max_test_attempts + 1, 1):
-            bTestWasCancelled = runTestForVersionAndSize(iRun, 1, 1)
-            if (bTestWasCancelled):
-                break
-
-        # close output window
-        g_camera.release()
-        cv2.destroyAllWindows()
-
-        PrintAndLog(f, "strHuman: " + strHuman)
-        PrintAndLog(f, "strFocus: " + strFocus)
-        PrintAndLog(f, "  iWidth: " + str(iWidth))
-        PrintAndLog(f, "iVersion: " + str(iVersion))
-
-        if (test_parameter_auto_focus):
-            PrintAndLog(f, "Autofocus On")
-        else:
-            PrintAndLog(f, "Autofocus Off")
-            fcm = calculateFocalLength_cm(fixed_focus_setting)
-            PrintAndLog(f, "Focus point set to %.2f. %.2f cm from lens" % (fixed_focus_setting, fcm))
-        PrintAndLog(f, "")
-        PrintAndLog(f, "Test runs %d times" % max_test_attempts)
-        PrintAndLog(f, "        Timings: " + g_strAttemptTimings)
-        PrintAndLog(f, "Completed iRuns: " + str(iRun))
-        if (0 < g_iTestAttempts):
-            fAvg = g_fTimeSum / iRun
-            PrintAndLog(f, "        Average: %.2f sec" % fAvg)
-        PrintAndLog(f, "============================================")
-        PrintAndLog(f, "============================================")
-
-        f.close()
+    return t_diff
 
 
 def isCameraRotated() -> bool:
@@ -470,6 +303,8 @@ def isCameraRotated() -> bool:
             i = i + 1
     return bCameraIsRotated
 
+#skip = True
+skip = False
 
 def create_csv_for_tests():
     global g_camera
@@ -478,81 +313,110 @@ def create_csv_for_tests():
 
     g_bCameraIsRotated = isCameraRotated()
 
-    """
-    str_filename = input("Enter file name (without extension): ")
-    if (0 == len(str_filename)):
-        exit()
-    """
-    str_filename = "abc"
-
-    strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
-    if ('a' == strAutoFocus):
+    if (skip):
+        str_filename = "abc"
         test_parameter_auto_focus = True
-    elif ('f' == strAutoFocus):
-        test_parameter_auto_focus = False
-    else:
-        return
 
-    dict_QR_Versions = {
-            10: [5, 6, 7, 8],
-            20: [14, 15, 16, 17],
-            50: [15, 16, 17, 18, 26, 27, 28, 29]
+    else:
+        str_filename = input("Enter file name (without extension): ")
+        if (0 == len(str_filename)):
+            exit()
+
+        strAutoFocus = input("Enter a for autofucus, f for fixed focus, q to quit: ")
+        if ('a' == strAutoFocus):
+            test_parameter_auto_focus = True
+        elif ('f' == strAutoFocus):
+            test_parameter_auto_focus = False
+        else:
+            return
+
+    dict_size_qr_records = {
+            # key = irecord: test for a size and version
+            0: {"size": 10, "version":5, "timings": {}},
+            1: {"size": 10, "version":6, "timings": {}},
+            2: {"size": 10, "version":7, "timings": {}},
+            3: {"size": 10, "version":8, "timings": {}},
+
+            4: {"size": 20, "version":14, "timings": {}},
+            5: {"size": 20, "version":15, "timings": {}},
+            6: {"size": 20, "version":16, "timings": {}},
+            7: {"size": 20, "version":17, "timings": {}},
+
+            8: {"size": 50, "version":15, "timings": {}},
+            9: {"size": 50, "version":16, "timings": {}},
+            10: {"size": 50, "version":17, "timings": {}},
+            11: {"size": 50, "version":18, "timings": {}},
+            12: {"size": 50, "version":26, "timings": {}},
+            13: {"size": 50, "version":27, "timings": {}},
+            14: {"size": 50, "version":28, "timings": {}},
+            15: {"size": 50, "version":29, "timings": {}}
         }
 
     # open output window
     g_camera = cv2.VideoCapture(0)
 
-    g_list_attempt_timings = []
+    timing = -1.0
 
-    for qr_size in dict_QR_Versions:
-        list_versions = dict_QR_Versions[qr_size]
+    for irecord in dict_size_qr_records:
+        int_qr_version = dict_size_qr_records[irecord]['version']
+        int_qr_size    = dict_size_qr_records[irecord]['size']
 
-        for qr_version in list_versions:
-            str_size = str(qr_size) + 'x' + str(qr_size)
+        print(irecord)
+        print("size", int_qr_size)
+        print("version", int_qr_version)
+        print("timings", dict_size_qr_records[irecord]['timings'])
 
-            for iRun in range(1, max_test_attempts + 1, 1):
-                #print("qr_version: %d qr_size: %d" % (qr_version, qr_size))
-
-                bTestWasCancelled = runTestForVersionAndSize(iRun, qr_version, qr_size)
-                if (bTestWasCancelled):
-                    break
+        for irun in range(1, max_test_attempts + 1, 1):
+            timing = runTestForVersionAndSize(irun, int_qr_version, int_qr_size)
+            dict_size_qr_records[irecord]['timings'][irun - 1] = timing
+            if (timing < 0):
+                break
     
-    """ write the timings to a CSV file.
-    QR Version	Size (mm x mm)	Scan Times (sec)	            Avg (sec)
-    5	        10 x 10	18.41	0.94	1.68	5.38	6.25	6.53
-    ...
-    29	        50 x 50	15.64	2.26	3.66	5.28	2.03	5.77
-    """
-    if (0 < g_iTestAttempts):
+    if (0 < timing):
         if (not os.path.isdir("./test_runs/")):
             os.mkdir("./test_runs/")
 
-        with open("./test_runs/" + str_filename + '.csv', 'w', newline='') as csvfile:
-            spamwriter = csv.writer(csvfile, delimiter=' ',
-                                    quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            spamwriter.writerow([''])
+        csvfile = open("./test_runs/" + str_filename + '.csv', 'w', newline='')
 
-            fieldnames = ['QR_Version', 'Size', 't1', 't2', 't3', 't4', 't5', 'average']
-            writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        """ write the timings to a CSV file.
+        QR Version	Size (mm x mm)	Scan Times (sec)	            Avg (sec)
+        5	        10 x 10	18.41	0.94	1.68	5.38	6.25	6.53
+        ...
+        29	        50 x 50	15.64	2.26	3.66	5.28	2.03	5.77
+        """
+        spamwriter = csv.writer(csvfile, delimiter=' ',
+                                quotechar='"', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow([''])
 
-            # writer.writeheader()
-            spamwriter.writerow(['QR Version', "Size (mm x mm)", "Scan Times (sec)", "", "", "", "", "Avg (sec)"])
+        fieldnames = ['QR_Version', 'Size', 't1', 't2', 't3', 't4', 't5', 'average']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
 
-            for qr_size in dict_QR_Versions:
+        # writer.writeheader()
+        spamwriter.writerow(['QR Version', "Size (mm x mm)", "Scan Times (sec)", "", "", "", "", "Avg (sec)"])
 
-                for iRun in range(1, max_test_attempts + 1, 1):
-                    float_average = g_fTimeSum / iRun
+        for irecord in dict_size_qr_records:
+            int_qr_version = dict_size_qr_records[irecord]['version']
+            int_qr_size = dict_size_qr_records[irecord]['size']
+            str_size = str(int_qr_size) + "x" + str(int_qr_size)
 
-                    writer.writerow(
-                        {'QR_Version': qr_version,
-                        'Size': str_size, 
-                        't1': g_list_attempt_timings[0],
-                        't2': g_list_attempt_timings[1],
-                        't3': g_list_attempt_timings[2],
-                        't4': g_list_attempt_timings[3],
-                        't5': g_list_attempt_timings[4],
-                        'average': float_average})
-        
+            for iRun in range(1, max_test_attempts + 1, 1):
+                dict_timings = dict_size_qr_records[iRun]['timings']
+
+                fTimeSum = 0.0
+                for ftime in dict_timings.values():
+                    fTimeSum += ftime
+
+                faverage = fTimeSum / max_test_attempts
+                writer.writerow(
+                    {'QR_Version': int_qr_version,
+                    'Size': str_size, 
+                    't1': "{:.2f}".format(dict_timings[0]),
+                    't2': "{:.2f}".format(dict_timings[1]),
+                    't3': "{:.2f}".format(dict_timings[2]),
+                    't4': "{:.2f}".format(dict_timings[3]),
+                    't5': "{:.2f}".format(dict_timings[4]),
+                    'average': "{:.2f}".format(faverage)})
+    
     # close output window
     g_camera.release()
     cv2.destroyAllWindows()
