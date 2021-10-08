@@ -199,8 +199,26 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
 
     if (1 == iRun):
         timeEnd = time.time() + TIME_TO_PREPARE_FIRST
-    else:
-        timeEnd = time.time() + TIME_TO_PREPARE_NEXT
+        while(time.time() < timeEnd):
+            if (not g_bCameraIsRotated):
+                    ret, frameIn = g_camera.read()
+            else:
+                ret, frameRotated = g_camera.read()
+                frameIn = cv2.flip(frameRotated, -1)
+
+            listLines = [
+                    "New label",
+                    "",
+                    "Please get ready with new label",
+                    "",
+                    "  Version: %d" % int_qr_version,
+                    "     Size: %dx%d" % (iSize, iSize),
+                ]
+            frameIn = printMessagesToWindow(frameIn, listLines)
+            cv2.imshow(strWindowtitle, frameIn)
+            cv2.waitKey(10) # delay - workaround for bug in cv2.imshow()
+
+    timeEnd = time.time() + TIME_TO_PREPARE_NEXT
 
     while(time.time() < timeEnd):
         if (not g_bCameraIsRotated):
@@ -211,18 +229,7 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
 
         bFound, dicContents = decode_qr_code_in_frame(frameIn)
         if (bFound):
-            if (1 == iRun):
-                timeEnd = time.time() + TIME_TO_PREPARE_FIRST
-            else:
-                timeEnd = time.time() + TIME_TO_PREPARE_NEXT
-
-            if (strWaitChar == '/'):
-                strWaitChar = '-'
-            elif (strWaitChar == '-'):
-                strWaitChar = '|'
-            elif (strWaitChar == '|'):
-                strWaitChar = '/'
-            print('\r' + strWaitChar, end = '')
+            timeEnd = time.time() + TIME_TO_PREPARE_NEXT
             frameIn = printMessageToWindow(frameIn, "Remove QR code")
         else:
             timeRemaining = timeEnd - time.time()
@@ -289,10 +296,12 @@ def runTestForVersionAndSize(iRun : int, int_qr_version : int, iSize : int) -> f
     if (bTestWasCancelled):
         print("!!! Cancelled !!!")
         t_diff = -1.0
-    elif (0 < i_time_till_timeout):
-        print("\ntime to decode: %f" % t_diff)
     else:
-        print("\ntimeout - tested failed")
+        if (i_time_till_timeout <= 0.0):
+            print("timeout")
+            t_diff = TIME_TILL_TIMEOUT
+
+        print("time to decode: %f" % t_diff)
 
     return t_diff
 
@@ -380,10 +389,14 @@ def create_csv_for_tests():
                 break
     
     if (0 < timing):
-        if (not os.path.isdir("./test_runs/")):
-            os.mkdir("./test_runs/")
+        str_dir = os.path.dirname(__file__)
 
-        csvfile = open("./test_runs/" + str_filename + '.csv', 'w', newline='')
+        if (not os.path.isdir(str_dir + "/test_runs/")):
+            os.mkdir(str_dir + "/test_runs/")
+
+        str_path_filename = str_dir + "/test_runs/" + str_filename + '.csv'
+
+        csvfile = open(str_path_filename, 'w', newline='')
 
         """ write the timings to a CSV file.
         QR Version	Size (mm x mm)	Scan Times (sec)	            Avg (sec)
@@ -423,6 +436,8 @@ def create_csv_for_tests():
                     't4': "{:.2f}".format(dict_timings[3]),
                     't5': "{:.2f}".format(dict_timings[4]),
                     'average': "{:.2f}".format(faverage)})
+
+        csvfile.close()
     
     # close output window
     g_camera.release()
