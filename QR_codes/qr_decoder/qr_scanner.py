@@ -39,14 +39,17 @@ sys.path.append('../../audio_control')
 #sys.path.insert(1, '/.../../audio_control')
 #import audio_play
 
-#TIME_TILL_TIMEOUT = 30
-TIME_TILL_TIMEOUT = 0
+#DEBUG_TEST_CSV_GENERATION = True
+DEBUG_TEST_CSV_GENERATION = False
 
-#TIME_PAUSE_TO_DISPLAY_RESULTS = 10
-TIME_PAUSE_TO_DISPLAY_RESULTS = 0
-
-#TIME_TO_PREPARE = 10
-TIME_TO_PREPARE = 0
+if (not DEBUG_TEST_CSV_GENERATION):
+    TIME_TILL_TIMEOUT = 30
+    TIME_PAUSE_TO_DISPLAY_RESULTS = 10
+    TIME_TO_PREPARE = 10
+else:
+    TIME_TILL_TIMEOUT = 0
+    TIME_PAUSE_TO_DISPLAY_RESULTS = 0
+    TIME_TO_PREPARE = 0
 
 debug_decode_data_matrix = False
 
@@ -303,8 +306,6 @@ def isCameraRotated() -> bool:
             i = i + 1
     return bCameraIsRotated
 
-#skip = True
-skip = False
 
 def create_csv_for_tests():
     global g_camera
@@ -313,7 +314,7 @@ def create_csv_for_tests():
 
     g_bCameraIsRotated = isCameraRotated()
 
-    if (skip):
+    if (DEBUG_TEST_CSV_GENERATION):
         str_filename = "abc"
         test_parameter_auto_focus = True
 
