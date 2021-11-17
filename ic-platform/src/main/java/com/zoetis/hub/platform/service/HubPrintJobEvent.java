@@ -1,14 +1,10 @@
 package com.zoetis.hub.platform.service;
 
-import java.util.HashMap;
-
 import javax.print.DocPrintJob;
 import javax.print.attribute.standard.PrinterState;
-import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
-import javax.print.attribute.standard.Severity;
 
-public class PrintJobStatus
+public class HubPrintJobEvent
 {
 	// set of job attributes
 	DocPrintJob m_job;
@@ -19,7 +15,7 @@ public class PrintJobStatus
 	// HashMap<PrinterStateReason,Severity> MEDIA_JAM, SHUTDOWN, etc.
 	PrinterStateReasons m_printerStateReasons;
 
-	public PrintJobStatus()
+	public HubPrintJobEvent()
 	{
 		// TODO Auto-generated constructor stub
 	}

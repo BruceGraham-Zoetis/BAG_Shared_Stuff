@@ -26,29 +26,20 @@ import javax.print.PrintServiceLookup;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Sides;
-//import javax.print.attribute.standard.MediaSize;
-//import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.PrinterName;
-import javax.print.event.*;
 
 import org.springframework.stereotype.Component;
 
 import com.zoetis.hub.platform.dto.PrintFileRequestDto;
 
 import javax.print.attribute.standard.Chromaticity;
-//import javax.print.attribute.standard.ColorSupported;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.AttributeSet;
 import javax.print.attribute.Attribute;
-//import javax.print.attribute.standard.PrinterLocation;
-//import javax.print.attribute.standard.PrinterInfo;
 import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterURI;
-//import javax.print.attribute.standard.Destination;
-//import javax.print.attribute.standard.PrinterMakeAndModel;
-//import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.attribute.standard.Severity;
 import javax.print.attribute.standard.QueuedJobCount;
@@ -56,16 +47,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.BufferedReader;
 
-//import javax.print.attribute.HashPrintJobAttributeSet;
-//import javax.print.attribute.PrintJobAttributeSet;
-//import javax.print.attribute.standard.JobMediaSheetsCompleted;
-//import javax.print.attribute.standard.JobState;
-
 @Component
 public class PrinterAccessObject
-//public class PrinterAccessObject implements PrintServiceAttributeListener, PrintJobListener
 {
-    private boolean       m_bDebugTrace;
+    //private boolean       m_bDebugTrace;
     private boolean       m_bPrinting;
     private DocPrintJob   m_job;
     private boolean       m_bPrintJobProcessingCompleted;
@@ -89,8 +74,6 @@ public class PrinterAccessObject
         E_QUEUE_STATE_STOPPED
     }
 
-	private List<PrintJobStatus> m_listPrintJobs = new ArrayList<>();
-	
     /**
      * @brief Constructor using default printer with all options being required.
      * 
@@ -104,7 +87,7 @@ public class PrinterAccessObject
      */
     PrinterAccessObject() throws PrintAccessException
     {
-        m_bDebugTrace = false;
+        //m_bDebugTrace = false;
 
         m_bPrinting                    = false;
         m_bPrintJobProcessingCompleted = false;
@@ -133,7 +116,7 @@ public class PrinterAccessObject
                     "Default printer is not set");
         }
         
-        m_threadMonitor = new ThreadMonitorPrintQueue(m_listPrintJobs);
+        m_threadMonitor = new ThreadMonitorPrintQueue();
         new Thread(m_threadMonitor).start();
     }
 
@@ -144,7 +127,7 @@ public class PrinterAccessObject
      */
     public void setDebugTrace(boolean bEnable)
     {
-        m_bDebugTrace = bEnable;
+        //m_bDebugTrace = bEnable;
         m_threadMonitor.setDebugTrace(bEnable);
     }
 
@@ -330,6 +313,7 @@ public class PrinterAccessObject
         m_bPrintJobRequiresAttention   = false;
 
         m_job = printService.createPrintJob();
+        m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getPrintJobName());
 
         //printService.addPrintServiceAttributeListener(this);
         printService.addPrintServiceAttributeListener(m_threadMonitor);

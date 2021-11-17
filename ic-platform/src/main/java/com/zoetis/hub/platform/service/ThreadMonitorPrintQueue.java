@@ -1,9 +1,14 @@
 package com.zoetis.hub.platform.service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.print.DocPrintJob;
 import javax.print.PrintService;
+import javax.print.attribute.Attribute;
+import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
@@ -19,38 +24,42 @@ import javax.print.event.PrintServiceAttributeListener;
  */
 public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeListener, PrintJobListener {
 
-	private List<PrintJobStatus> m_listPrintJobs;
-    private boolean       m_bDebugTrace;
+	private final List<HubPrintJob> m_listPrintJobs;
+	private final List<HubPrintJobEvent> m_listHubPrintJobEvent;
+    private boolean m_bDebugTrace;
 	
-	public ThreadMonitorPrintQueue(List<PrintJobStatus> listPrintJobs)
+	public ThreadMonitorPrintQueue()
 	{
 		m_bDebugTrace = false;
-		m_listPrintJobs = listPrintJobs;
+		m_listPrintJobs = Collections.synchronizedList(new ArrayList<>());
+		m_listHubPrintJobEvent = Collections.synchronizedList(new ArrayList<>());
 	}
 	
 	@Override
 	public void run()
 	{
-		synchronized(m_listPrintJobs)
+		synchronized(m_listHubPrintJobEvent)
 		{
     		while (true)
     		{
-    	        if(m_listPrintJobs.size() == 0)
+    	        if(m_listHubPrintJobEvent.size() == 0)
     	        {
     	            try
     	            {
-    	                m_listPrintJobs.wait(10000);
+    	                m_listHubPrintJobEvent.wait(10000);
     	            }
     	            catch (InterruptedException e)
     	            {
 		                Thread.currentThread().interrupt(); 
-		                //System.out.printf("Thread interrupted %s\n", e.toString()); 
+		                System.out.printf("Thread interrupted %s\n", e.toString()); 
     	            }
     	        }
     	        else
     	        {
-        			System.out.println("Checking Print Queue");
-    	            m_listPrintJobs.remove(0);
+        			System.out.println("Print Event");
+        			
+        			
+    	            m_listHubPrintJobEvent.remove(0);
     	        }
 	    	}
 		}
@@ -67,16 +76,30 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     }
     
     /**
+     * @brief Add a print job to monitor 
+     * 
+     * @param job - The print job
+     * @param strPrintJobName - The user provided print job name
+     */
+    public void addMonitoredPrintJob(DocPrintJob job, String strPrintJobName)
+    {
+    	HubPrintJob hubPrintJob = new HubPrintJob();
+    	hubPrintJob.m_strPrintJobName = strPrintJobName; 
+    	hubPrintJob.m_job = job;
+    	this.m_listPrintJobs.add(hubPrintJob);
+    }
+    
+    /**
      * 
      * Used by PrintServiceAttributeListener
      */
     private void jobCompleted()
     {
-	    synchronized (m_listPrintJobs)
+	    synchronized (m_listHubPrintJobEvent)
 	    {
-            PrintJobStatus printJobStatus = new PrintJobStatus();
-	        m_listPrintJobs.add(printJobStatus);
-	        m_listPrintJobs.notifyAll(); // synchronize/wait on the same object.
+	    	HubPrintJobEvent hubPrintJobEvent = new HubPrintJobEvent();
+	        m_listHubPrintJobEvent.add(hubPrintJobEvent);
+	        m_listHubPrintJobEvent.notifyAll(); // synchronize/wait on the same object.
 	    }
     }
 
@@ -91,24 +114,24 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     public void printJobFailed(PrintJobEvent printJobEvent)
     {
 
-        synchronized (m_listPrintJobs)
+        synchronized (m_listHubPrintJobEvent)
         {
         	PrintService printService = printJobEvent.getPrintJob().getPrintService();
         	
-        	PrintJobStatus printJobStatus = new PrintJobStatus();
+        	HubPrintJobEvent hubPrintJobEvent = new HubPrintJobEvent();
         	
-        	printJobStatus.m_job = printJobEvent.getPrintJob();
+        	hubPrintJobEvent.m_job = printJobEvent.getPrintJob();
 
             PrinterState prnState =
                     (PrinterState)printService.getAttribute(PrinterState.class);
-        	printJobStatus.m_printerState = prnState;
+        	hubPrintJobEvent.m_printerState = prnState;
         	
             PrinterStateReasons prnStateReasons =
                     (PrinterStateReasons)printService.getAttribute(PrinterStateReasons.class);
-        	printJobStatus.m_printerStateReasons = prnStateReasons; 
+        	hubPrintJobEvent.m_printerStateReasons = prnStateReasons; 
         	
-        	m_listPrintJobs.add(printJobStatus);
-            m_listPrintJobs.notifyAll(); // synchronize/wait on the same object.
+        	m_listHubPrintJobEvent.add(hubPrintJobEvent);
+            m_listHubPrintJobEvent.notifyAll(); // synchronize/wait on the same object.
         }
 
         if (m_bDebugTrace)
@@ -196,10 +219,10 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     @Override
     public void printJobRequiresAttention(PrintJobEvent printJobEvent)
     {
-        synchronized (m_listPrintJobs)
+        synchronized (m_listHubPrintJobEvent)
         {
             //m_bPrintJobRequiresAttention = true;
-        	m_listPrintJobs.notifyAll(); // synchronize/wait on the same object.
+        	m_listHubPrintJobEvent.notifyAll(); // synchronize/wait on the same object.
         }
         
         int pet = printJobEvent.getPrintEventType();
@@ -231,22 +254,22 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
      */
     public void attributeUpdate(PrintServiceAttributeEvent psae)
     {
-        //System.out.println("");
+        System.out.println("");
 
-        //Attribute[] attrs = psae.getAttributes().toArray();
-        //for (int i = 0; i < attrs.length; i++)
-        //{
-            //String attrName = attrs[i].getName();
-            //String attrValue = attrs[i].toString();
-            //System.out.printf("** attributeUpdate() Name: %s  Value: %s%n", attrName, attrValue);
+        Attribute[] attrs = psae.getAttributes().toArray();
+        for (int i = 0; i < attrs.length; i++)
+        {
+            String attrName = attrs[i].getName();
+            String attrValue = attrs[i].toString();
+            System.out.printf("** attributeUpdate() Name: %s  Value: %s%n", attrName, attrValue);
 
-            //Attribute attr = attrs[i];
-            //if (attr.equals(PrinterIsAcceptingJobs.ACCEPTING_JOBS))
-            //{
-                //if (m_bDebugTrace) System.out.println("INFO: ACCEPTING_JOBS");
-                //m_listPrintJobs.notifyAll(); // synchronize/wait on the same object.
-            //}
-        //}
+            Attribute attr = attrs[i];
+            if (attr.equals(PrinterIsAcceptingJobs.ACCEPTING_JOBS))
+            {
+                if (m_bDebugTrace) System.out.println("INFO: ACCEPTING_JOBS");
+                m_listHubPrintJobEvent.notifyAll();  // synchronize/wait on the same object.
+            }
+        }
     }
 
 }

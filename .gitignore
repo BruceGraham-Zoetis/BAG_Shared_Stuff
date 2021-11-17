@@ -1,2 +1,10 @@
 *.pyc
 
+
+ic-platform/.mvn/wrapper/maven-wrapper.jar
+
+ic-platform/.mvn/wrapper/MavenWrapperDownloader.java
+
+ic-platform/.mvn/wrapper/maven-wrapper.properties
+
+bag_vetscan/backup_pre_new_json/analyzer_app (copy)/
