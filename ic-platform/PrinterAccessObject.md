@@ -1,8 +1,8 @@
 PrinterAccessObject
 ========================================
 This class provides functions for:
-* determing installed printers
-* selecting a printer for printing
+* determine installed printers
+* select a printer for printing
 * printing from a file's input stream
 * printing PDF and TXT files
 * monitoring print job processing
@@ -95,7 +95,7 @@ Query, enable or enable a printer supported printing option.
 		isSheetCollateEnabled()
 
 
-Printing Prcessing status
+Printing Processing status
 -----------------------------
 Note that when processing is complete, the print job is sent to the printer queue.
 The printer has not printed the document yet.

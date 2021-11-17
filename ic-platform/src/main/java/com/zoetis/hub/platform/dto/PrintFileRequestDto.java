@@ -10,7 +10,7 @@ import java.io.Serializable;
  * 
  * {
  * 		"printerName": "HP-Color-LaserJet-Pro-M453-4",
- * 		"fileName": "~/tempfile/somefile.pdf",
+ * 		"fileName": /home/bag/test_files/file.txt",
  * 		"colorEnabled": false,
  * 		"duplexEnabled": true,
  * 		"copies": 3,

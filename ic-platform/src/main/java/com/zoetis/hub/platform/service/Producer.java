@@ -8,12 +8,12 @@ import com.zoetis.hub.platform.dto.PrintFileRequestDto;
 
 @Service
 public class Producer {
-	public static final String topic = "mytopic";
 	
 	@Autowired
 	private KafkaTemplate<String, PrintFileRequestDto> kafkaPrintFile;
 	
 	public void publishPrintFile(PrintFileRequestDto requestDetails) {
+		final String topic = "printFile";
 		
 		String strFileName = requestDetails.getFileName();
 		if ("" == strFileName)
@@ -21,25 +21,35 @@ public class Producer {
 			return;
 		}
 		
-		System.out.println("Publishing to topic " + topic);
-		System.out.println(" printerName: " + requestDetails.getPrinterName());
-		System.out.println(" fileName: " + requestDetails.getFileName());
-		System.out.println(" colorEnabled: " + requestDetails.getColorEnabled());
-		System.out.println(" duplexEnabled: " + requestDetails.getDuplexEnabled());
-		System.out.println(" copies: " + requestDetails.getCopies());
+		System.out.println("Producer Topic: " + topic);
+		System.out.println("\tprinterName: " + requestDetails.getPrinterName());
+		System.out.println("\tfileName: " + requestDetails.getFileName());
+		System.out.println("\tcolorEnabled: " + requestDetails.getColorEnabled());
+		System.out.println("\tduplexEnabled: " + requestDetails.getDuplexEnabled());
+		System.out.println("\tcopies: " + requestDetails.getCopies());
 				
 		this.kafkaPrintFile.send(topic, requestDetails);
 	}
 	
 	/*
 	@Autowired
-	private KafkaTemplate<String, String> kafkaTemplate;
+	private KafkaTemplate<String, DefaultPrinterDto> kafkaDefaultPrinter;
 	
-	String kafkaTopic = "default-printer";
-	
-	public void send(String message) {
+	public void send(DefaultPrinterDto requestDetails) {
+		String topic = "default-printer";
 	    
-	    kafkaTemplate.send(kafkaTopic, message);
+	    kafkaDefaultPrinter.send(topic, requestDetails);
+	}
+	*/
+
+	/*
+	@Autowired
+	private KafkaTemplate<String, SystemPrintersDto> kafkaSystemPrinters;
+	
+	public void send(SystemPrintersDto requestDetails) {
+		String topic = "system-printers";
+	    
+	    kafkaSystemPrinters.send(topic, requestDetails);
 	}
 	*/
 }

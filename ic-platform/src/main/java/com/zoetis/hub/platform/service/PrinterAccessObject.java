@@ -29,9 +29,12 @@ import javax.print.attribute.standard.Sides;
 //import javax.print.attribute.standard.MediaSize;
 //import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.PrinterName;
 import javax.print.event.*;
 
 import org.springframework.stereotype.Component;
+
+import com.zoetis.hub.platform.dto.PrintFileRequestDto;
 
 import javax.print.attribute.standard.Chromaticity;
 //import javax.print.attribute.standard.ColorSupported;
@@ -58,9 +61,9 @@ import java.io.BufferedReader;
 //import javax.print.attribute.standard.JobMediaSheetsCompleted;
 //import javax.print.attribute.standard.JobState;
 
-
 @Component
-public class PrinterAccessObject implements PrintServiceAttributeListener, PrintJobListener
+public class PrinterAccessObject
+//public class PrinterAccessObject implements PrintServiceAttributeListener, PrintJobListener
 {
     private boolean       m_bDebugTrace;
     private boolean       m_bPrinting;
@@ -75,6 +78,7 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     private boolean  m_bColor;        // true = Color printing, false = Monochrome
     private boolean  m_bDuplex;       // true = Duplex printing, false = Single sheet per page
     private boolean  m_bSheetCollate; // true = Collate copies, false = don't collate copies
+    private ThreadMonitorPrintQueue m_threadMonitor;
 
     enum E_QUEUE_STATE
     {
@@ -85,7 +89,8 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         E_QUEUE_STATE_STOPPED
     }
 
-
+	private List<PrintJobStatus> m_listPrintJobs = new ArrayList<>();
+	
     /**
      * @brief Constructor using default printer with all options being required.
      * 
@@ -127,165 +132,21 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
                     PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
                     "Default printer is not set");
         }
-    }
-
-
-    /**
-     * @brief Constructor using specified printer with all options being required.
-     * 
-     * Default Settings:
-     *       Copies: 1
-     *        Color: not set, uses default printer's setting
-     *       Duplex: not set, uses default printer's setting
-     * SheetCollate: not set, uses default printer's setting
-     * 
-     * @param[in] strPrinterName = Name of printer queue to use.
-     * 
-     * @throws PrintAccessException
-     */
-    public PrinterAccessObject(String strPrinterName) throws PrintAccessException
-    {
-        m_bPrintJobProcessingCompleted = false;
-        m_bPrintJobFailed              = false;
-        m_bPrintJobRequiresAttention   = false;
-
-        // default printing attributes
-        m_printService = null;
-        m_strPrinterName = "";
-        //m_mediaSizeName = MediaSizeName.NA_LETTER;
-        m_nCopies       = 1;
-        m_bColor        = false;
-        m_bDuplex       = false;
-        m_bSheetCollate = false;
-
-
-        // find the printer by name
-        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
-        // System.out.println("INFO: Number of print services: " + printServices.length);
         
-        String strDefaultPrinterName = "";
-        int index = 0;
-
-        for (PrintService printService : printServices)
-        {
-            // System.out.println("INFO: Printer: " + printService.getName()); 
-            strDefaultPrinterName = printService.getName();
-            if (0 == strDefaultPrinterName.compareToIgnoreCase(strPrinterName))
-            {
-                m_printService = printService;
-                m_strPrinterName = strDefaultPrinterName;
-                break;
-            }
-            index++;
-        }
-
-        if (0 == m_strPrinterName.length())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_NAME_NOT_FOUND,
-                "Printer does not exist");    
-        }
-
-        m_printService = printServices[index];
+        m_threadMonitor = new ThreadMonitorPrintQueue(m_listPrintJobs);
+        new Thread(m_threadMonitor).start();
     }
-
 
     /**
-     * @brief Constructor using specified printer with all options being required.
+     * @brief Enable or Disable printing debug info to System.out 
      * 
-     * @param[in] strPrinterName = Name of printer queue to use.
-     * @param[in] nCopies        = the number of copies to print
-     * @param[in] bColor         = true = Color printing, false = Monochrome
-     * @param[in] bDuplex        = true = Duplex printing, false = Single sheet per page
-     * @param[in] bSheetCollate  = true = Collate copies, false = don't collate copies
-     * 
-     * @throws PrintAccessException
+     * @param bEnable
      */
-    public PrinterAccessObject(
-                String   strPrinterName,
-                int      nCopies,
-                boolean  bColor,
-                boolean  bDuplex,
-                boolean  bSheetCollate
-            ) throws PrintAccessException
-    {
-        m_bPrintJobProcessingCompleted = false;
-        m_bPrintJobFailed              = false;
-        m_bPrintJobRequiresAttention   = false;
-
-        m_strPrinterName = "";
-        m_nCopies       = nCopies;
-        m_bColor        = bColor;
-        m_bDuplex       = bDuplex;
-        m_bSheetCollate = bSheetCollate;
-
-        // default printing attributes
-        m_printService = null;
-        //m_mediaSizeName = MediaSizeName.NA_LETTER;
-
-        // find the printer by name
-        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
-        // System.out.println("INFO: Number of print services: " + printServices.length);
-
-        for (PrintService printService : printServices)
-        {
-            // System.out.println("INFO: Printer: " + printService.getName()); 
-            String strName = printService.getName();
-            if (0 == strName.compareToIgnoreCase(strPrinterName))
-            {
-                m_printService = printService;
-                m_strPrinterName  = strName;
-                break;
-            }
-        }
-
-        if (0 == m_strPrinterName.length())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_NAME_NOT_FOUND,
-                "Printer does not exist");
-        }
-
-        // verify that the printer supports all options
-        if (!isPdfSupported())
-        {
-            m_printService = null;
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_PDF_NOT_SUPPORTED,
-                "Printer does not support PDF");
-        }
-
-        if (bColor && !isColorSuported())
-        {
-            m_printService = null;
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_COLOR_NOT_SUPPORTED,
-                "Printer does not support color");
-        }
-
-        if (bDuplex && !isDuplexSuported())
-        {
-            m_printService = null;
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_DUPLEX_NOT_SUPPORTED,
-                "Printer does not support Duplex");
-        }
-
-        if (bSheetCollate && !isSheetCollateSupported())
-        {
-            m_printService = null;
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_SHEETCOLLATE_NOT_SUPPORTED,
-                "Printer does not support SheetCollate");
-        }
-    }
-
-
     public void setDebugTrace(boolean bEnable)
     {
         m_bDebugTrace = bEnable;
+        m_threadMonitor.setDebugTrace(bEnable);
     }
-
 
     /**
      * @brief Verify that specified printer options are supported.
@@ -335,7 +196,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return true;
     }
 
-
     /**
      * Sets the print job's attributes that where enabled when the object was created.
      * 
@@ -376,7 +236,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return printAttributes;
     }
 
-
     /**
      * @brief : Print a given file given a file's path and name
      * 
@@ -385,35 +244,7 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
      * @return true - print job started successfully
      * @return false - print job start failed.
      */
-    public boolean printFile(String pathFileName) throws PrintAccessException
-    {
-        FileInputStream fileInputStream;
-
-        try
-        {
-            fileInputStream = new FileInputStream(pathFileName); 
-        }
-        catch (FileNotFoundException ffne)
-        { 
-            m_bPrinting = false;
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.FILE_NOT_FOUND,
-                "File not found");
-        }
-
-        return printFile(fileInputStream);
-    }
-        
-        
-    /**
-     * @brief : Print a given file given a file's input stream
-     * 
-     * @param[in] fileInputStream = FileInputStream
-     * 
-     * @return true - print job started successfully
-     * @return false - print job start failed.
-     */
-    public boolean printFile(FileInputStream fileInputStream) throws PrintAccessException
+    public boolean printFile(PrintFileRequestDto requestDetails) throws PrintAccessException
     {
         synchronized (this)
         {
@@ -426,9 +257,68 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
             {
                 m_bPrinting = true;
             }
-        }        
+        }
 
-        // Set the document type
+        FileInputStream fileInputStream;
+        String strPrinterName;
+        PrintService printService = null;
+        
+        try
+        {
+    		enableColor(requestDetails.getColorEnabled());
+    		enableDuplex(requestDetails.getDuplexEnabled());
+    		setCopies(requestDetails.getCopies());
+    		strPrinterName = requestDetails.getPrinterName();
+    		if (strPrinterName.equals(""))
+    		{ // use default printer
+    	        try
+    	        {
+    	            printService = PrintServiceLookup.lookupDefaultPrintService();
+    	            m_strPrinterName  = printService.getName();
+    	            m_printService = printService;
+    	        }
+    	        catch (Exception e)
+    	        {
+    	            throw new PrintAccessException(
+    	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
+    	                    "Default printer is not set");
+    	        }
+    		}
+    		else
+    		{ // get the printServer for the given printer name
+    			PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+    	        for (PrintService ps : printServices)
+    	        {
+    	        	PrinterName printerName = (PrinterName)ps.getAttribute(PrinterName.class);
+	                if (printerName.getValue().equals(strPrinterName))
+	                {
+	                	printService = ps;
+	    	            m_strPrinterName  = printService.getName();
+	    	            m_printService = printService;
+	                    break;
+	                }
+    	        }
+    	        if (null == printService)
+    	        {
+	                m_bPrinting = false;
+	                throw new PrintAccessException(
+	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_NAME_NOT_FOUND,
+	                    "Printer name not found");
+    	        }
+    		}
+
+            String pathFileName = requestDetails.getFileName();
+            fileInputStream = new FileInputStream(pathFileName); 
+        }
+        catch (FileNotFoundException ffne)
+        { 
+            m_bPrinting = false;
+            throw new PrintAccessException(
+                PrintAccessException.E_EXCEPTION_ID.FILE_NOT_FOUND,
+                "File not found");
+        }
+
+                // Set the document type
         DocFlavor myFormat = DocFlavor.INPUT_STREAM.AUTOSENSE;
         
         // Create a Doc
@@ -439,13 +329,15 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         m_bPrintJobFailed              = false;
         m_bPrintJobRequiresAttention   = false;
 
-        m_job = m_printService.createPrintJob();
+        m_job = printService.createPrintJob();
 
-        m_printService.addPrintServiceAttributeListener(this);
+        //printService.addPrintServiceAttributeListener(this);
+        printService.addPrintServiceAttributeListener(m_threadMonitor);
 
         try
         {
-            m_job.addPrintJobListener(this);
+            //m_job.addPrintJobListener(this);
+        	m_job.addPrintJobListener(m_threadMonitor);
 
             PrintRequestAttributeSet printAttributes = buildPrintAttributes();
             m_job.print(attributesDoc, printAttributes);
@@ -463,174 +355,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return true;
     }
 
-    
-    /**
-     * 
-     * Used by PrintJobAttributeListener
-     */
-    public void attributeUpdate(PrintServiceAttributeEvent psae)
-    {
-        //System.out.println("");
-
-        //Attribute[] attrs = psae.getAttributes().toArray();
-        //for (int i = 0; i < attrs.length; i++)
-        //{
-            //String attrName = attrs[i].getName();
-            //String attrValue = attrs[i].toString();
-            //System.out.printf("** attributeUpdate() Name: %s  Value: %s%n", attrName, attrValue);
-
-            //Attribute attr = attrs[i];
-            //if (attr.equals(PrinterIsAcceptingJobs.ACCEPTING_JOBS))
-            //{
-                //if (m_bDebugTrace) System.out.println("INFO: ACCEPTING_JOBS");
-                //notify();
-            //}
-        //}
-    }
-    
-
-    /**
-     * Called to notify the client that data has been successfully transferred to
-     * the print service, and the client may free local resources allocated for that data.
-     * 
-     * The client should not assume that the data has been completely printed after receiving this event.
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printDataTransferCompleted(PrintJobEvent printJobEvent)
-    {
-        //if (m_bDebugTrace) System.out.println("INFO: printDataTransferCompleted");
-
-        jobCompleted();
-    }
-
-    /**
-     * Called to notify the client that the job completed successfully.
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printJobCompleted(PrintJobEvent printJobEvent)
-    {
-        if (m_bDebugTrace) System.out.println("INFO: printJobCompleted");
-
-        jobCompleted();
-    }
-
-
-    /**
-     * 
-     * Called to notify the client that the job failed to 
-     * complete successfully and will have to be resubmitted.
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printJobFailed(PrintJobEvent printJobEvent)
-    {
-
-        synchronized (this)
-        {
-            m_bPrintJobFailed = true;
-            notify();
-        }
-
-        if (m_bDebugTrace)
-        {
-            System.out.println("INFO: printJobFailed");
-
-            PrinterStateReasons psr = printJobEvent.getPrintJob().getPrintService().getAttribute(PrinterStateReasons.class);
-            if (psr != null)
-            {
-                Set<PrinterStateReason> errors = psr.printerStateReasonSet(Severity.REPORT);
-                for (PrinterStateReason reason : errors)
-                {
-                    System.out.printf(" Reason : %s",reason.getName());
-                }
-                System.out.println();
-            }
-        }
-    }
-
-
-    /**
-     * Called to notify the client that the job was canceled by user or program.
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printJobCanceled(PrintJobEvent printJobEvent)
-    {
-        if (m_bDebugTrace) System.out.println("INFO: printJobCanceled");
-
-        jobCompleted();
-    }
-
-
-    /**
-     * Called to notify the client that no more events will be delivered.
-     * One cause of this event being generated is if the job has successfully completed, 
-     * but the printing system is limited in capability and cannot verify this. 
-     * This event is required to be delivered if none of the other 
-     * terminal events (completed/failed/canceled) are delivered.
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printJobNoMoreEvents(PrintJobEvent printJobEvent)
-    {
-        //if (m_bDebugTrace) System.out.println("INFO: printJobNoMoreEvents");
-
-        jobCompleted();
-    }
-
-
-    /**
-     * Called to notify the client that some possibly 
-     * user rectifiable problem occurs (eg printer out of paper).
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    public void printJobRequiresAttention(PrintJobEvent printJobEvent)
-    {
-        synchronized (this)
-        {
-            m_bPrintJobRequiresAttention = true;
-            notify();
-        }
-
-        if (m_bDebugTrace)
-        {
-
-            int pet = printJobEvent.getPrintEventType();
-            System.out.println("INFO: printJobRequiresAttention");
-            System.out.printf("PrintEventType: %d%n", pet);
-            System.out.println(printJobEvent);
-
-            PrinterStateReasons psr = printJobEvent.getPrintJob().getPrintService().getAttribute(PrinterStateReasons.class);
-            if (psr != null)
-            {
-                Set<PrinterStateReason> errors = psr.printerStateReasonSet(Severity.REPORT);
-                for (PrinterStateReason reason : errors)
-                {
-                    System.out.printf(" Reason : %s",reason.getName());
-                }
-                System.out.println();
-            }
-        }
-    }
-
-
-    /**
-     * 
-     * Used by PrintServiceAttributeListener
-     */
-    private void jobCompleted()
-    {
-        synchronized (this)
-        {
-            m_bPrintJobProcessingCompleted = true;
-            notify(); // TODO -  synchronize/wait on the same object.
-        }
-    }
-
-
     /**
      * @brief Determines if the print job has completed
      * 
@@ -642,7 +366,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return m_bPrintJobProcessingCompleted;
     }
 
-
     /**
      * @brief Determines if the print job has failed
      * 
@@ -653,7 +376,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     {
         return m_bPrintJobFailed;
     }
-
 
     /**
      * @brief Determines if the print job requires attention.
@@ -711,7 +433,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-
     /**
      * @brief Stops further processing of a print job.
      * 
@@ -731,7 +452,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-    
     /**
      * @brief Gets the printer queue state.
      * 
@@ -786,7 +506,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
 
         return map;
     }
-
     
     /**
      * @brief Use lpstat to get the printer queue's status
@@ -934,7 +653,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return map;
     }
 
-
     /**
      * @brief Get the desciption of the printer queue state
      * 
@@ -963,7 +681,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         strReason = str.toString();
         return strReason;
     }
-
 
     /**
      * @brief Get the count of print jobs in the targeted printer's print queue
@@ -997,7 +714,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return nQueuedJobCount;
     }
 
-
     /**
      * @brief Query support for printer option: DUPLEX
      * 
@@ -1022,7 +738,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return bRtn;
     }
 
-
     /**
      * @brief Enable or Disable the printer option: DUPLEX
      * 
@@ -1044,7 +759,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-	
     /**
      * @brief Determine if the printer option is enabled: DUPLEX
      * 
@@ -1055,7 +769,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     {
         return m_bDuplex;
     }
-
 
     /**
      * @brief Query support for printer option: COLOR
@@ -1081,7 +794,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return bRtn;
     }
 
-
     /**
      * @brief Enable or Disable the printer option: Color
      * 
@@ -1104,7 +816,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-	
     /**
      * @brief Determine if the printer option is enabled: COLOR
      * 
@@ -1115,7 +826,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     {
         return m_bColor;
     }
-
 
 	/**
      * @brief Set the number of copies to print during the next print job.
@@ -1138,7 +848,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-
 	/**
      * Get the number of copies to print during the next print job.
      * 
@@ -1148,7 +857,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     {
         return m_nCopies;
     }
-
 
     /**
      * @brief Query support for printer option: SheetCollate
@@ -1174,7 +882,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return bRtn;
     }
 
-
     /**
      * @brief Enable or Disable the printer option: Color
      * 
@@ -1197,7 +904,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }
     }
 
-
     /**
      * @brief Determine if the printer option is enabled: SheetCollate
      * 
@@ -1208,8 +914,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
     {
         return m_bSheetCollate;
     }
-
-
 
     /**
      * @brief Retrieves name of the default printer.
@@ -1233,8 +937,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
 
         return strName;
     }
-
-
 
     public class PrinterInfo extends Object
     {
@@ -1349,7 +1051,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         }        
     }
 
-
     /**
      * @brief Retrieves info about the printers in the system.
      * 
@@ -1415,7 +1116,6 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
         return map;
     }
 
-
     /**
      * @brief Verifies that the target printer is capabile of printing PDF files.
      * 
@@ -1454,6 +1154,5 @@ public class PrinterAccessObject implements PrintServiceAttributeListener, Print
            return true;
         }
     }
-
 }
 
