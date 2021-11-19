@@ -46,14 +46,7 @@ import lombok.NoArgsConstructor;
 )
 @JsonSubTypes ({
 	@JsonSubTypes.Type(value = PrintFileMessage.class, name = "PRINT_FILE"),
-	@JsonSubTypes.Type(value = PrintJobAbortedMessage.class, name = "PRINTJOB_ABORTED"),
-	//@JsonSubTypes.Type(value = PrintJobCanceledMessage.class, name = "PRINTJOB_CANCELED"),
-	@JsonSubTypes.Type(value = PrintJobCompletedMessage.class, name = "PRINTJOB_COMPLETED"),
-	//@JsonSubTypes.Type(value = PrintJobPendingMessage.class, name = "PRINTJOB_PENDING"),
-	//@JsonSubTypes.Type(value = PrintJobPendingHeldMessage.class, name = "PRINTJOB_PENDING_HELD"),
-	//@JsonSubTypes.Type(value = PrintJobProcessingMessage.class, name = "PRINTJOB_PROCESSING"),
-	//@JsonSubTypes.Type(value = PrintJobProcessingStoppedMessage.class, name = "PRINTJOB_PROCESSING_STOPPED"),
-	//@JsonSubTypes.Type(value = PrintJoUnknownMessage.class, name = "PRINTJOB_UNKNOWN")
+	@JsonSubTypes.Type(value = PrintJobCancelMessage.class, name = "PRINTJOB_CANCEL")
 })
 public abstract class PrintAccessObjectMessage<D>
 	extends ApplicationMessage<PrintAccessObjectMessage.Action, D>
@@ -63,14 +56,7 @@ public abstract class PrintAccessObjectMessage<D>
 	public enum Action
 	{
 		PRINT_FILE,
-		PRINTJOB_ABORTED,
-		//PRINTJOB_CANCELED,
-		PRINTJOB_COMPLETED,
-		//PRINTJOB_PENDING,
-		//PRINTJOB_PENDING_HELD,
-		//PRINTJOB_PROCESSING,
-		//PRINTJOB_PROCESSING_STOPPED,
-		//PRINTJOB_UNKNOWN
+		PRINTJOB_CANCEL
 	}
 	
 	public PrintAccessObjectMessage(D payload)
