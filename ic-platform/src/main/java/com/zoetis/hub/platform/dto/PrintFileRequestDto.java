@@ -1,6 +1,9 @@
 package com.zoetis.hub.platform.dto;
 
-import java.io.Serializable;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * 
@@ -9,29 +12,36 @@ import java.io.Serializable;
  * Example JSON string
  * 
  * {
+ * 		"printJobName": "job-5481863",
  * 		"printerName": "HP-Color-LaserJet-Pro-M453-4",
  * 		"fileName": /home/bag/test_files/file.txt",
  * 		"colorEnabled": false,
  * 		"duplexEnabled": true,
- * 		"copies": 3,
- * 		"printJobName": "job-5481863"
+ * 		"copies": 3
  * }
 */
-
-public class PrintFileRequestDto implements Serializable
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class PrintFileRequestDto
 {
 	/**
-	 * 
+	 * The name for the print job that is provided by Hub apps. 
 	 */
-	private static final long serialVersionUID = 1L;
+	@NonNull
+	private String printJobName;
 	
+	@NonNull
 	private String printerName;
+	
+	@NonNull
 	private String fileName;
+	
 	private boolean colorEnabled;
 	private boolean duplexEnabled;
 	private int     copies;
-	private String printJobName;
 	
+	/*
 	public PrintFileRequestDto()
 	{
 		this.printerName = "";
@@ -41,6 +51,7 @@ public class PrintFileRequestDto implements Serializable
 		this.copies = 0;
 		this.printJobName = "";
 	}
+	*/
 
 	public String getPrinterName() {
 		return printerName;

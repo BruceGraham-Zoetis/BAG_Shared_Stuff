@@ -56,10 +56,19 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     	        }
     	        else
     	        {
+        			HubPrintJobEvent hubPrintJobEvent = m_listHubPrintJobEvent.remove(0);
         			System.out.println("Print Event");
+        			System.out.println(hubPrintJobEvent.m_job);
+        			System.out.println(hubPrintJobEvent.m_printerState);
         			
-        			
-    	            m_listHubPrintJobEvent.remove(0);
+        			PrinterStateReasons psr = hubPrintJobEvent.m_job.getPrintService().getAttribute(PrinterStateReasons.class);
+                    Set<PrinterStateReason> errors = psr.printerStateReasonSet(Severity.REPORT);
+                    for (PrinterStateReason reason : errors)
+                    {
+                        System.out.printf(" Reason : %s",reason.getName());
+                    }
+                    System.out.println();
+        			System.out.println("");
     	        }
 	    	}
 		}
@@ -267,7 +276,7 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
             if (attr.equals(PrinterIsAcceptingJobs.ACCEPTING_JOBS))
             {
                 if (m_bDebugTrace) System.out.println("INFO: ACCEPTING_JOBS");
-                m_listHubPrintJobEvent.notifyAll();  // synchronize/wait on the same object.
+                m_listHubPrintJobEvent.notify();  // synchronize/wait on the same object.
             }
         }
     }

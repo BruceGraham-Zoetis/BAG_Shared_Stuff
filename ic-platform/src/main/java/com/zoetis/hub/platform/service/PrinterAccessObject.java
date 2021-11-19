@@ -30,9 +30,7 @@ import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.PrinterName;
 
 import org.springframework.stereotype.Component;
-
 import com.zoetis.hub.platform.dto.PrintFileRequestDto;
-
 import javax.print.attribute.standard.Chromaticity;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.AttributeSet;
@@ -53,9 +51,6 @@ public class PrinterAccessObject
     //private boolean       m_bDebugTrace;
     private boolean       m_bPrinting;
     private DocPrintJob   m_job;
-    private boolean       m_bPrintJobProcessingCompleted;
-    private boolean       m_bPrintJobFailed;
-    private boolean       m_bPrintJobRequiresAttention;
     //private MediaSizeName m_mediaSizeName;
     private PrintService m_printService; // the targeted printer queue service.
     private String   m_strPrinterName; // the name of print queue to use.
@@ -64,7 +59,7 @@ public class PrinterAccessObject
     private boolean  m_bDuplex;       // true = Duplex printing, false = Single sheet per page
     private boolean  m_bSheetCollate; // true = Collate copies, false = don't collate copies
     private ThreadMonitorPrintQueue m_threadMonitor;
-
+    
     enum E_QUEUE_STATE
     {
         // occurs during print job creation
@@ -89,10 +84,7 @@ public class PrinterAccessObject
     {
         //m_bDebugTrace = false;
 
-        m_bPrinting                    = false;
-        m_bPrintJobProcessingCompleted = false;
-        m_bPrintJobFailed              = false;
-        m_bPrintJobRequiresAttention   = false;
+        m_bPrinting = false;
 
         // default printing attributes
         m_printService = null;
@@ -308,20 +300,14 @@ public class PrinterAccessObject
         Doc attributesDoc = new SimpleDoc(fileInputStream, myFormat, null); 
 
         // Create a print job from one of the print services
-        m_bPrintJobProcessingCompleted = false;
-        m_bPrintJobFailed              = false;
-        m_bPrintJobRequiresAttention   = false;
-
         m_job = printService.createPrintJob();
-        m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getPrintJobName());
+        //m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getPrintJobName());
 
-        //printService.addPrintServiceAttributeListener(this);
-        printService.addPrintServiceAttributeListener(m_threadMonitor);
+        //printService.addPrintServiceAttributeListener(m_threadMonitor);
 
         try
         {
-            //m_job.addPrintJobListener(this);
-        	m_job.addPrintJobListener(m_threadMonitor);
+        	//m_job.addPrintJobListener(m_threadMonitor);
 
             PrintRequestAttributeSet printAttributes = buildPrintAttributes();
             m_job.print(attributesDoc, printAttributes);
@@ -337,84 +323,6 @@ public class PrinterAccessObject
 
         m_bPrinting = false;
         return true;
-    }
-
-    /**
-     * @brief Determines if the print job has completed
-     * 
-     * @return true - completed
-     * @return false - not completed
-     */
-    public boolean isPrintJobProcessingCompleted()
-    {
-        return m_bPrintJobProcessingCompleted;
-    }
-
-    /**
-     * @brief Determines if the print job has failed
-     * 
-     * @return true - completed
-     * @return false - not completed
-     */
-    public boolean isPrintJobFailed()
-    {
-        return m_bPrintJobFailed;
-    }
-
-    /**
-     * @brief Determines if the print job requires attention.
-     * 
-     * Ex: Printer is out of paper.
-     * 
-     * @return true - completed
-     * @return false - not completed
-     */
-    public boolean isPrintJobRequiringAttention()
-    {
-        return m_bPrintJobRequiresAttention;
-    }
-
-
-    /**
-     * @brief Wait for the print job to complete
-     * 
-     * see https://www.baeldung.com/java-wait-notify
-     * 
-     * Notes: If there is an error, then an exception will be thrown
-     * 
-     * 
-     * @return true - completed
-     * @return false - not completed.
-     */
-    public synchronized void waitForPrintJobProcessingCompleted() throws PrintAccessException
-    {
-        try
-        {
-            while (true)
-            {
-                if (m_bPrintJobProcessingCompleted)
-                    // System.err.println("Print job finished.");
-                    break;
-                else if (m_bPrintJobFailed)
-                {
-                    throw new PrintAccessException(
-                        PrintAccessException.E_EXCEPTION_ID.PRINTJOB_FAILED,
-                        "Print job failed.");
-                }
-                else if (m_bPrintJobRequiresAttention)
-                {
-                    throw new PrintAccessException(
-                        PrintAccessException.E_EXCEPTION_ID.PRINTJOB_REQUIRES_ATTENTION,
-                        "Print job requires attention. Ex: out of paper.");
-                }
-                else
-                    wait();
-            }
-        }
-        catch (InterruptedException e)
-        {
-            Thread.currentThread().interrupt(); 
-        }
     }
 
     /**

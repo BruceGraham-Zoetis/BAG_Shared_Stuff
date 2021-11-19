@@ -20,6 +20,8 @@ import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
 import com.zoetis.hub.platform.dto.PrintFileRequestDto;
+import com.zoetis.hub.platform.dto.PrintJobAbortedDto;
+import com.zoetis.hub.platform.dto.PrintJobCompletedDto;
 
 @Configuration
 public class KafkaConfiguration {
@@ -27,7 +29,35 @@ public class KafkaConfiguration {
 	@Value("${spring.kafka.consumer.bootstrap-servers}")
     private String bootstrapServers;
 	
-	public ProducerFactory<String, PrintFileRequestDto> producerFactory() {
+	public ProducerFactory<String, PrintJobCompletedDto> producerFactory1() {
+		Map<String, Object> config = new HashMap<>();
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+		return new DefaultKafkaProducerFactory<>(config);
+	}
+
+	@Bean
+	public KafkaTemplate<String, PrintJobCompletedDto> kafkaTemplate1() {
+		return new KafkaTemplate<>(producerFactory1());
+	}
+
+	public ProducerFactory<String, PrintJobAbortedDto> producerFactory2() {
+		Map<String, Object> config = new HashMap<>();
+		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
+		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
+		config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
+
+		return new DefaultKafkaProducerFactory<>(config);
+	}
+
+	@Bean
+	public KafkaTemplate<String, PrintJobAbortedDto> kafkaTemplate2() {
+		return new KafkaTemplate<>(producerFactory2());
+	}
+	
+	public ProducerFactory<String, PrintFileRequestDto> producerFactory3() {
 		Map<String, Object> config = new HashMap<>();
 		config.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
 		config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
@@ -38,7 +68,7 @@ public class KafkaConfiguration {
 
 	@Bean
 	public KafkaTemplate<String, PrintFileRequestDto> kafkaTemplate() {
-		return new KafkaTemplate<>(producerFactory());
+		return new KafkaTemplate<>(producerFactory3());
 	}
 	
     @Bean
