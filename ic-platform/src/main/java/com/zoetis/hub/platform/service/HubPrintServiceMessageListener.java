@@ -32,22 +32,22 @@ public class HubPrintServiceMessageListener
 	@Autowired
 	private KafkaTemplate<String, PrintJobAbortedDto> kafkaPrintJobAborted;
     
-	@KafkaListener(topics="printFile", groupId="ic-platform")
+	@KafkaListener(topics="printAccessObject")
 	public void consumePrintFile(String messageJson) throws PrintAccessException
 	{
 		prtAccObj.setDebugTrace(true);
         try
         {
-            logger.info ("Received printFile message: {}", messageJson);
+            logger.info ("Received Topic printAccessObject message: {}", messageJson);
             var message = objectMapper.readValue (messageJson, PrintAccessObjectMessage.class);
-            logger.info ("Parsed printFile message: {}", message);
+            logger.info ("Parsed Topic printAccessObject message: {}", message);
 
             if (message instanceof PrintFileMessage)
             {
     			PrintFileRequestDto requestDetails = (PrintFileRequestDto) message.getPayload();  
 	       		try
 	    		{
-	    			System.out.println("Consume Topic: printFile");
+	    			System.out.println("Message: printFile");
 	    			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
 	    			System.out.println("\tprinterName: " + requestDetails.getPrinterName());
 	    			System.out.println("\tfileName: " + requestDetails.getFileName());
