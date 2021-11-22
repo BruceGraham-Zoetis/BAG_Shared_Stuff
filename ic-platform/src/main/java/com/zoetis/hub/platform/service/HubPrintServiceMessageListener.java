@@ -11,9 +11,11 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zoetis.hub.platform.dto.PrintFileRequestDto;
 import com.zoetis.hub.platform.dto.PrintJobAbortedDto;
+import com.zoetis.hub.platform.dto.PrintJobCancelDto;
 import com.zoetis.hub.platform.dto.PrintJobCompletedDto;
 import com.zoetis.hub.platform.message.PrintAccessObjectMessage;
 import com.zoetis.hub.platform.message.PrintFileMessage;
+import com.zoetis.hub.platform.message.PrintJobCancelMessage;
 
 @Service
 public class HubPrintServiceMessageListener
@@ -76,6 +78,21 @@ public class HubPrintServiceMessageListener
     				data.setPrintJobName(requestDetails.getPrintJobName());
     				sendPrintJobAborted(data);
 	    		}
+            }
+            else if (message instanceof PrintJobCancelMessage)
+            {
+    			PrintJobCancelDto requestDetails = (PrintJobCancelDto) message.getPayload();  
+           		try
+        		{
+	    			System.out.println("Message: printJobCancel");
+	    			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
+	    			prtAccObj.stopPrintJobProcessing();
+           			
+        		}
+        		catch (PrintAccessException e)
+        		{
+        			// TODO - define a print service error message
+        		}
             }
             else
             {
