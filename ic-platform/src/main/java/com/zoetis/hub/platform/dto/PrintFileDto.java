@@ -23,8 +23,14 @@ import lombok.NonNull;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PrintFileRequestDto
+public class PrintFileDto
 {
+	@NonNull
+	private String action;
+	
+	@NonNull
+	private String name;
+	
 	/**
 	 * The name for the print job that is provided by Hub apps. 
 	 */
@@ -40,19 +46,21 @@ public class PrintFileRequestDto
 	private boolean colorEnabled;
 	private boolean duplexEnabled;
 	private int     copies;
-	
-	/*
-	public PrintFileRequestDto()
-	{
-		this.printerName = "";
-		this.fileName = "";
-		this.colorEnabled = false;
-		this.duplexEnabled = false;
-		this.copies = 0;
-		this.printJobName = "";
-	}
-	*/
 
+	public String toString()
+	{ 
+		String str;
+		str = "{\"action\":\"" + this.action + "\", ";
+		str += "\"name\":\"" + this.name + "\", ";
+		str += "\"printJobName\":\"" + this.printJobName + "\", ";
+		str += "\"printerName\":\"" + this.printerName + "\", ";
+		str += "\"fileName\":\"" + this.fileName + "\", ";
+		str += "\"colorEnabled\":" + this.colorEnabled + ", ";
+		str += "\"duplexEnabled\":" + this.duplexEnabled + ", ";
+		str += "\"copies\":" + this.copies + "}";
+	    return str;
+	}
+	
 	public String getPrinterName() {
 		return printerName;
 	}

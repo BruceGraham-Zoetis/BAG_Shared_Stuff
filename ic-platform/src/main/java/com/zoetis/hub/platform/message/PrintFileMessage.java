@@ -1,14 +1,16 @@
 package com.zoetis.hub.platform.message;
 
-import com.zoetis.hub.platform.dto.PrintFileRequestDto;
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.zoetis.hub.platform.dto.PrintFileDto;
 
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 @NoArgsConstructor
-public final class PrintFileMessage extends PrintAccessObjectMessage<PrintFileRequestDto>
+@JsonTypeName("PRINT_FILE")
+public final class PrintFileMessage extends PrintAccessObjectMessage<PrintFileDto>
 {
-	public PrintFileMessage(PrintFileRequestDto payload)
+	public PrintFileMessage(PrintFileDto payload)
 	{
 		super(payload);
 	}

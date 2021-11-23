@@ -30,7 +30,7 @@ import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.PrinterName;
 
 import org.springframework.stereotype.Component;
-import com.zoetis.hub.platform.dto.PrintFileRequestDto;
+import com.zoetis.hub.platform.dto.PrintFileDto;
 import javax.print.attribute.standard.Chromaticity;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.AttributeSet;
@@ -219,7 +219,7 @@ public class PrinterAccessObject
      * @return true - print job started successfully
      * @return false - print job start failed.
      */
-    public boolean printFile(PrintFileRequestDto requestDetails) throws PrintAccessException
+    public boolean printFile(PrintFileDto requestDetails) throws PrintAccessException
     {
         synchronized (this)
         {

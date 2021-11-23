@@ -9,7 +9,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.zoetis.hub.platform.dto.PrintFileRequestDto;
+import com.zoetis.hub.platform.dto.PrintFileDto;
 import com.zoetis.hub.platform.dto.PrintJobAbortedDto;
 import com.zoetis.hub.platform.dto.PrintJobCancelDto;
 import com.zoetis.hub.platform.dto.PrintJobCompletedDto;
@@ -34,8 +34,8 @@ public class HubPrintServiceMessageListener
 	@Autowired
 	private KafkaTemplate<String, PrintJobAbortedDto> kafkaPrintJobAborted;
     
-	@KafkaListener(topics="printAccessObject")
-	public void consumePrintFile(String messageJson) throws PrintAccessException
+	@KafkaListener(topics = PrintAccessObjectMessage.TOPIC,  groupId = "printAccessObject")
+	public void PrintAccessObjectListener(String messageJson) throws PrintAccessException
 	{
 		prtAccObj.setDebugTrace(true);
         try
@@ -46,53 +46,29 @@ public class HubPrintServiceMessageListener
 
             if (message instanceof PrintFileMessage)
             {
-    			PrintFileRequestDto requestDetails = (PrintFileRequestDto) message.getPayload();  
-	       		try
-	    		{
-	    			System.out.println("Message: printFile");
-	    			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
-	    			System.out.println("\tprinterName: " + requestDetails.getPrinterName());
-	    			System.out.println("\tfileName: " + requestDetails.getFileName());
-	    			System.out.println("\tcolorEnabled: " + requestDetails.getColorEnabled());
-	    			System.out.println("\tduplexEnabled: " + requestDetails.getDuplexEnabled());
-	    			System.out.println("\tcopies: " + requestDetails.getCopies());
-
-	    			if (prtAccObj.printFile(requestDetails))
-	    			{
-	    				PrintJobCompletedDto data = new PrintJobCompletedDto();
-	    				data.setPrintJobName(requestDetails.getPrintJobName());
-	    				sendPrintJobCompleted(data);
-	    			}
-	    			else
-	    			{
-	    				PrintJobAbortedDto data = new PrintJobAbortedDto();
-	    				data.setPrintJobName(requestDetails.getPrintJobName());
-	    				sendPrintJobAborted(data);
-	    			}
-	    		}
-	    		catch (PrintAccessException e)
-	    		{
-	    			logger.error(e.getErrorMsg());
-	    			
-    				PrintJobAbortedDto data = new PrintJobAbortedDto();
-    				data.setPrintJobName(requestDetails.getPrintJobName());
-    				sendPrintJobAborted(data);
-	    		}
+            	PrintFileDto requestDetails;
+            	try
+            	{
+            		requestDetails = (PrintFileDto) message.getPayload();
+            	    handlePrintFileMessage(requestDetails);
+            	}
+                catch (Exception e)
+                {
+                	logger.error("Error message to printFileDto", e);
+                }
             }
             else if (message instanceof PrintJobCancelMessage)
             {
-    			PrintJobCancelDto requestDetails = (PrintJobCancelDto) message.getPayload();  
-           		try
-        		{
-	    			System.out.println("Message: printJobCancel");
-	    			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
-	    			prtAccObj.stopPrintJobProcessing();
-           			
-        		}
-        		catch (PrintAccessException e)
-        		{
-        			// TODO - define a print service error message
-        		}
+            	PrintJobCancelDto requestDetails;
+            	try
+            	{
+	            	requestDetails = (PrintJobCancelDto) message.getPayload();
+	    			handlePrintJobCancelMessage(requestDetails);  
+            	}
+                catch (Exception e)
+                {
+                	logger.error("Error message to PrintJobCancelDto", e);
+                }
             }
             else
             {
@@ -101,11 +77,69 @@ public class HubPrintServiceMessageListener
         }
         catch (Exception e)
         {
-            logger.error("Error handling printFile message", e);
+            //logger.error("Error handling printFile message", e);
+        	
+        	// TODO - Define an error message
+			PrintJobAbortedDto data = new PrintJobAbortedDto();
+			data.setPrintJobName("printjob failed");
+			sendPrintJobAborted(data);
         }
 	}
+
+	private void handlePrintFileMessage(PrintFileDto requestDetails)
+	{
+		try
+		{
+			System.out.println("Message: printFile");
+			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
+			System.out.println("\tprinterName: " + requestDetails.getPrinterName());
+			System.out.println("\tfileName: " + requestDetails.getFileName());
+			System.out.println("\tcolorEnabled: " + requestDetails.getColorEnabled());
+			System.out.println("\tduplexEnabled: " + requestDetails.getDuplexEnabled());
+			System.out.println("\tcopies: " + requestDetails.getCopies());
+
+			if (prtAccObj.printFile(requestDetails))
+			{
+				PrintJobCompletedDto data = new PrintJobCompletedDto();
+				data.setPrintJobName(requestDetails.getPrintJobName());
+				sendPrintJobCompleted(data);
+			}
+			else
+			{
+				PrintJobAbortedDto data = new PrintJobAbortedDto();
+				data.setPrintJobName(requestDetails.getPrintJobName());
+				sendPrintJobAborted(data);
+			}
+		}
+		catch (PrintAccessException e)
+		{
+			logger.error(e.getErrorMsg());
+			
+			PrintJobAbortedDto data = new PrintJobAbortedDto();
+			data.setPrintJobName("printFile failed");
+			sendPrintJobAborted(data);
+		}
+	}
 	
-	public void sendPrintJobCompleted(PrintJobCompletedDto data)
+	private void handlePrintJobCancelMessage(PrintJobCancelDto requestDetails)
+	{
+   		try
+		{
+			System.out.println("Message: printJobCancel");
+			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
+			prtAccObj.stopPrintJobProcessing();
+   			
+		}
+		catch (PrintAccessException e)
+		{
+			// TODO - define a print service error message
+			PrintJobAbortedDto data = new PrintJobAbortedDto();
+			data.setPrintJobName("printJobCancel failed");
+			sendPrintJobAborted(data);
+		}
+	}
+	
+	private void sendPrintJobCompleted(PrintJobCompletedDto data)
 	{
 		final String topic = "printJobState";
 		
@@ -115,13 +149,12 @@ public class HubPrintServiceMessageListener
 		kafkaPrintJobCompleted.send(topic, data);
 	}
 
-	public void sendPrintJobAborted(PrintJobAbortedDto data)
+	private void sendPrintJobAborted(PrintJobAbortedDto data)
 	{
 		final String topic = "printJobState";
 		
 		System.out.println("Producer Topic: " + topic);
 		System.out.println("\tprintJobName: " + data.getPrintJobName());
-				
 		kafkaPrintJobAborted.send(topic, data);
 	}
 }
