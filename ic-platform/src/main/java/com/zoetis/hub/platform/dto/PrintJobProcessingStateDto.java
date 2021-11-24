@@ -43,7 +43,7 @@ UNKNOWN					The job state is unknown.
  * Example JSON string
  * 
  * {
- * 		"printJobName": "job-5481863",
+ * 		"correlationID": 5481863,
  * 		"state": "PENDING",
  * 		"printerStateReasons": "Out of paper."
  * }

@@ -12,7 +12,7 @@ import lombok.NonNull;
  * Example JSON string
  * 
  * {
- * 		"printJobName": "job-5481863",
+ * 		"correlationID": 5481863,
  * 		"printerName": "HP-Color-LaserJet-Pro-M453-4",
  * 		"fileName": /home/bag/test_files/file.txt",
  * 		"colorEnabled": false,
@@ -25,17 +25,11 @@ import lombok.NonNull;
 @AllArgsConstructor
 public class PrintFileDto
 {
-	@NonNull
-	private String action;
-	
-	@NonNull
-	private String name;
-	
 	/**
-	 * The name for the print job that is provided by Hub apps. 
+	 * The ID provided by Hub apps to identify a print job.
+	 * The ID is used to identify response topic messages. 
 	 */
-	@NonNull
-	private String printJobName;
+	private int correlationID;
 	
 	@NonNull
 	private String printerName;
@@ -50,14 +44,14 @@ public class PrintFileDto
 	public String toString()
 	{ 
 		String str;
-		str = "{\"action\":\"" + this.action + "\", ";
-		str += "\"name\":\"" + this.name + "\", ";
-		str += "\"printJobName\":\"" + this.printJobName + "\", ";
-		str += "\"printerName\":\"" + this.printerName + "\", ";
-		str += "\"fileName\":\"" + this.fileName + "\", ";
-		str += "\"colorEnabled\":" + this.colorEnabled + ", ";
-		str += "\"duplexEnabled\":" + this.duplexEnabled + ", ";
-		str += "\"copies\":" + this.copies + "}";
+		str = "{\n";
+		str += "\"correlationID\":" + this.correlationID + ", \n";
+		str += "\"printerName\":\"" + this.printerName + "\", \n";
+		str += "\"fileName\":\"" + this.fileName + "\", \n";
+		str += "\"colorEnabled\":" + this.colorEnabled + ", \n";
+		str += "\"duplexEnabled\":" + this.duplexEnabled + ", \n";
+		str += "\"copies\":" + this.copies + "\n";
+		str += "}";
 	    return str;
 	}
 	
@@ -101,12 +95,12 @@ public class PrintFileDto
 		this.copies = copies;
 	}
 
-	public String getPrintJobName() {
-		return printJobName;
+	public int getCorrelationID() {
+		return correlationID;
 	}
 
-	public void setPrintJobName(String printJobName) {
-		this.printJobName = printJobName;
+	public void setCorrelationID(int correlationID) {
+		this.correlationID = correlationID;
 	}
    
 }

@@ -301,7 +301,7 @@ public class PrinterAccessObject
 
         // Create a print job from one of the print services
         m_job = printService.createPrintJob();
-        //m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getPrintJobName());
+        //m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getCorrelationID());
 
         //printService.addPrintServiceAttributeListener(m_threadMonitor);
 

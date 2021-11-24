@@ -3,31 +3,35 @@ package com.zoetis.hub.platform.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
+
+/**
+ * 
+ * @author bag
+ * 
+ * Example JSON string
+ * 
+ * {
+ * 		"correlationID": 5481863
+ * }
+*/
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrintJobCancelDto
 {
-	@NonNull
-	private String action;
-	
-	@NonNull
-	private String name;
-	
 	/**
-	 * The name for the print job that is provided by Hub apps. 
+	 * The ID provided by Hub apps to identify a print job.
+	 * The ID is used to identify response topic messages. 
 	 */
-	@NonNull
-	private String printJobName;
+	private int correlationID;
 	
 	public String toString()
 	{ 
 		String str;
-		str = "{\"action\":\"" + this.action + "\", ";
-		str += "\"name\":\"" + this.name + "\", ";
-		str += "\"printJobName\":\"" + this.printJobName + "\"}";
+		str = "{\n";
+		str += "\"correlationID\":" + this.correlationID + "\n";
+		str += "}";
 	    return str;
 	}
 	

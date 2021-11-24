@@ -10,7 +10,7 @@ import java.io.Serializable;
 /**
  * Example JSON string
  * {
- * 		"printJobName": "job-5481863",
+ * 		"correlationID": 5481863,
  * 		"state": "PENDING",
  * 		"printerStateReasons": "Out of paper."
  * }
@@ -24,23 +24,23 @@ public class PrintJobStateDto implements Serializable
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String printJobName; 
+	private int correlationID; 
 	private String state;
 	private String printerStateReasons;
 	
 	public PrintJobStateDto()
 	{
-		this.setPrintJobName(""); 
+		this.setCorrelationID(-1); 
 		this.setState("");
 		this.setPrinterStateReasons("");
 	}
 
-	public String getPrintJobName() {
-		return printJobName;
+	public int getCorrelationID() {
+		return correlationID;
 	}
 
-	public void setPrintJobName(String printJobName) {
-		this.printJobName = printJobName;
+	public void setCorrelationID(int correlationID) {
+		this.correlationID = correlationID;
 	}
 
 	public String getState() {

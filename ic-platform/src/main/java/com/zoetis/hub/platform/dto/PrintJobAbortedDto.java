@@ -3,21 +3,19 @@ package com.zoetis.hub.platform.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class PrintJobAbortedDto
 {
-	@NonNull
-	private String printJobName;
+	private int correlationID;
 	
-	public String getPrintJobName() {
-		return printJobName;
+	public int getCorrelationID() {
+		return correlationID;
 	}
 
-	public void setPrintJobName(String printJobName) {
-		this.printJobName = printJobName;
+	public void setCorrelationID(int correlationID) {
+		this.correlationID = correlationID;
 	}
 }

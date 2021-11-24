@@ -34,9 +34,11 @@ public class HubPrintServiceMessageListener
 	@Autowired
 	private KafkaTemplate<String, PrintJobAbortedDto> kafkaPrintJobAborted;
     
-	@KafkaListener(topics = PrintAccessObjectMessage.TOPIC,  groupId = "printAccessObject")
+	@KafkaListener(topics = PrintAccessObjectMessage.TOPIC)
 	public void PrintAccessObjectListener(String messageJson) throws PrintAccessException
+	//public void PrintAccessObjectListener(Object obj) throws PrintAccessException
 	{
+		//String messageJson = "";
 		prtAccObj.setDebugTrace(true);
         try
         {
@@ -77,12 +79,7 @@ public class HubPrintServiceMessageListener
         }
         catch (Exception e)
         {
-            //logger.error("Error handling printFile message", e);
-        	
-        	// TODO - Define an error message
-			PrintJobAbortedDto data = new PrintJobAbortedDto();
-			data.setPrintJobName("printjob failed");
-			sendPrintJobAborted(data);
+            logger.error("Error PrintAccessObjectListener", e);
         }
 	}
 
@@ -91,7 +88,7 @@ public class HubPrintServiceMessageListener
 		try
 		{
 			System.out.println("Message: printFile");
-			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
+			System.out.println("\tcorrelationID: " + requestDetails.getCorrelationID());
 			System.out.println("\tprinterName: " + requestDetails.getPrinterName());
 			System.out.println("\tfileName: " + requestDetails.getFileName());
 			System.out.println("\tcolorEnabled: " + requestDetails.getColorEnabled());
@@ -101,13 +98,13 @@ public class HubPrintServiceMessageListener
 			if (prtAccObj.printFile(requestDetails))
 			{
 				PrintJobCompletedDto data = new PrintJobCompletedDto();
-				data.setPrintJobName(requestDetails.getPrintJobName());
+				data.setCorrelationID(requestDetails.getCorrelationID());
 				sendPrintJobCompleted(data);
 			}
 			else
 			{
 				PrintJobAbortedDto data = new PrintJobAbortedDto();
-				data.setPrintJobName(requestDetails.getPrintJobName());
+				data.setCorrelationID(requestDetails.getCorrelationID());
 				sendPrintJobAborted(data);
 			}
 		}
@@ -116,7 +113,7 @@ public class HubPrintServiceMessageListener
 			logger.error(e.getErrorMsg());
 			
 			PrintJobAbortedDto data = new PrintJobAbortedDto();
-			data.setPrintJobName("printFile failed");
+			data.setCorrelationID(123456);
 			sendPrintJobAborted(data);
 		}
 	}
@@ -126,7 +123,7 @@ public class HubPrintServiceMessageListener
    		try
 		{
 			System.out.println("Message: printJobCancel");
-			System.out.println("\tprintJobName: " + requestDetails.getPrintJobName());
+			System.out.println("\tcorrelationID: " + requestDetails.getCorrelationID());
 			prtAccObj.stopPrintJobProcessing();
    			
 		}
@@ -134,7 +131,7 @@ public class HubPrintServiceMessageListener
 		{
 			// TODO - define a print service error message
 			PrintJobAbortedDto data = new PrintJobAbortedDto();
-			data.setPrintJobName("printJobCancel failed");
+			data.setCorrelationID(45678);
 			sendPrintJobAborted(data);
 		}
 	}
@@ -144,7 +141,7 @@ public class HubPrintServiceMessageListener
 		final String topic = "printJobState";
 		
 		System.out.println("Producer Topic: " + topic);
-		System.out.println("\tprintJobName: " + data.getPrintJobName());
+		System.out.println("\tcorrelationID: " + data.getCorrelationID());
 				
 		kafkaPrintJobCompleted.send(topic, data);
 	}
@@ -154,7 +151,7 @@ public class HubPrintServiceMessageListener
 		final String topic = "printJobState";
 		
 		System.out.println("Producer Topic: " + topic);
-		System.out.println("\tprintJobName: " + data.getPrintJobName());
+		System.out.println("\tcorrelationID: " + data.getCorrelationID());
 		kafkaPrintJobAborted.send(topic, data);
 	}
 }
