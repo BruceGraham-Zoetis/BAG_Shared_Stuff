@@ -88,13 +88,13 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
      * @brief Add a print job to monitor 
      * 
      * @param job - The print job
-     * @param strPrintJobName - The user provided print job name
+     * @param correlationID - The user provided print job ID
      */
-    public void addMonitoredPrintJob(DocPrintJob job, String strPrintJobName)
+    public void addMonitoredPrintJob(DocPrintJob job, int correlationID)
     {
     	HubPrintJob hubPrintJob = new HubPrintJob();
-    	hubPrintJob.m_strPrintJobName = strPrintJobName; 
-    	hubPrintJob.m_job = job;
+    	hubPrintJob.setCorrelationID(correlationID); 
+    	hubPrintJob.setDocPringJob(job);
     	this.m_listPrintJobs.add(hubPrintJob);
     }
     

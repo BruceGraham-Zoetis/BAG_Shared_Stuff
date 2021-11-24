@@ -10,9 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zoetis.hub.platform.dto.PrintFileDto;
-import com.zoetis.hub.platform.dto.PrintJobAbortedDto;
+import com.zoetis.hub.platform.dto.PrintJobStateDto;
 import com.zoetis.hub.platform.dto.PrintJobCancelDto;
-import com.zoetis.hub.platform.dto.PrintJobCompletedDto;
+import com.zoetis.hub.platform.dto.PrintJobProcessingStates;
 import com.zoetis.hub.platform.message.PrintAccessObjectMessage;
 import com.zoetis.hub.platform.message.PrintFileMessage;
 import com.zoetis.hub.platform.message.PrintJobCancelMessage;
@@ -29,16 +29,11 @@ public class HubPrintServiceMessageListener
     private ObjectMapper objectMapper;
     
 	@Autowired
-	private KafkaTemplate<String, PrintJobCompletedDto> kafkaPrintJobCompleted;
-    
-	@Autowired
-	private KafkaTemplate<String, PrintJobAbortedDto> kafkaPrintJobAborted;
+	private KafkaTemplate<String, PrintJobStateDto> kafkaPrintJobState;
     
 	@KafkaListener(topics = PrintAccessObjectMessage.TOPIC)
 	public void PrintAccessObjectListener(String messageJson) throws PrintAccessException
-	//public void PrintAccessObjectListener(Object obj) throws PrintAccessException
 	{
-		//String messageJson = "";
 		prtAccObj.setDebugTrace(true);
         try
         {
@@ -74,7 +69,7 @@ public class HubPrintServiceMessageListener
             }
             else
             {
-                logger.warn("Unrecognized message received: {}", message);
+                logger.error("Unrecognized message received: {}", message);
             }
         }
         catch (Exception e)
@@ -97,24 +92,22 @@ public class HubPrintServiceMessageListener
 
 			if (prtAccObj.printFile(requestDetails))
 			{
-				PrintJobCompletedDto data = new PrintJobCompletedDto();
+				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				sendPrintJobCompleted(data);
+				data.setProcessingState(PrintJobProcessingStates.PROCESSING); 
+				sendPrintJobState(data);
 			}
 			else
 			{
-				PrintJobAbortedDto data = new PrintJobAbortedDto();
+				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				sendPrintJobAborted(data);
+				data.setProcessingState(PrintJobProcessingStates.ABORTED);
+				sendPrintJobState(data);
 			}
 		}
 		catch (PrintAccessException e)
 		{
-			logger.error(e.getErrorMsg());
-			
-			PrintJobAbortedDto data = new PrintJobAbortedDto();
-			data.setCorrelationID(123456);
-			sendPrintJobAborted(data);
+			logger.error("printFile", e.getErrorMsg());
 		}
 	}
 	
@@ -123,35 +116,24 @@ public class HubPrintServiceMessageListener
    		try
 		{
 			System.out.println("Message: printJobCancel");
-			System.out.println("\tcorrelationID: " + requestDetails.getCorrelationID());
+			System.out.println(requestDetails.toString());
+
 			prtAccObj.stopPrintJobProcessing();
    			
 		}
 		catch (PrintAccessException e)
 		{
-			// TODO - define a print service error message
-			PrintJobAbortedDto data = new PrintJobAbortedDto();
-			data.setCorrelationID(45678);
-			sendPrintJobAborted(data);
+			logger.error("printJobCancel", e.getErrorMsg());
 		}
 	}
 	
-	private void sendPrintJobCompleted(PrintJobCompletedDto data)
+	private void sendPrintJobState(PrintJobStateDto data)
 	{
 		final String topic = "printJobState";
 		
 		System.out.println("Producer Topic: " + topic);
-		System.out.println("\tcorrelationID: " + data.getCorrelationID());
-				
-		kafkaPrintJobCompleted.send(topic, data);
-	}
+		System.out.println(data.toString());
 
-	private void sendPrintJobAborted(PrintJobAbortedDto data)
-	{
-		final String topic = "printJobState";
-		
-		System.out.println("Producer Topic: " + topic);
-		System.out.println("\tcorrelationID: " + data.getCorrelationID());
-		kafkaPrintJobAborted.send(topic, data);
+		kafkaPrintJobState.send(topic, data);
 	}
 }

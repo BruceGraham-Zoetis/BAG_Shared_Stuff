@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
+import javax.print.attribute.standard.PrinterStateReason;
+
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
@@ -13,6 +15,8 @@ public class UnitTestDtoSerDe_platform
 {
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	
+	//////////////////////////////////////////
+	// PrintFileDto
 	@Test
 	void printFileDto_SerDeRT_WithoutDetails()
 			throws IOException, JSONException
@@ -68,8 +72,10 @@ public class UnitTestDtoSerDe_platform
 		}
 	}
 
+	//////////////////////////////////////////
+	// PrintJobCancelDto
 	@Test
-	void printJobCancelDto_SerDeRT_WithoutDetails()
+	void PrintJobCancelDto_SerDeRT_WithoutDetails()
 			throws IOException, JSONException
 	{
 		var dtoIsOut = new PrintJobCancelDto();
@@ -90,7 +96,7 @@ public class UnitTestDtoSerDe_platform
 	}
 	
 	@Test
-	void printJobCancelDto_SerDeRT_WithDetails()
+	void PrintJobCancelDto_SerDeRT_WithDetails()
 			throws IOException, JSONException
 	{
 		int correlationID = 34567;
@@ -109,6 +115,59 @@ public class UnitTestDtoSerDe_platform
 		{
 			System.out.println(e);
 			assert(false);
+		}
+	}
+
+	//////////////////////////////////////////
+	// PrintJobStateDto
+	@Test
+	void printJobStateDto_SerDeRT_WithoutDetails()
+			throws IOException, JSONException
+	{
+		int correlationID = 34567;
+
+		var dtoIsOut = new PrintJobStateDto();
+		dtoIsOut.setCorrelationID(correlationID);
+		System.out.println(dtoIsOut.toString());
+		String dtoSer = objectMapper.writeValueAsString (dtoIsOut);
+		System.out.println(dtoSer);
+		
+		try
+		{
+			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobStateDto.class);
+			assertEquals (dtoIsOut, dtoIsIn);
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+			assert(false);
+		}
+	}
+	
+	@Test
+	void printJobStateDto_SerDeRT_WithDetails()
+			throws IOException, JSONException
+	{
+		int correlationID = 34567;
+
+		final var dtoIsOut = new PrintJobStateDto();
+		dtoIsOut.setCorrelationID(correlationID);
+		dtoIsOut.setProcessingState(PrintJobProcessingStates.PROCESSING);
+		dtoIsOut.addPrinterStateReason(PrinterStateReason.COVER_OPEN);
+		dtoIsOut.addPrinterStateReason(PrinterStateReason.DOOR_OPEN);
+		System.out.println(dtoIsOut.toString());
+		String dtoSer = objectMapper.writeValueAsString (dtoIsOut); // TODO - this faults when the PrinteStateReasons are accessed.
+		System.out.println(dtoSer.toString());
+		
+		try
+		{
+			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobStateDto.class);
+			assertEquals (dtoIsOut, dtoIsIn);
+		}
+		catch (Exception e)
+		{
+			System.out.println(e);
+			assertEquals(true, false);
 		}
 	}
 }

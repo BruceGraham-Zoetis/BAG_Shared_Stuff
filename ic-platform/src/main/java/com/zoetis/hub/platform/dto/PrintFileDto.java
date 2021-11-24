@@ -2,7 +2,6 @@ package com.zoetis.hub.platform.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -21,7 +20,6 @@ import lombok.NonNull;
  * }
 */
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
 public class PrintFileDto
 {
@@ -40,17 +38,27 @@ public class PrintFileDto
 	private boolean colorEnabled;
 	private boolean duplexEnabled;
 	private int     copies;
+	
+	public PrintFileDto()
+	{
+		correlationID = -1;
+		printerName = "";
+		fileName = "";
+		colorEnabled = false;
+		duplexEnabled = false;
+		copies = 0;	
+	}
 
 	public String toString()
 	{ 
 		String str;
 		str = "{\n";
-		str += "\"correlationID\":" + this.correlationID + ", \n";
-		str += "\"printerName\":\"" + this.printerName + "\", \n";
-		str += "\"fileName\":\"" + this.fileName + "\", \n";
-		str += "\"colorEnabled\":" + this.colorEnabled + ", \n";
-		str += "\"duplexEnabled\":" + this.duplexEnabled + ", \n";
-		str += "\"copies\":" + this.copies + "\n";
+		str += "\t\"correlationID\": " + this.correlationID + ", \n";
+		str += "\t\"printerName\": \"" + this.printerName + "\", \n";
+		str += "\t\"fileName\": \"" + this.fileName + "\", \n";
+		str += "\t\"colorEnabled\": " + this.colorEnabled + ", \n";
+		str += "\t\"duplexEnabled\": " + this.duplexEnabled + ", \n";
+		str += "\t\"copies\": " + this.copies + "\n";
 		str += "}";
 	    return str;
 	}
