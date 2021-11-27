@@ -2,6 +2,7 @@ package com.zoetis.hub.platform.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 
 /**
@@ -20,6 +21,7 @@ import lombok.NonNull;
  * }
 */
 @Data
+@NoArgsConstructor
 @AllArgsConstructor
 public class PrintFileDto
 {
@@ -39,6 +41,7 @@ public class PrintFileDto
 	private boolean duplexEnabled;
 	private int     copies;
 	
+	/*
 	public PrintFileDto()
 	{
 		correlationID = -1;
@@ -48,6 +51,7 @@ public class PrintFileDto
 		duplexEnabled = false;
 		copies = 0;	
 	}
+    */
 
 	public String toString()
 	{ 

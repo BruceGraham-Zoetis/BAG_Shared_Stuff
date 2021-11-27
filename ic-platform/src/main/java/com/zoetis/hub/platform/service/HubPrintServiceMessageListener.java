@@ -1,6 +1,8 @@
 package com.zoetis.hub.platform.service;
 
 
+import javax.print.attribute.standard.JobState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,9 +12,8 @@ import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zoetis.hub.platform.dto.PrintFileDto;
-import com.zoetis.hub.platform.dto.PrintJobStateDto;
 import com.zoetis.hub.platform.dto.PrintJobCancelDto;
-import com.zoetis.hub.platform.dto.PrintJobProcessingStates;
+import com.zoetis.hub.platform.dto.PrintJobStateDto;
 import com.zoetis.hub.platform.message.PrintAccessObjectMessage;
 import com.zoetis.hub.platform.message.PrintFileMessage;
 import com.zoetis.hub.platform.message.PrintJobCancelMessage;
@@ -94,14 +95,14 @@ public class HubPrintServiceMessageListener
 			{
 				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				data.setProcessingState(PrintJobProcessingStates.PROCESSING); 
+				data.setJobState(JobState.PROCESSING); 
 				sendPrintJobState(data);
 			}
 			else
 			{
 				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				data.setProcessingState(PrintJobProcessingStates.ABORTED);
+				data.setJobState(JobState.ABORTED);
 				sendPrintJobState(data);
 			}
 		}

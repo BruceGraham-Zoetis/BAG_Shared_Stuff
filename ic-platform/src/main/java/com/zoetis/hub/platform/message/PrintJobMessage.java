@@ -16,21 +16,21 @@ import lombok.NoArgsConstructor;
 	property = "action"
 )
 @JsonSubTypes ({
-	@JsonSubTypes.Type(value = PrintFileMessage.class, name = "PRINT_FILE"),
-	@JsonSubTypes.Type(value = PrintJobCancelMessage.class, name = "PRINTJOB_CANCEL")
+	@JsonSubTypes.Type(value = PrintJobProcessingMessage.class, name = "PRINTJOB_PROCESSING"),
+	@JsonSubTypes.Type(value = PrinterStateMessage.class, name = "PRINTER_STATE")
 })
-public abstract class PrintAccessObjectMessage<D>
-	extends ApplicationMessage<PrintAccessObjectMessage.Action, D>
+public abstract class PrintJobMessage<D>
+	extends ApplicationMessage<PrintJobMessage.Action, D>
 {
 	public static final String TOPIC = "printAccessObject";
 	
 	public enum Action
 	{
-		PRINT_FILE,
-		PRINTJOB_CANCEL
+		PRINTJOB_PROCESSING,
+		PRINTER_STATE
 	}
 	
-	public PrintAccessObjectMessage(D payload)
+	public PrintJobMessage(D payload)
 	{
 	    super(payload);
 	}

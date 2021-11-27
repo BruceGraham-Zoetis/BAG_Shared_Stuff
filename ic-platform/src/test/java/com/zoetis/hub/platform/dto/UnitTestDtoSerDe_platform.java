@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
+import javax.print.attribute.standard.JobState;
+import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 
 import org.json.JSONException;
@@ -29,7 +31,7 @@ public class UnitTestDtoSerDe_platform
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintFileDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
@@ -63,7 +65,7 @@ public class UnitTestDtoSerDe_platform
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintFileDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
@@ -86,7 +88,7 @@ public class UnitTestDtoSerDe_platform
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobCancelDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
@@ -109,7 +111,7 @@ public class UnitTestDtoSerDe_platform
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobCancelDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
@@ -135,7 +137,7 @@ public class UnitTestDtoSerDe_platform
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobStateDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
@@ -152,17 +154,20 @@ public class UnitTestDtoSerDe_platform
 
 		final var dtoIsOut = new PrintJobStateDto();
 		dtoIsOut.setCorrelationID(correlationID);
-		dtoIsOut.setProcessingState(PrintJobProcessingStates.PROCESSING);
+		//dtoIsOut.setJobState(JobState.PROCESSING);
+		dtoIsOut.setPrinterState(PrinterState.STOPPED);
 		dtoIsOut.addPrinterStateReason(PrinterStateReason.COVER_OPEN);
 		dtoIsOut.addPrinterStateReason(PrinterStateReason.DOOR_OPEN);
 		System.out.println(dtoIsOut.toString());
-		String dtoSer = objectMapper.writeValueAsString (dtoIsOut); // TODO - this faults when the PrinteStateReasons are accessed.
+		String dtoSer = objectMapper.writeValueAsString (dtoIsOut);
 		System.out.println(dtoSer.toString());
 		
 		try
 		{
 			var dtoIsIn = objectMapper.readValue (dtoSer, PrintJobStateDto.class);
-			assertEquals (dtoIsOut, dtoIsIn);
+			System.out.println("dtoIsOut " + dtoIsOut);
+			System.out.println("dtoIsIn " + dtoIsIn);
+			assertEquals (dtoIsOut.toString(), dtoIsIn.toString());
 		}
 		catch (Exception e)
 		{
