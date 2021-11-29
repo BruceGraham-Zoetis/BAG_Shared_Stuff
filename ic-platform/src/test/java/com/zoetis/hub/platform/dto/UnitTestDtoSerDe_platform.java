@@ -1,8 +1,10 @@
 package com.zoetis.hub.platform.dto;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
+import java.net.URL;
 
 import javax.print.attribute.standard.JobState;
 import javax.print.attribute.standard.PrinterState;
@@ -46,10 +48,14 @@ public class UnitTestDtoSerDe_platform
 	{
 		int correlationID = 34567;
 		String printerName = "HP LaserJet";
-		String fileName = "/home/bag/test_files/file.pdf";
+		String fileName;
 		boolean colorEnabled = false;
 		boolean duplexEnabled = true;
 		int     copies = 2;
+		
+		URL url = getClass().getClassLoader().getResource("file.pdf");
+		fileName = url.getFile();
+        assertNotNull(fileName);
 
 		final var dtoIsOut = new PrintFileDto(
 				correlationID,
