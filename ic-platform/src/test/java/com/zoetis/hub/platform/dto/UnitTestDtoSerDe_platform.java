@@ -154,8 +154,9 @@ public class UnitTestDtoSerDe_platform
 
 		final var dtoIsOut = new PrintJobStateDto();
 		dtoIsOut.setCorrelationID(correlationID);
-		//dtoIsOut.setJobState(JobState.PROCESSING);
-		dtoIsOut.setPrinterState(PrinterState.STOPPED);
+		dtoIsOut.jobState = JobState.PROCESSING.getValue();
+		dtoIsOut.printerState = PrinterState.STOPPED.getValue();
+		//dtoIsOut.setPrinterState(PrinterState.STOPPED);
 		dtoIsOut.addPrinterStateReason(PrinterStateReason.COVER_OPEN);
 		dtoIsOut.addPrinterStateReason(PrinterStateReason.DOOR_OPEN);
 		System.out.println(dtoIsOut.toString());

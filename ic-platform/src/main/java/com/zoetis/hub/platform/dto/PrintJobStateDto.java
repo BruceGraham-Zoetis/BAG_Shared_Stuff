@@ -1,17 +1,13 @@
 package com.zoetis.hub.platform.dto;
 
-import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import javax.print.attribute.standard.JobState;
-import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 
 /**
  * 
@@ -40,20 +36,20 @@ public class PrintJobStateDto
 	 */
 	private int correlationID;
 	
-	private int jobState; // PrintJobProcessingStates -> Integer
-	private int printerState;
-	private Set<Integer> printerStateReasons; // PrinterStateReason -> Integer
+	public int jobState; // PrintJobProcessingStates
+	public int printerState;
+	public Set<Integer> printerStateReasons; // PrinterStateReason
 	
 	/*
 	public PrintJobStateDto(int correlationID)
 	{
 		this.correlationID = correlationID; 
-		//this.setJobState(JobState.UNKNOWN);
+		//this.jobState JobState.UNKNOWN.getValue();
 		//this.setPrinterState(PrinterState.UNKNOWN);
 		//this.printerStateReasons = new HashSet<>();
 	}
 
-	public PrintJobStateDto(int correlationID, Integer jobState)
+	public PrintJobStateDto(int correlationID, int jobState)
 	{
 		this.correlationID = correlationID; 
 		this.jobState = jobState;
@@ -105,18 +101,18 @@ public class PrintJobStateDto
 		this.jobState = processingState.getValue();
 	}
 */	
-
-	public Integer getPrinterState()
+/*
+	public int getPrinterState()
 	{
 		return printerState;
 	}
-
+*/
+/*
 	public void setPrinterState(PrinterState printerState)
 	{
 		this.printerState = printerState.getValue();
 	}
-
-	
+*/
 	public void addPrinterStateReason(PrinterStateReason printerStateReason)
 	{
 		Integer iVal = printerStateReason.getValue();

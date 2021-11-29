@@ -95,14 +95,14 @@ public class HubPrintServiceMessageListener
 			{
 				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				data.setJobState(JobState.PROCESSING); 
+				data.jobState = JobState.PROCESSING.getValue(); 
 				sendPrintJobState(data);
 			}
 			else
 			{
 				PrintJobStateDto data = new PrintJobStateDto();
 				data.setCorrelationID(requestDetails.getCorrelationID());
-				data.setJobState(JobState.ABORTED);
+				data.jobState = JobState.ABORTED.getValue();
 				sendPrintJobState(data);
 			}
 		}
