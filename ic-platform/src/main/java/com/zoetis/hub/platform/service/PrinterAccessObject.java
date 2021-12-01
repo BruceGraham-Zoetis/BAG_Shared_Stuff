@@ -1,5 +1,12 @@
 package com.zoetis.hub.platform.service;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 /**
  * @brief PrinterAccessObject.java
  * 
@@ -8,52 +15,45 @@ package com.zoetis.hub.platform.service;
  *   For example, to use Duplex, the printer's print queue MUST have the Duplex option set.
  * 
 */
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
-import java.util.*;
-
-import javax.print.*;
-import javax.print.PrintService;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-
-import javax.print.DocFlavor;
-import javax.print.SimpleDoc;
-import javax.print.PrintException;
 import javax.print.Doc;
+import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
+import javax.print.PrintException;
+import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
+import javax.print.SimpleDoc;
+import javax.print.attribute.Attribute;
+import javax.print.attribute.AttributeSet;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
-import javax.print.attribute.standard.Sides;
-import javax.print.attribute.standard.Copies;
-import javax.print.attribute.standard.PrinterName;
-
-import org.springframework.stereotype.Component;
-import com.zoetis.hub.platform.dto.PrintFileDto;
 import javax.print.attribute.standard.Chromaticity;
-import javax.print.attribute.standard.SheetCollate;
-import javax.print.attribute.AttributeSet;
-import javax.print.attribute.Attribute;
+import javax.print.attribute.standard.Copies;
+import javax.print.attribute.standard.JobName;
+import javax.print.attribute.standard.PrinterName;
 import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
-import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.PrinterStateReasons;
-import javax.print.attribute.standard.Severity;
+import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.QueuedJobCount;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.BufferedReader;
+import javax.print.attribute.standard.Severity;
+import javax.print.attribute.standard.SheetCollate;
+import javax.print.attribute.standard.Sides;
+
+import org.springframework.stereotype.Component;
+
+import com.zoetis.hub.platform.dto.PrintFileDto;
+import com.zoetis.hub.platform.dto.PrintJobCancelDto;
 
 @Component
 public class PrinterAccessObject
 {
     //private boolean       m_bDebugTrace;
     private boolean       m_bPrinting;
-    private DocPrintJob   m_job;
-    //private MediaSizeName m_mediaSizeName;
     private PrintService m_printService; // the targeted printer queue service.
-    private String   m_strPrinterName; // the name of print queue to use.
     private int      m_nCopies;       // the number of copies to print
     private boolean  m_bColor;        // true = Color printing, false = Monochrome
     private boolean  m_bDuplex;       // true = Duplex printing, false = Single sheet per page
@@ -88,7 +88,6 @@ public class PrinterAccessObject
 
         // default printing attributes
         m_printService = null;
-        m_strPrinterName = "";
         //m_mediaSizeName = MediaSizeName.NA_LETTER;
         m_nCopies       = 1;
         m_bColor        = false;
@@ -98,7 +97,6 @@ public class PrinterAccessObject
         try
         {
             PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
-            m_strPrinterName  = printService.getName();
             m_printService = printService;
         }
         catch (Exception e)
@@ -214,12 +212,13 @@ public class PrinterAccessObject
     /**
      * @brief : Print a given file given a file's path and name
      * 
-     * @param[in] pathFileName - the path and name of a file
+     * @param[in] printFileDto - info about the print job
+     * Note that printFileDto contains the correlationID is a user provided print job ID.
      * 
      * @return true - print job started successfully
      * @return false - print job start failed.
      */
-    public boolean printFile(PrintFileDto requestDetails) throws PrintAccessException
+    public boolean printFile(PrintFileDto printFileDto) throws PrintAccessException
     {
         synchronized (this)
         {
@@ -240,16 +239,15 @@ public class PrinterAccessObject
         
         try
         {
-    		enableColor(requestDetails.getColorEnabled());
-    		enableDuplex(requestDetails.getDuplexEnabled());
-    		setCopies(requestDetails.getCopies());
-    		strPrinterName = requestDetails.getPrinterName();
+    		enableColor(printFileDto.getColorEnabled());
+    		enableDuplex(printFileDto.getDuplexEnabled());
+    		setCopies(printFileDto.getCopies());
+    		strPrinterName = printFileDto.getPrinterName();
     		if (strPrinterName.equals(""))
     		{ // use default printer
     	        try
     	        {
     	            printService = PrintServiceLookup.lookupDefaultPrintService();
-    	            m_strPrinterName  = printService.getName();
     	            m_printService = printService;
     	        }
     	        catch (Exception e)
@@ -268,7 +266,6 @@ public class PrinterAccessObject
 	                if (printerName.getValue().equals(strPrinterName))
 	                {
 	                	printService = ps;
-	    	            m_strPrinterName  = printService.getName();
 	    	            m_printService = printService;
 	                    break;
 	                }
@@ -282,7 +279,7 @@ public class PrinterAccessObject
     	        }
     		}
 
-            String pathFileName = requestDetails.getFileName();
+            String pathFileName = printFileDto.getFileName();
             fileInputStream = new FileInputStream(pathFileName); 
         }
         catch (FileNotFoundException ffne)
@@ -299,18 +296,18 @@ public class PrinterAccessObject
         // Create a Doc
         Doc attributesDoc = new SimpleDoc(fileInputStream, myFormat, null); 
 
-        // Create a print job from one of the print services
-        m_job = printService.createPrintJob();
-        //m_threadMonitor.addMonitoredPrintJob(m_job, requestDetails.getCorrelationID());
-
-        //printService.addPrintServiceAttributeListener(m_threadMonitor);
+        // Create a print job for the print service
+        DocPrintJob docPrintJob;
+        docPrintJob = printService.createPrintJob();
+        m_threadMonitor.addMonitoredPrintJob(docPrintJob, printFileDto);
 
         try
         {
-        	//m_job.addPrintJobListener(m_threadMonitor);
-
             PrintRequestAttributeSet printAttributes = buildPrintAttributes();
-            m_job.print(attributesDoc, printAttributes);
+            String jobName = String.valueOf(printFileDto.getCorrelationID());
+            printAttributes.add(new JobName(jobName, null));
+            
+            docPrintJob.print(attributesDoc, printAttributes);
         }
         catch (PrintException pe)
         {
@@ -328,14 +325,14 @@ public class PrinterAccessObject
     /**
      * @brief Stops further processing of a print job.
      * 
+     * @param[in] printJobCancelDto = info about the print job to cancel
+     * 
      */
-    public void stopPrintJobProcessing() throws PrintAccessException
+    public void stopPrintJobProcessing(PrintJobCancelDto printJobCancelDto) throws PrintAccessException
     {
         try
         {
-            CancelablePrintJob cancelableJob = (CancelablePrintJob) m_job;
-            
-            cancelableJob.cancel();
+        	m_threadMonitor.stopPrintJobProcessing(printJobCancelDto.getCorrelationID());
         }
         catch (PrintException e) {
             throw new PrintAccessException(
@@ -348,6 +345,8 @@ public class PrinterAccessObject
      * @brief Gets the printer queue state.
      * 
      * Note: If status is STOPPED, then use getPrinterStateReason() to get reason.
+     * 
+     * @param[in] strPrinterName - name of the printer
      * 
      * --- Returned Map ---
      * State: 
@@ -364,14 +363,14 @@ public class PrinterAccessObject
      * 
      * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
      */
-    public Map<String, Object> getPrinterState()
+    public Map<String, Object> getPrinterState(String strPrinterName)
     {
         Map<String, Object> map = new HashMap<>();
         
         PrinterState prnState = m_printService.getAttribute(PrinterState.class);
         if (null == prnState)
         {
-            map = getLpstat();
+            map = getLpstat(strPrinterName);
         }
         else
         {
@@ -402,6 +401,8 @@ public class PrinterAccessObject
     /**
      * @brief Use lpstat to get the printer queue's status
      * 
+     * @param[in] strPrinterName - name of the printer
+     * 
      * --- Returned Map ---
      * State: 
      *   E_QUEUE_STATE_UNKNOWN    = The printer state is unknown. The printer driver does not provide state info.
@@ -417,14 +418,14 @@ public class PrinterAccessObject
      * 
      * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
      */
-    private Map<String, Object> getLpstat()
+    private Map<String, Object> getLpstat(String strPrinterName)
     {
         Map<String, Object> map = new HashMap<>();
         map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_UNKNOWN);
         map.put("Reason", "UNKNOWN");
         map.put("Percent", -1);
 
-        String[] cmd = { "lpstat", "-o", "-l", m_strPrinterName };
+        String[] cmd = { "lpstat", "-o", "-l", strPrinterName };
 
         try
         {

@@ -112,14 +112,14 @@ public class HubPrintServiceMessageListener
 		}
 	}
 	
-	private void handlePrintJobCancelMessage(PrintJobCancelDto requestDetails)
+	private void handlePrintJobCancelMessage(PrintJobCancelDto printJobCancelDto)
 	{
    		try
 		{
 			System.out.println("Message: printJobCancel");
-			System.out.println(requestDetails.toString());
+			System.out.println(printJobCancelDto.toString());
 
-			prtAccObj.stopPrintJobProcessing();
+			prtAccObj.stopPrintJobProcessing(printJobCancelDto);
    			
 		}
 		catch (PrintAccessException e)

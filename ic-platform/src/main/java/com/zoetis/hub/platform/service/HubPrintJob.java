@@ -65,7 +65,7 @@ public class HubPrintJob
 		return docPrintJob;
 	}
 
-	public void setDocPringJob(DocPrintJob docPrintJob) {
+	public void setDocPrintJob(DocPrintJob docPrintJob) {
 		this.docPrintJob = docPrintJob;
 	}
 
