@@ -1,0 +1,3 @@
+To cancel a printJob given a correlationID,
+can the print queue be searched for jobNames with the name correlationID?
+ 

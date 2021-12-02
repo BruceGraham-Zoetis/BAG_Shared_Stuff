@@ -35,7 +35,6 @@ public class HubPrintServiceMessageListener
 	@KafkaListener(topics = PrintAccessObjectMessage.TOPIC)
 	public void PrintAccessObjectListener(String messageJson) throws PrintAccessException
 	{
-		prtAccObj.setDebugTrace(true);
         try
         {
             logger.info ("Received Topic printAccessObject message: {}", messageJson);

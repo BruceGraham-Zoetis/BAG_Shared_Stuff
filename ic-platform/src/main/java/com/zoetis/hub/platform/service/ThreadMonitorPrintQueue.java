@@ -1,9 +1,5 @@
 package com.zoetis.hub.platform.service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -11,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.print.CancelablePrintJob;
 import javax.print.DocPrintJob;
 import javax.print.PrintException;
 import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
 import javax.print.attribute.Attribute;
+import javax.print.attribute.AttributeSet;
 import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.JobState;
@@ -23,6 +20,8 @@ import javax.print.attribute.standard.PrinterIsAcceptingJobs;
 import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
+import javax.print.attribute.standard.PrinterURI;
+import javax.print.attribute.standard.QueuedJobCount;
 import javax.print.attribute.standard.Severity;
 import javax.print.event.PrintJobEvent;
 import javax.print.event.PrintJobListener;
@@ -34,6 +33,7 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 import com.zoetis.hub.platform.dto.PrintFileDto;
 import com.zoetis.hub.platform.dto.PrintJobStateDto;
+import com.zoetis.hub.platform.dto.PrinterInfoDto;
 
 /**
  * @brief Thread for monitoring the System Print Queue
@@ -264,6 +264,7 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
      * 
      * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
      */
+    /* TODO
     private Map<String, Object> getLpstat(String strPrinterName)
     {
         Map<String, Object> map = new HashMap<>();
@@ -387,6 +388,7 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
 
         return map;
     }
+    */
 
     /**
      * @brief Add a print job to monitor 
@@ -605,4 +607,92 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
         }
     }
 
+
+    /**
+     * @brief Retrieves info about the printers in the system.
+     * 
+     * 
+     * @return Map containing info about each printer
+     */
+    public static Map<String, PrinterInfoDto> getPrinters()
+    {
+        Map<String, PrinterInfoDto> map = new HashMap<>();
+
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+
+        PrintService printServiceDefault = PrintServiceLookup.lookupDefaultPrintService();
+        String strDefaultPrinterName = printServiceDefault.getName();
+        
+        for (PrintService printService : printServices)
+        {
+            PrinterInfoDto printerInfoDto = new PrinterInfoDto();
+
+            Attribute[] attrs = printService.getAttributes().toArray();
+            for (int i = 0; i < attrs.length; i++)
+            {
+                String strName = attrs[i].getName();
+                String strValue = attrs[i].toString();
+                //System.out.printf("** Name: %s  Value: %s%n", strName, strValue);
+
+                if (0 == strName.compareTo("printer-name"))
+                {
+                    printerInfoDto.setPrintQueueName(strValue);
+
+                    if (0 == strDefaultPrinterName.compareTo(strValue))
+                        printerInfoDto.setDefaultPrinter(true);
+                    else
+                        printerInfoDto.setDefaultPrinter(false);
+                }
+
+                if (0 == strName.compareTo("printer-info"))
+                    printerInfoDto.setModelName(strValue);
+
+                if (0 == strName.compareTo("printer-location"))
+                    printerInfoDto.setPrinterLocation(strValue);
+    
+            }
+
+            PrinterURI uri = printService.getAttribute(PrinterURI.class);
+            if (null != uri)
+                printerInfoDto.setConnection(uri.getURI().toString());
+
+            if (0 < printerInfoDto.getPrintQueueName().length())
+                map.put(printerInfoDto.getPrintQueueName(), printerInfoDto);
+        }
+        return map;
+    }
+    
+    /**
+     * @brief Get the count of print jobs in the targeted printer's print queue
+     * 
+     * @param[in] printService - The printer service
+     * 
+     * Note that a printer driver may not provide a count. In this case, 0 will be returned.
+     * 
+     * @return the count of print jobs waiting in the print queue.
+     */
+    public Integer getPrinterQueueCount(PrintService printService)
+    {
+        int nQueuedJobCount = 0;
+    
+        if (printService != null)
+        {
+            AttributeSet attributes = printService.getAttributes();
+            Attribute att = attributes.get(QueuedJobCount.class);
+            if (null != att)
+            {
+                // found
+                String value = att.toString();
+                nQueuedJobCount = Integer.parseInt(value);
+            }
+            else
+            {
+                nQueuedJobCount = 0;
+            }
+
+            //System.out.println("INFO: QueuedJobCount: " + nQueuedJobCount);
+        }
+
+        return nQueuedJobCount;
+    }
 }
