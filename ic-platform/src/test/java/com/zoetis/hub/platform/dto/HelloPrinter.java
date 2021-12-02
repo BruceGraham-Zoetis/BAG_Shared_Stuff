@@ -254,14 +254,12 @@ public class HelloPrinter {
 			requestAttributeSet.add(new JobName("xyz", null));
 			job.print(doc, requestAttributeSet);
 		} catch (PrintException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		while (true) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				return;
 			}

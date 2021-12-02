@@ -1,1 +1,1 @@
-package com.zoetiz.hub.PrintFileMessageTest;
+package com.zoetis.hub.PrintFileMessageTest;

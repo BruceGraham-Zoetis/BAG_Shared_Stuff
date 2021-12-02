@@ -1,8 +1,14 @@
 package com.zoetis.hub.platform.service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.print.CancelablePrintJob;
@@ -14,6 +20,7 @@ import javax.print.attribute.PrintJobAttributeSet;
 import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.JobState;
 import javax.print.attribute.standard.PrinterIsAcceptingJobs;
+import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.attribute.standard.Severity;
@@ -85,8 +92,28 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
                     }
                     System.out.println();
         			System.out.println("");
+        			
+        			PrinterState prnState = hubPrintJobEvent.m_job.getPrintService().getAttribute(PrinterState.class);
+        	        if (null != prnState)
+        	        {
+        	        	data.printerState = prnState.getValue();
+        	        	//data.percent = 0;
+        	        }
+        	        else
+        	        {
+        	            /*
+        	            Map<String, Object> map = new HashMap<>();
+        	            
+        	        	String strPrinterName;
+        	        	strPrinterName = hubPrintJobEvent.m_job.getPrintService().getName(); 
+        	            map = getLpstat(strPrinterName);
+        	            */
+        	        	
+        	        	data.printerState = PrinterState.UNKNOWN.getValue();
+        	            //data.percent = 0;
+        	        }
 
-    				switch(hubPrintJobEvent.m_printJobEvent.getPrintEventType())
+        	        switch(hubPrintJobEvent.m_printJobEvent.getPrintEventType())
     				{
     				case PrintJobEvent.JOB_CANCELED:
     				    /**
@@ -94,7 +121,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * {@link javax.print.PrintService PrintService}.
     				     */
     					data.jobState = JobState.CANCELED.getValue();
-            			data.printerState = 0; // TODO
     					break;
     					
     				case PrintJobEvent.JOB_COMPLETE:
@@ -102,7 +128,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * The document is completely printed.
     				     */
     					data.jobState = JobState.COMPLETED.getValue();
-            			data.printerState = 0; // TODO
     					break;
     					
     				case PrintJobEvent.JOB_FAILED:
@@ -111,7 +136,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * application must resubmit the job.
     				     */
     					data.jobState = JobState.ABORTED.getValue();
-            			data.printerState = 0; // TODO
     					break;
     					
     				case PrintJobEvent.REQUIRES_ATTENTION:
@@ -122,7 +146,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * runs out of paper.
     				     */
     					data.jobState = JobState.PROCESSING_STOPPED.getValue();
-            			data.printerState = 0; // TODO
     					break;
     					
     				case PrintJobEvent.NO_MORE_EVENTS:
@@ -137,7 +160,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * service does not support delivering such an event.
     				     */
     					data.jobState = JobState.COMPLETED.getValue();
-            			data.printerState = 0; // TODO
     					break;
     					
     				case PrintJobEvent.DATA_TRANSFER_COMPLETE:
@@ -147,7 +169,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     				     * data resources.
     				     */
     					data.jobState = JobState.PROCESSING.getValue();
-            			data.printerState = 0; // TODO
     					break;
     				}
 
@@ -169,6 +190,12 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
      */
     public void stopPrintJobProcessing(int correlationID) throws PrintException, PrintAccessException
     {
+    	/*
+    	 * TODO To cancel a printJob given a correlationID,
+		 * can the print queue be searched for jobNames with the name correlationID?
+     	 */
+    	
+    	/*
 		synchronized(m_listHubPrintJobs)
 		{
 	        for (HubPrintJob hubPrintJob : m_listHubPrintJobs)
@@ -203,6 +230,8 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
     	        }
 	        }
 		}
+		*/
+    	
     }
     
     /**
@@ -215,6 +244,150 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
         m_bDebugTrace = bEnable;
     }
     
+    /**
+     * @brief Use lpstat to get the printer queue's status
+     * 
+     * @param[in] strPrinterName - name of the printer
+     * 
+     * --- Returned Map ---
+     * State: 
+     *   PrinterState.UNKNOWN    = The printer state is unknown. The printer driver does not provide state info.
+     *   PrinterState.IDLE       = Indicates that new jobs can start processing without waiting.
+     *   PrinterState.PROCESSING = Indicates that jobs are processing; new jobs will wait before processing.
+     *   PrinterState.STOPPED    = Indicates that no jobs can be processed and intervention is required.
+     * 
+     * Reason: Text string returned from printer driver, CUPS, IPP, LPD, etc.
+     * 
+     * Percent:
+     *   -1 = unknown.
+     *   0 to 100 = Percent completed printing.
+     * 
+     * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
+     */
+    private Map<String, Object> getLpstat(String strPrinterName)
+    {
+        Map<String, Object> map = new HashMap<>();
+        map.put("State", PrinterState.UNKNOWN.getValue());
+        map.put("Reason", "UNKNOWN");
+        map.put("Percent", -1);
+
+        String[] cmd = { "lpstat", "-o", "-l", strPrinterName };
+
+        try
+        {
+            InputStream stdin = Runtime.getRuntime().exec(cmd).getInputStream();
+            InputStreamReader isr = new InputStreamReader(stdin);
+            BufferedReader br = new BufferedReader(isr);
+
+            String strLine;
+            int iLineCount = 0;
+            while ((strLine = br.readLine()) != null)
+            {
+                iLineCount++;
+
+                if (strLine.contains("Status:"))
+                {
+                    if (strLine.contains("Connecting to printer."))
+                    {
+                        map.put("State", PrinterState.STOPPED.getValue());
+                        map.put("Reason", "Connecting to printer.");
+                    }
+                    else if (strLine.contains("Connected to printer."))
+                    {
+                    	map.put("State", PrinterState.STOPPED.getValue());
+                        map.put("Reason", "Connected to printer");
+                    }    
+                    else if (strLine.contains("The printer is not responding."))
+                    {
+                    	map.put("State", PrinterState.STOPPED.getValue());
+                        map.put("Reason", "The printer is not responding.");
+                    }    
+                    else if (strLine.contains("Waiting for printer to finish."))
+                    {
+                    	map.put("State", PrinterState.PROCESSING.getValue());
+                        map.put("Reason", "Waiting for printer to finish.");
+                    }
+                    else if (strLine.contains("Waiting for job to complete."))
+                    {
+                    	map.put("State", PrinterState.PROCESSING.getValue());
+                        map.put("Reason", "Waiting for job to complete.");
+                    }
+                    else if (strLine.contains("Copying print data."))
+                    {
+                    	map.put("State", PrinterState.PROCESSING.getValue());
+                        map.put("Reason", "Copying print data.");
+                    }
+
+                    else if (strLine.contains("Spooling job,"))
+                    {
+                        int iPos = strLine.indexOf("Spooling job,");
+                        if (-1 != iPos)
+                        {
+                            String strReason = strLine.substring(iPos + 8);
+                            map.put("State", PrinterState.PROCESSING.getValue());
+                            map.put("Reason", "Spooling job.");
+                            // Ex: Spooling job, 52%
+                            iPos = strReason.indexOf("%");
+                            String strPercent = strReason.substring(iPos - 3);
+                            int iPercent = Integer.parseInt(strPercent);
+                            if ((0 <= iPercent) && (iPercent <= 100))
+                            {
+                                map.put("Percent", iPercent);
+                            }
+                        }    
+                    }
+
+                    else
+                    {
+                        int iPos = strLine.indexOf("Status:");
+                        if (-1 != iPos)
+                        {
+                            String strReason = strLine.substring(iPos + 8);
+                            if (0 != strReason.length())
+                            {
+                            	map.put("State", PrinterState.UNKNOWN.getValue());
+                                map.put("Reason", strReason);
+                            }
+                            else
+                            { 
+                                while ((strLine = br.readLine()) != null)
+                                {
+                                    if (strLine.contains("job printing"))
+                                    {
+                                    	map.put("State", PrinterState.PROCESSING.getValue());
+                                        map.put("Reason", "Print job is printing.");
+                                    }
+                                    else if (strLine.contains("queued"))
+                                    {
+                                    	map.put("State", PrinterState.PROCESSING.getValue());
+                                        map.put("Reason", "Print job is queued.");
+                                    }
+                                }
+                            }
+                        }    
+                    }
+                }
+
+                if (map.get("Reason").equals("UNKNOWN"))
+                {
+                    System.out.println("Reason ???: " + map.get("Reason"));
+                }
+            }
+
+            if (0 == iLineCount)
+            {
+            	map.put("State", PrinterState.IDLE.getValue());
+                map.put("Reason", "Print queue is empty.");
+            }
+        }
+        catch (IOException e)
+        {
+            //System.out.println(e);
+        }
+
+        return map;
+    }
+
     /**
      * @brief Add a print job to monitor 
      * 

@@ -1,12 +1,7 @@
 package com.zoetis.hub.platform.service;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-
 /**
  * @brief PrinterAccessObject.java
  * 
@@ -17,7 +12,6 @@ import java.io.InputStreamReader;
 */
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import javax.print.Doc;
 import javax.print.DocFlavor;
@@ -34,12 +28,8 @@ import javax.print.attribute.standard.Chromaticity;
 import javax.print.attribute.standard.Copies;
 import javax.print.attribute.standard.JobName;
 import javax.print.attribute.standard.PrinterName;
-import javax.print.attribute.standard.PrinterState;
-import javax.print.attribute.standard.PrinterStateReason;
-import javax.print.attribute.standard.PrinterStateReasons;
 import javax.print.attribute.standard.PrinterURI;
 import javax.print.attribute.standard.QueuedJobCount;
-import javax.print.attribute.standard.Severity;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.standard.Sides;
 
@@ -53,22 +43,8 @@ public class PrinterAccessObject
 {
     //private boolean       m_bDebugTrace;
     private boolean       m_bPrinting;
-    private PrintService m_printService; // the targeted printer queue service.
-    private int      m_nCopies;       // the number of copies to print
-    private boolean  m_bColor;        // true = Color printing, false = Monochrome
-    private boolean  m_bDuplex;       // true = Duplex printing, false = Single sheet per page
-    private boolean  m_bSheetCollate; // true = Collate copies, false = don't collate copies
     private ThreadMonitorPrintQueue m_threadMonitor;
     
-    enum E_QUEUE_STATE
-    {
-        // occurs during print job creation
-        E_QUEUE_STATE_UNKNOWN,
-        E_QUEUE_STATE_IDLE,
-        E_QUEUE_STATE_PROCESSING,
-        E_QUEUE_STATE_STOPPED
-    }
-
     /**
      * @brief Constructor using default printer with all options being required.
      * 
@@ -86,26 +62,6 @@ public class PrinterAccessObject
 
         m_bPrinting = false;
 
-        // default printing attributes
-        m_printService = null;
-        //m_mediaSizeName = MediaSizeName.NA_LETTER;
-        m_nCopies       = 1;
-        m_bColor        = false;
-        m_bDuplex       = false;
-        m_bSheetCollate = false;
-
-        try
-        {
-            PrintService printService = PrintServiceLookup.lookupDefaultPrintService();
-            m_printService = printService;
-        }
-        catch (Exception e)
-        {
-            throw new PrintAccessException(
-                    PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
-                    "Default printer is not set");
-        }
-        
         m_threadMonitor = new ThreadMonitorPrintQueue();
         new Thread(m_threadMonitor).start();
     }
@@ -119,94 +75,6 @@ public class PrinterAccessObject
     {
         //m_bDebugTrace = bEnable;
         m_threadMonitor.setDebugTrace(bEnable);
-    }
-
-    /**
-     * @brief Verify that specified printer options are supported.
-     * 
-     * @param[in] bColor         = true = Color printing, false = Monochrome
-     * @param[in] bDuplex        = true = Duplex printing, false = Single sheet per page
-     * @param[in] bSheetCollate  = true = Collate copies, false = don't collate copies
-     * 
-     * @return true - the printer supports setting the specified options
-     * 
-     * @throws PrintAccessException
-     */
-    public boolean verifyPrinterOptionsAreSupported(
-                boolean  bColor,
-                boolean  bDuplex,
-                boolean  bSheetCollate
-                ) throws PrintAccessException
-    {
-        if (!isPdfSupported())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_PDF_NOT_SUPPORTED,
-                "Printer does not support PDF");
-        }
-
-        if (bColor && !isColorSuported())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_COLOR_NOT_SUPPORTED,
-                "Printer does not support color");
-        }
-
-        if (bDuplex && !isDuplexSuported())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_DUPLEX_NOT_SUPPORTED,
-                "Printer does not support Duplex");
-        }
-
-        if (bSheetCollate && !isSheetCollateSupported())
-        {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTER_SHEETCOLLATE_NOT_SUPPORTED,
-                "Printer does not support SheetCollate");
-        }
-
-        return true;
-    }
-
-    /**
-     * Sets the print job's attributes that where enabled when the object was created.
-     * 
-     * Note: Only attributes that are enabled in the printer's queue are set.
-     * 
-     */
-    private PrintRequestAttributeSet buildPrintAttributes()
-    {
-
-        PrintRequestAttributeSet printAttributes = new HashPrintRequestAttributeSet();
-
-        printAttributes.add(new Copies(m_nCopies));
-
-        if (isSheetCollateSupported())
-        {
-            if (m_bSheetCollate)
-                printAttributes.add(SheetCollate.COLLATED);
-            else
-                printAttributes.add(SheetCollate.UNCOLLATED);
-        }
-
-        if (isColorSuported())
-        {
-            if (m_bColor)
-                printAttributes.add(Chromaticity.COLOR);
-            else
-                printAttributes.add(Chromaticity.MONOCHROME);
-        }
-
-        if (isDuplexSuported())
-        {
-            if (m_bDuplex)
-                printAttributes.add(Sides.DUPLEX);
-            else
-                printAttributes.add(Sides.ONE_SIDED);
-        }
-
-        return printAttributes;
     }
 
     /**
@@ -234,24 +102,22 @@ public class PrinterAccessObject
         }
 
         FileInputStream fileInputStream;
-        String strPrinterName;
         PrintService printService = null;
+        String   strPrinterName;
         
         try
         {
-    		enableColor(printFileDto.getColorEnabled());
-    		enableDuplex(printFileDto.getDuplexEnabled());
-    		setCopies(printFileDto.getCopies());
     		strPrinterName = printFileDto.getPrinterName();
+    		
     		if (strPrinterName.equals(""))
     		{ // use default printer
     	        try
     	        {
     	            printService = PrintServiceLookup.lookupDefaultPrintService();
-    	            m_printService = printService;
     	        }
     	        catch (Exception e)
     	        {
+    	        	m_bPrinting = false;
     	            throw new PrintAccessException(
     	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
     	                    "Default printer is not set");
@@ -266,7 +132,6 @@ public class PrinterAccessObject
 	                if (printerName.getValue().equals(strPrinterName))
 	                {
 	                	printService = ps;
-	    	            m_printService = printService;
 	                    break;
 	                }
     	        }
@@ -279,8 +144,7 @@ public class PrinterAccessObject
     	        }
     		}
 
-            String pathFileName = printFileDto.getFileName();
-            fileInputStream = new FileInputStream(pathFileName); 
+            fileInputStream = new FileInputStream(printFileDto.getFileName()); 
         }
         catch (FileNotFoundException ffne)
         { 
@@ -299,11 +163,45 @@ public class PrinterAccessObject
         // Create a print job for the print service
         DocPrintJob docPrintJob;
         docPrintJob = printService.createPrintJob();
-        m_threadMonitor.addMonitoredPrintJob(docPrintJob, printFileDto);
+        // TODO m_threadMonitor.addMonitoredPrintJob(docPrintJob, printFileDto);
 
         try
         {
-            PrintRequestAttributeSet printAttributes = buildPrintAttributes();
+            PrintRequestAttributeSet printAttributes = new HashPrintRequestAttributeSet();
+
+            if (0 < printFileDto.getCopies())
+            {
+            	printAttributes.add(new Copies(printFileDto.getCopies()));
+            }
+            else
+            { // the printFileDto did not provide a valid copies, use default of 1.
+            	printAttributes.add(new Copies(1));
+            }
+
+            if (printService.isAttributeValueSupported(SheetCollate.COLLATED, null, null))
+            {
+                if (printFileDto.getSheetCollate())
+                    printAttributes.add(SheetCollate.COLLATED);
+                else
+                    printAttributes.add(SheetCollate.UNCOLLATED);
+            }
+
+            if (printService.isAttributeValueSupported(Chromaticity.COLOR, null, null))
+            {
+                if (printFileDto.getColorEnabled())
+                    printAttributes.add(Chromaticity.COLOR);
+                else
+                    printAttributes.add(Chromaticity.MONOCHROME);
+            }
+
+            if (printService.isAttributeValueSupported(Sides.DUPLEX, null, null))
+            {
+                if (printFileDto.getDuplexEnabled())
+                    printAttributes.add(Sides.DUPLEX);
+                else
+                    printAttributes.add(Sides.ONE_SIDED);
+            }
+
             String jobName = String.valueOf(printFileDto.getCorrelationID());
             printAttributes.add(new JobName(jobName, null));
             
@@ -340,255 +238,23 @@ public class PrinterAccessObject
                 "Failed to cancel printing:" + e.getMessage());
         }
     }
-
-    /**
-     * @brief Gets the printer queue state.
-     * 
-     * Note: If status is STOPPED, then use getPrinterStateReason() to get reason.
-     * 
-     * @param[in] strPrinterName - name of the printer
-     * 
-     * --- Returned Map ---
-     * State: 
-     *   E_QUEUE_STATE_UNKNOWN    = The printer state is unknown. The printer driver does not provide state info.
-     *   E_QUEUE_STATE_IDLE       = Indicates that new jobs can start processing without waiting.
-     *   E_QUEUE_STATE_PROCESSING = Indicates that jobs are processing; new jobs will wait before processing.
-     *   E_QUEUE_STATE_STOPPED    = Indicates that no jobs can be processed and intervention is required.
-     * 
-     * Reason: Text string returned from printer driver, CUPS, IPP, LPD, etc.
-     * 
-     * Percent:
-     *   -1 = unknown.
-     *   0 to 100 = Percent completed printing.
-     * 
-     * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
-     */
-    public Map<String, Object> getPrinterState(String strPrinterName)
-    {
-        Map<String, Object> map = new HashMap<>();
-        
-        PrinterState prnState = m_printService.getAttribute(PrinterState.class);
-        if (null == prnState)
-        {
-            map = getLpstat(strPrinterName);
-        }
-        else
-        {
-            map.put("Percent", 0);
-            
-            if (PrinterState.UNKNOWN == prnState)
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_UNKNOWN);
-
-            else if (PrinterState.IDLE == prnState)
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_IDLE);
-
-            else if (PrinterState.PROCESSING == prnState)
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-            
-            else if (PrinterState.STOPPED == prnState)
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_STOPPED);
-
-            else
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_UNKNOWN);
-            
-            String strReason = getPrinterStateReason();
-            map.put("Reason", strReason);
-        }
-
-        return map;
-    }
     
     /**
-     * @brief Use lpstat to get the printer queue's status
-     * 
-     * @param[in] strPrinterName - name of the printer
-     * 
-     * --- Returned Map ---
-     * State: 
-     *   E_QUEUE_STATE_UNKNOWN    = The printer state is unknown. The printer driver does not provide state info.
-     *   E_QUEUE_STATE_IDLE       = Indicates that new jobs can start processing without waiting.
-     *   E_QUEUE_STATE_PROCESSING = Indicates that jobs are processing; new jobs will wait before processing.
-     *   E_QUEUE_STATE_STOPPED    = Indicates that no jobs can be processed and intervention is required.
-     * 
-     * Reason: Text string returned from printer driver, CUPS, IPP, LPD, etc.
-     * 
-     * Percent:
-     *   -1 = unknown.
-     *   0 to 100 = Percent completed printing.
-     * 
-     * @return Map ["State": E_QUEUE_STATE, "Reason": String, "Percent": Int]
-     */
-    private Map<String, Object> getLpstat(String strPrinterName)
-    {
-        Map<String, Object> map = new HashMap<>();
-        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_UNKNOWN);
-        map.put("Reason", "UNKNOWN");
-        map.put("Percent", -1);
-
-        String[] cmd = { "lpstat", "-o", "-l", strPrinterName };
-
-        try
-        {
-            InputStream stdin = Runtime.getRuntime().exec(cmd).getInputStream();
-            InputStreamReader isr = new InputStreamReader(stdin);
-            BufferedReader br = new BufferedReader(isr);
-
-            String strLine;
-            int iLineCount = 0;
-            while ((strLine = br.readLine()) != null)
-            {
-                iLineCount++;
-
-                if (strLine.contains("Status:"))
-                {
-                    if (strLine.contains("Connecting to printer."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_STOPPED);
-                        map.put("Reason", "Connecting to printer.");
-                    }
-                    else if (strLine.contains("Connected to printer."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_STOPPED);
-                        map.put("Reason", "Connected to printer");
-                    }    
-                    else if (strLine.contains("The printer is not responding."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_STOPPED);
-                        map.put("Reason", "The printer is not responding.");
-                    }    
-                    else if (strLine.contains("Waiting for printer to finish."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                        map.put("Reason", "Waiting for printer to finish.");
-                    }
-                    else if (strLine.contains("Waiting for job to complete."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                        map.put("Reason", "Waiting for job to complete.");
-                    }
-                    else if (strLine.contains("Copying print data."))
-                    {
-                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                        map.put("Reason", "Copying print data.");
-                    }
-
-                    else if (strLine.contains("Spooling job,"))
-                    {
-                        int iPos = strLine.indexOf("Spooling job,");
-                        if (-1 != iPos)
-                        {
-                            String strReason = strLine.substring(iPos + 8);
-                            map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                            map.put("Reason", "Spooling job.");
-                            // Ex: Spooling job, 52%
-                            iPos = strReason.indexOf("%");
-                            String strPercent = strReason.substring(iPos - 3);
-                            int iPercent = Integer.parseInt(strPercent);
-                            if ((0 <= iPercent) && (iPercent <= 100))
-                            {
-                                map.put("Percent", iPercent);
-                            }
-                        }    
-                    }
-
-                    else
-                    {
-                        int iPos = strLine.indexOf("Status:");
-                        if (-1 != iPos)
-                        {
-                            String strReason = strLine.substring(iPos + 8);
-                            if (0 != strReason.length())
-                            {
-                                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_UNKNOWN);
-                                map.put("Reason", strReason);
-                            }
-                            else
-                            { 
-                                while ((strLine = br.readLine()) != null)
-                                {
-                                    if (strLine.contains("job printing"))
-                                    {
-                                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                                        map.put("Reason", "Print job is printing.");
-                                    }
-                                    else if (strLine.contains("queued"))
-                                    {
-                                        map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_PROCESSING);
-                                        map.put("Reason", "Print job is queued.");
-                                    }
-                                }
-                            }
-                        }    
-                    }
-                }
-
-                /*
-                String strState = map.get("State").toString();
-                String strReason = map.get("Reason").toString();
-                if (strState.equals("E_QUEUE_STATE_UNKNOWN") && strReason.equals("UNKNOWN"))
-                {
-                    System.out.println(strLine);
-                }
-                */
-            }
-
-            if (0 == iLineCount)
-            {
-                map.put("State", E_QUEUE_STATE.E_QUEUE_STATE_IDLE);
-                map.put("Reason", "Print queue is empty.");
-            }
-        }
-        catch (IOException e)
-        {
-            //System.out.println(e);
-        }
-
-        return map;
-    }
-
-    /**
-     * @brief Get the desciption of the printer queue state
-     * 
-     * Note: Use this when getPrinterState() returns STOPPED
-     * 
-     * @return String - Desciption of the reason
-     */
-    private String getPrinterStateReason()
-    {
-        String strReason = "";
-
-        StringBuilder str = new StringBuilder();
-
-        PrinterStateReasons prnStateReasons = m_printService.getAttribute(PrinterStateReasons.class);
-        if (prnStateReasons != null)
-        {
-            Set<PrinterStateReason> errors = prnStateReasons.printerStateReasonSet(Severity.REPORT);
-
-            for (PrinterStateReason reason : errors)
-            {
-                str.append(reason.getName());
-                str.append(";");
-            }
-        }
-
-        strReason = str.toString();
-        return strReason;
-    }
-
-    /**
      * @brief Get the count of print jobs in the targeted printer's print queue
+     * 
+     * @param[in] printService - The printer service
      * 
      * Note that a printer driver may not provide a count. In this case, 0 will be returned.
      * 
      * @return the count of print jobs waiting in the print queue.
      */
-    public Integer getPrinterQueueCount()
+    public Integer getPrinterQueueCount(PrintService printService)
     {
         int nQueuedJobCount = 0;
     
-        if (m_printService != null)
+        if (printService != null)
         {
-            AttributeSet attributes = m_printService.getAttributes();
+            AttributeSet attributes = printService.getAttributes();
             Attribute att = attributes.get(QueuedJobCount.class);
             if (null != att)
             {
@@ -605,207 +271,6 @@ public class PrinterAccessObject
         }
 
         return nQueuedJobCount;
-    }
-
-    /**
-     * @brief Query support for printer option: DUPLEX
-     * 
-     * @return true - DUPLEX is supported
-     * @return false - DUPLEX is not supported
-     */
-    public boolean isDuplexSuported()
-    {
-        boolean bRtn = false;
-
-        try
-        {
-            if (m_printService.isAttributeValueSupported(Sides.DUPLEX, null, null))
-            {
-                bRtn = true;
-            }
-        }
-        catch (Exception e)
-        {
-            //
-        }
-        return bRtn;
-    }
-
-    /**
-     * @brief Enable or Disable the printer option: DUPLEX
-     * 
-     * @param[in] bEnable - true = enable DUPLEX. false = disable DUPLEX
-     * 
-     * @return true = success
-     * @return false = failed. Print queue does not support Duplex.
-     */
-    public boolean enableDuplex(boolean bEnable)
-    {
-        if (isDuplexSuported())
-        {
-            m_bDuplex  = bEnable;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @brief Determine if the printer option is enabled: DUPLEX
-     * 
-     * @return true = option is supported
-     * @return false = option is not supported
-     */
-    public boolean isDuplexEnabled()
-    {
-        return m_bDuplex;
-    }
-
-    /**
-     * @brief Query support for printer option: COLOR
-     * 
-     * @return true - COLOR is supported
-     * @return false - COLOR is not supported
-     */
-    public boolean isColorSuported()
-    {
-        boolean bRtn = false;
-
-        try
-        {
-            if (m_printService.isAttributeValueSupported(Chromaticity.COLOR, null, null))
-            {
-                bRtn = true;
-            }
-        }
-        catch (Exception e)
-        {
-            //
-        }
-        return bRtn;
-    }
-
-    /**
-     * @brief Enable or Disable the printer option: Color
-     * 
-     * @param[in] bEnable - true = print job will be in color
-     * @param[in] bEnable - false = print job will be in monochrome
-     * 
-     * @return true = success
-     * @return false = failed. Print queue does not support Color.
-     */
-    public boolean enableColor(boolean bEnable)
-    {
-        if (isColorSuported())
-        {
-            m_bColor = bEnable;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @brief Determine if the printer option is enabled: COLOR
-     * 
-     * @return true = option is enabled
-     * @return false = option is not enabled
-     */
-    public boolean isColorEnabled()
-    {
-        return m_bColor;
-    }
-
-	/**
-     * @brief Set the number of copies to print during the next print job.
-     * 
-     * @param[in] nCopies - the number of copies to print
-     * 
-     * @return true - success
-     * @return false - failure.
-     */
-    public boolean setCopies(int nCopies)
-    {
-        if (0 < nCopies)
-        {
-            m_nCopies = nCopies;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-	/**
-     * Get the number of copies to print during the next print job.
-     * 
-     * @return - the number of copies to print
-     */
-	public int getCopies()
-    {
-        return m_nCopies;
-    }
-
-    /**
-     * @brief Query support for printer option: SheetCollate
-     *
-     * @return true - SheetCollate is supported
-     * @return false - SheetCollate is not supported
-     */
-    public boolean isSheetCollateSupported()
-    {
-        boolean bRtn = false;
-
-        try
-        {
-            if (m_printService.isAttributeValueSupported(SheetCollate.COLLATED, null, null))
-            {
-                bRtn = true;
-            }
-        }
-        catch (Exception e)
-        {
-            //
-        }
-        return bRtn;
-    }
-
-    /**
-     * @brief Enable or Disable the printer option: Color
-     * 
-     * @param[in] bEnable - true = print job will be in color
-     * @param[in] bEnable - false = print job will be in monochrome
-     * 
-     * @return true = success
-     * @return false = failed. Print queue does not support Color.
-     */
-    public boolean enableSheetCollate(boolean bEnable)
-    {
-        if (isSheetCollateSupported())
-        {
-            m_bSheetCollate = bEnable;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    /**
-     * @brief Determine if the printer option is enabled: SheetCollate
-     * 
-     * @return true = option is enabled
-     * @return false = option is not enabled
-     */
-    public boolean isSheetCollateEnabled()
-    {
-        return m_bSheetCollate;
     }
 
     /**
@@ -1007,45 +472,6 @@ public class PrinterAccessObject
         }
 
         return map;
-    }
-
-    /**
-     * @brief Verifies that the target printer is capabile of printing PDF files.
-     * 
-     * @return true - PDF printing is supported
-     * @return false - PDF printing is not supported
-     */
-    public boolean isPdfSupported()
-    {
-        int count = 0;
-
-        try
-        {
-            for (DocFlavor docFlavor : m_printService.getSupportedDocFlavors())
-            {
-                //System.err.println(docFlavor.toString());
-    
-                if (docFlavor.toString().contains("pdf"))
-                {
-                    count++;
-                    break;
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            //
-        }
-
-        if (count == 0)
-        {
-            return false;
-        }
-        else
-        {
-           //System.out.println("INFO: PDF is supported by printer: " + printService.getName());
-           return true;
-        }
     }
 }
 

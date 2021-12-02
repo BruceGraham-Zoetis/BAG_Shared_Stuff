@@ -83,13 +83,8 @@ public class HubPrintServiceMessageListener
 	{
 		try
 		{
-			System.out.println("Message: printFile");
-			System.out.println("\tcorrelationID: " + requestDetails.getCorrelationID());
-			System.out.println("\tprinterName: " + requestDetails.getPrinterName());
-			System.out.println("\tfileName: " + requestDetails.getFileName());
-			System.out.println("\tcolorEnabled: " + requestDetails.getColorEnabled());
-			System.out.println("\tduplexEnabled: " + requestDetails.getDuplexEnabled());
-			System.out.println("\tcopies: " + requestDetails.getCopies());
+			logger.debug("Message: printFile PrintJobStateDto: " + 
+					requestDetails.toString());
 
 			if (prtAccObj.printFile(requestDetails))
 			{
@@ -108,7 +103,7 @@ public class HubPrintServiceMessageListener
 		}
 		catch (PrintAccessException e)
 		{
-			logger.error("printFile", e.getErrorMsg());
+			logger.error("printFile " + e.getErrorMsg());
 		}
 	}
 	
@@ -116,8 +111,8 @@ public class HubPrintServiceMessageListener
 	{
    		try
 		{
-			System.out.println("Message: printJobCancel");
-			System.out.println(printJobCancelDto.toString());
+   			logger.debug("Message: printJobCancel PrintJobCancelDto: " +
+					printJobCancelDto.toString());
 
 			prtAccObj.stopPrintJobProcessing(printJobCancelDto);
    			
@@ -132,8 +127,7 @@ public class HubPrintServiceMessageListener
 	{
 		final String topic = "printJobState";
 		
-		System.out.println("Producer Topic: " + topic);
-		System.out.println(data.toString());
+		logger.debug("Producer Topic: " + topic + " PrintJobStateDto: " + data.toString());
 
 		kafkaPrintJobState.send(topic, data);
 	}

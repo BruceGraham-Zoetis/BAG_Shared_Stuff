@@ -49,6 +49,7 @@ public class UnitTestDtoSerDe_platform
 		int correlationID = 34567;
 		String printerName = "HP LaserJet";
 		String fileName;
+		boolean sheetCollate = false;
 		boolean colorEnabled = false;
 		boolean duplexEnabled = true;
 		int     copies = 2;
@@ -57,13 +58,17 @@ public class UnitTestDtoSerDe_platform
 		fileName = url.getFile();
         assertNotNull(fileName);
 
-		final var dtoIsOut = new PrintFileDto(
+        PrintFileDto printFileDto = new PrintFileDto();
+        PrintFileDto.PrintFileDto_init(
+        		printFileDto,
 				correlationID,
 				printerName,
 				fileName,
+				sheetCollate,
 				colorEnabled,
 				duplexEnabled,
 				copies);
+		final var dtoIsOut = printFileDto; 
 		System.out.println(dtoIsOut.toString());
 		String dtoSer = objectMapper.writeValueAsString (dtoIsOut);
 		System.out.println(dtoSer.toString());

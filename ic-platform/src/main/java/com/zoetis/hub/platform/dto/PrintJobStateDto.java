@@ -3,6 +3,8 @@ package com.zoetis.hub.platform.dto;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.print.attribute.standard.JobState;
+import javax.print.attribute.standard.PrinterState;
 import javax.print.attribute.standard.PrinterStateReason;
 
 import lombok.AllArgsConstructor;
@@ -37,24 +39,28 @@ public class PrintJobStateDto
 	private int correlationID;
 	
 	public int jobState; // PrintJobProcessingStates
-	public int printerState;
+	public int printerState; // PrinterState
 	public Set<Integer> printerStateReasons; // PrinterStateReason
 	
-	/*
-	public PrintJobStateDto(int correlationID)
+	public static void PrintJobStateDto_clear(PrintJobStateDto printJobStateDto)
 	{
-		this.correlationID = correlationID; 
-		//this.jobState JobState.UNKNOWN.getValue();
-		//this.setPrinterState(PrinterState.UNKNOWN);
-		//this.printerStateReasons = new HashSet<>();
+		printJobStateDto.correlationID = -1; 
+		printJobStateDto.jobState = JobState.UNKNOWN.getValue();
+		printJobStateDto.printerState = PrinterState.UNKNOWN.getValue();
+		printJobStateDto.printerStateReasons = new HashSet<>();
 	}
 
-	public PrintJobStateDto(int correlationID, int jobState)
+	public static void PrintJobStateDto_init(
+			PrintJobStateDto printJobStateDto,
+			int correlationID,
+			int jobState,
+			PrinterState printerState)
 	{
-		this.correlationID = correlationID; 
-		this.jobState = jobState;
+		printJobStateDto.correlationID = correlationID; 
+		printJobStateDto.jobState = jobState;
+		printJobStateDto.printerState = printerState.getValue();
+		printJobStateDto.printerStateReasons = new HashSet<>();
 	}
-*/
 	
 	public String toString()
 	{ 

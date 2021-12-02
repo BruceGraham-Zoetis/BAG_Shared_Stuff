@@ -37,21 +37,40 @@ public class PrintFileDto
 	@NonNull
 	private String fileName;
 	
+	private boolean sheetCollate;
 	private boolean colorEnabled;
 	private boolean duplexEnabled;
 	private int     copies;
 	
-	/*
-	public PrintFileDto()
+	public static void PrintFileDto_clear(PrintFileDto printFileDto)
 	{
-		correlationID = -1;
-		printerName = "";
-		fileName = "";
-		colorEnabled = false;
-		duplexEnabled = false;
-		copies = 0;	
+		printFileDto.correlationID = -1;
+		printFileDto.printerName = "";
+		printFileDto.fileName = "";
+		printFileDto.sheetCollate = false;
+		printFileDto.colorEnabled = false;
+		printFileDto.duplexEnabled = false;
+		printFileDto.copies = 0;	
 	}
-    */
+
+	public static void PrintFileDto_init(
+			PrintFileDto printFileDto,
+			int correlationID,
+			String printerName,
+			String fileName,
+			boolean sheetCollate,
+			boolean colorEnabled,
+			boolean duplexEnabled,
+			int     copies)
+	{
+		printFileDto.correlationID = correlationID;
+		printFileDto.printerName = printerName;
+		printFileDto.fileName = fileName;
+		printFileDto.sheetCollate = sheetCollate;
+		printFileDto.colorEnabled = colorEnabled;
+		printFileDto.duplexEnabled = duplexEnabled;
+		printFileDto.copies = copies;	
+	}
 
 	public String toString()
 	{ 
@@ -60,6 +79,7 @@ public class PrintFileDto
 		str += "\t\"correlationID\": " + this.correlationID + ", \n";
 		str += "\t\"printerName\": \"" + this.printerName + "\", \n";
 		str += "\t\"fileName\": \"" + this.fileName + "\", \n";
+		str += "\t\"sheetCollate\": " + this.sheetCollate + ", \n";
 		str += "\t\"colorEnabled\": " + this.colorEnabled + ", \n";
 		str += "\t\"duplexEnabled\": " + this.duplexEnabled + ", \n";
 		str += "\t\"copies\": " + this.copies + "\n";
@@ -83,6 +103,14 @@ public class PrintFileDto
 		this.fileName = fileName;
 	}
 
+	public boolean getSheetCollate() {
+		return sheetCollate;
+	}
+
+	public void setSheetCollate(boolean sheetCollate) {
+		this.sheetCollate = sheetCollate;
+	}
+	
 	public boolean getColorEnabled() {
 		return colorEnabled;
 	}
