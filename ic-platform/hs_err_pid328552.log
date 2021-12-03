@@ -1,0 +1,41 @@
+#
+# A fatal error has been detected by the Java Runtime Environment:
+#
+#  SIGSEGV (0xb) at pc=0x00007fad4ea6e393, pid=328552, tid=331817
+#
+# JRE version: OpenJDK Runtime Environment (16.0.2+7) (build 16.0.2+7-67)
+# Java VM: OpenJDK 64-Bit Server VM (16.0.2+7-67, mixed mode, tiered, compressed oops, compressed class ptrs, g1 gc, linux-amd64)
+# Problematic frame:
+# C  [libjimage.so+0x4393]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x63
+#
+# Core dump will be written. Default location: Core dumps may be processed with "/usr/share/apport/apport %p %s %c %d %P %E" (or dumping to /home/bag/Zoetis/ic-platform/core.328552)
+#
+# If you would like to submit a bug report, please visit:
+#   https://bugreport.java.com/bugreport/crash.jsp
+#
+
+---------------  S U M M A R Y ------------
+
+Command Line: -XX:+ShowCodeDetailsInExceptionMessages -agentlib:jdwp=transport=dt_socket,suspend=y,address=localhost:38831 -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote.port=45339 -Dcom.sun.management.jmxremote.authenticate=false -Dcom.sun.management.jmxremote.ssl=false -Djava.rmi.server.hostname=localhost -Dspring.jmx.enabled=true -Dspring.application.admin.enabled=true -Djava.security.egd=file:/dev/./urandom -XX:TieredStopAtLevel=1 -Dspring.boot.project.name=ic-platform -javaagent:/home/bag/sts-4.12.0.RELEASE/configuration/org.eclipse.osgi/254/0/.cp/lib/javaagent-shaded.jar -Dfile.encoding=UTF-8 com.zoetis.hub.platform.PlatformApplication --spring.output.ansi.enabled=always
+
+Host: Intel(R) Core(TM) i7-6820HQ CPU @ 2.70GHz, 2 cores, 7G, Ubuntu 20.04.3 LTS
+Time: Thu Dec  2 11:21:27 2021 EST elapsed time: 282.885058 seconds (0d 0h 4m 42s)
+
+---------------  T H R E A D  ---------------
+
+Current thread (0x00007fad04000e60):  JavaThread "RMI TCP Connection(8)-127.0.0.1" daemon [_thread_in_vm, id=331817, stack(0x00007fad30b1a000,0x00007fad30c1b000)]
+
+Stack: [0x00007fad30b1a000,0x00007fad30c1b000],  sp=0x00007fad30c17360,  free space=1012k
+Native frames: (J=compiled Java code, A=aot compiled Java code, j=interpreted, Vv=VM code, C=native code)
+C  [libjimage.so+0x4393]  ImageStrings::find(Endian*, char const*, int*, unsigned int)+0x63
+C  [libjimage.so+0x50de]  ImageFileReader::find_location_index(char const*, unsigned long long*) const+0x3e
+C  [libjimage.so+0x55bc]  JIMAGE_FindResource+0xfc
+V  [libjvm.so+0x55e431]  ClassPathImageEntry::open_stream_for_loader(char const*, ClassLoaderData*, Thread*)+0x51
+V  [libjvm.so+0x56299e]  ClassLoader::load_class(Symbol*, bool, Thread*)+0x13e
+V  [libjvm.so+0xd32def]  SystemDictionary::load_instance_class(Symbol*, Handle, Thread*)+0x34f
+V  [libjvm.so+0xd31b72]  SystemDictionary::resolve_instance_class_or_null(Symbol*, Handle, Handle, Thread*)+0xa62
+V  [libjvm.so+0xd33d7e]  SystemDictionary::resolve_or_fail(Symbol*, Handle, Handle, bool, Thread*)+0x5e
+V  [libjvm.so+0x5cce68]  ConstantPool::klass_at_impl(constantPoolHandle const&, int, bool, Thread*)+0xe8
+V  [libjvm.so+0x7ed722]  InterpreterRuntime::_new(JavaThread*, ConstantPool*, int)+0x72
+j  javax.management.remote.rmi.RMIConnectionImpl.getClassLoaderFor(Ljavax/management/ObjectName;)Ljava/lang/ClassLoader;+0 java.management.rmi@16.0.2
+j  javax.management.remote.rmi.RMIConnectionImpl.invoke(Ljavax/management/ObjectName;Ljava/lang/String;Ljava/rmi/MarshalledObject;[Ljava/lang/String;Ljavax/security/auth/Subject;)Ljava/lang/Object;+49 java.management.rmi@16.0.2

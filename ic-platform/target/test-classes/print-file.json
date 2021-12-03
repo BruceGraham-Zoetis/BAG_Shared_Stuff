@@ -5,6 +5,7 @@
 		"correlationID": 123,
 		"printerName": "Print_to_PDF",
 		"fileName": "/home/bag/test_files/file.pdf",
+		"sheetCollate": true, 
 		"colorEnabled": true,
 		"duplexEnabled": true,
 		"copies": 3

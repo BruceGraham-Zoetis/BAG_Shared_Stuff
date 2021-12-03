@@ -24,7 +24,7 @@ public class HubPrintServiceMessageListener
     @Autowired
     PrinterAccessObject prtAccObj;
     
-    private Logger logger = LoggerFactory.getLogger (HubPrintServiceMessageListener.class); 
+    private Logger logger = LoggerFactory.getLogger (HubPrintServiceMessageListener.class);
 	
 	@Autowired
     private ObjectMapper objectMapper;

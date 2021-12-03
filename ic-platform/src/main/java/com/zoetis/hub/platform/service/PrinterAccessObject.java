@@ -27,7 +27,7 @@ import com.zoetis.hub.platform.dto.PrintJobCancelDto;
 @Component
 public class PrinterAccessObject
 {
-    private boolean       m_bPrinting;
+    private boolean m_bPrinting;
     private ThreadMonitorPrintQueue m_threadMonitor;
     
     /**
