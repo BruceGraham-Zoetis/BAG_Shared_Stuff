@@ -181,59 +181,6 @@ public class ThreadMonitorPrintQueue implements Runnable, PrintServiceAttributeL
 		}
 	}
 
-	/**
-     * @throws PrintAccessException 
-	 * @brief Stops further processing of a print job.
-     * 
-     * @param[in] correlationID = the print job ID
-     * 
-     */
-    public void stopPrintJobProcessing(int correlationID) throws PrintException, PrintAccessException
-    {
-    	/*
-    	 * TODO To cancel a printJob given a correlationID,
-		 * can the print queue be searched for jobNames with the name correlationID?
-     	 */
-    	
-    	/*
-		synchronized(m_listHubPrintJobs)
-		{
-	        for (HubPrintJob hubPrintJob : m_listHubPrintJobs)
-	        {
-	        	if (hubPrintJob.getCorrelationID() == correlationID)
-    	        {
-	        		DocPrintJob docPrintJob = hubPrintJob.getDocPrintJob();
-	        		m_listHubPrintJobs.remove(hubPrintJob);
-
-	        		try
-	        		{
-    	        		CancelablePrintJob cancelableJob = (CancelablePrintJob) docPrintJob;
-	                    cancelableJob.cancel();
-
-	                    final String topic = "printJobState";
-	        			System.out.println("Producer Topic: " + topic);
-	
-	        			PrintJobStateDto data = new PrintJobStateDto();
-	    				data.setCorrelationID(correlationID);
-	        			System.out.println(data.toString());
-	        			kafkaPrintJobState.send(topic, data);
-	
-	                    // TODO removePrintJobAttributeListener() ?
-	                    // TODO removePrintJobListener() ?
-	        		}
-	                catch (PrintException e)
-	        		{
-	                    throw new PrintAccessException(
-	                        PrintAccessException.E_EXCEPTION_ID.PRINTJOB_CANCEL_FAILED,
-	                        "Failed to cancel printing: " + e);
-	                }
-    	        }
-	        }
-		}
-		*/
-    	
-    }
-    
     /**
      * @brief Enable or Disable printing debug info to System.out 
      * 

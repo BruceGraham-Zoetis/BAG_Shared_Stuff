@@ -113,8 +113,9 @@ public class UnitTestDtoSerDe_platform
 			throws IOException, JSONException
 	{
 		int correlationID = 34567;
+		String printerName = "Print_to_PDF";
 
-		final var dtoIsOut = new PrintJobCancelDto(correlationID);
+		final var dtoIsOut = new PrintJobCancelDto(correlationID, printerName);
 		System.out.println(dtoIsOut.toString());
 		String dtoSer = objectMapper.writeValueAsString (dtoIsOut);
 		System.out.println(dtoSer.toString());

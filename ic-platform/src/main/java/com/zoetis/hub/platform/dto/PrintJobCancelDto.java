@@ -3,6 +3,7 @@ package com.zoetis.hub.platform.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 /**
  * 
@@ -25,12 +26,16 @@ public class PrintJobCancelDto
 	 * The ID is used to identify response topic messages. 
 	 */
 	private int correlationID;
+
+	@NonNull
+	private String printerName;
 	
 	public String toString()
 	{ 
 		String str;
 		str = "{\n";
-		str += "\"correlationID\":" + this.correlationID + "\n";
+		str += "\"correlationID\":" + this.correlationID + ",\n";
+		str += "\"printerName\":" + this.printerName + "\n";
 		str += "}";
 	    return str;
 	}

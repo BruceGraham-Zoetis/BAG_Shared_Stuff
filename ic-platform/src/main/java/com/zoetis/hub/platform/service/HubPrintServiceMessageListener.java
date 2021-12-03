@@ -1,6 +1,5 @@
 package com.zoetis.hub.platform.service;
 
-
 import javax.print.attribute.standard.JobState;
 
 import org.slf4j.Logger;
@@ -82,7 +81,7 @@ public class HubPrintServiceMessageListener
 	{
 		try
 		{
-			logger.debug("Message: printFile PrintJobStateDto: " + 
+			logger.info("Message: printFile PrintJobStateDto: " + 
 					requestDetails.toString());
 
 			if (prtAccObj.printFile(requestDetails))
@@ -110,7 +109,7 @@ public class HubPrintServiceMessageListener
 	{
    		try
 		{
-   			logger.debug("Message: printJobCancel PrintJobCancelDto: " +
+   			logger.info("Message: printJobCancel PrintJobCancelDto: " +
 					printJobCancelDto.toString());
 
 			prtAccObj.stopPrintJobProcessing(printJobCancelDto);
@@ -126,7 +125,7 @@ public class HubPrintServiceMessageListener
 	{
 		final String topic = "printJobState";
 		
-		logger.debug("Producer Topic: " + topic + " PrintJobStateDto: " + data.toString());
+		logger.info("Producer Topic: " + topic + " PrintJobStateDto: " + data.toString());
 
 		kafkaPrintJobState.send(topic, data);
 	}

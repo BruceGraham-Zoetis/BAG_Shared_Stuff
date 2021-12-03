@@ -10,6 +10,7 @@ import javax.print.PrintException;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.print.attribute.Attribute;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Chromaticity;
@@ -19,6 +20,8 @@ import javax.print.attribute.standard.PrinterName;
 import javax.print.attribute.standard.SheetCollate;
 import javax.print.attribute.standard.Sides;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.zoetis.hub.platform.dto.PrintFileDto;
@@ -28,6 +31,7 @@ import com.zoetis.hub.platform.dto.PrintJobCancelDto;
 public class PrinterAccessObject
 {
     private boolean m_bPrinting;
+    Logger logger;
     private ThreadMonitorPrintQueue m_threadMonitor;
     
     /**
@@ -36,6 +40,7 @@ public class PrinterAccessObject
     PrinterAccessObject()
     {
         m_bPrinting = false;
+        logger = LoggerFactory.getLogger (HubPrintServiceMessageListener.class);
 
         m_threadMonitor = new ThreadMonitorPrintQueue();
         new Thread(m_threadMonitor).start();
@@ -69,46 +74,46 @@ public class PrinterAccessObject
         PrintService printService = null;
         String   strPrinterName;
         
+		strPrinterName = printFileDto.getPrinterName();
+		
+		if (strPrinterName.equals(""))
+		{ // use default printer
+	        try
+	        {
+	            printService = PrintServiceLookup.lookupDefaultPrintService();
+	        }
+	        catch (Exception e)
+	        {
+	        	m_bPrinting = false;
+	            throw new PrintAccessException(
+	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
+	                    "Printer name not provided. Default printer is not set");
+	        }
+		}
+		else
+		{ // get the printServer for the given printer name
+			PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+	        for (PrintService ps : printServices)
+	        {
+	        	PrinterName printerName = (PrinterName)ps.getAttribute(PrinterName.class);
+                if (printerName.getValue().equals(strPrinterName))
+                {
+                	printService = ps;
+                    break;
+                }
+	        }
+	        if (null == printService)
+	        {
+                m_bPrinting = false;
+                throw new PrintAccessException(
+                    PrintAccessException.E_EXCEPTION_ID.PRINTER_NAME_NOT_FOUND,
+                    "Printer name not found");
+	        }
+		}
+
         try
         {
-    		strPrinterName = printFileDto.getPrinterName();
-    		
-    		if (strPrinterName.equals(""))
-    		{ // use default printer
-    	        try
-    	        {
-    	            printService = PrintServiceLookup.lookupDefaultPrintService();
-    	        }
-    	        catch (Exception e)
-    	        {
-    	        	m_bPrinting = false;
-    	            throw new PrintAccessException(
-    	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_DEFAULT_NOT_FOUND,
-    	                    "Default printer is not set");
-    	        }
-    		}
-    		else
-    		{ // get the printServer for the given printer name
-    			PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
-    	        for (PrintService ps : printServices)
-    	        {
-    	        	PrinterName printerName = (PrinterName)ps.getAttribute(PrinterName.class);
-	                if (printerName.getValue().equals(strPrinterName))
-	                {
-	                	printService = ps;
-	                    break;
-	                }
-    	        }
-    	        if (null == printService)
-    	        {
-	                m_bPrinting = false;
-	                throw new PrintAccessException(
-	                    PrintAccessException.E_EXCEPTION_ID.PRINTER_NAME_NOT_FOUND,
-	                    "Printer name not found");
-    	        }
-    		}
-
-            fileInputStream = new FileInputStream(printFileDto.getFileName()); 
+        	fileInputStream = new FileInputStream(printFileDto.getFileName());
         }
         catch (FileNotFoundException ffne)
         { 
@@ -118,7 +123,7 @@ public class PrinterAccessObject
                 "File not found");
         }
 
-                // Set the document type
+        // Set the document type
         DocFlavor myFormat = DocFlavor.INPUT_STREAM.AUTOSENSE;
         
         // Create a Doc
@@ -192,15 +197,63 @@ public class PrinterAccessObject
      */
     public void stopPrintJobProcessing(PrintJobCancelDto printJobCancelDto) throws PrintAccessException
     {
-        try
+        //int    correlationID  = printJobCancelDto.getCorrelationID(); 
+        String strPrinterName = printJobCancelDto.getPrinterName();
+        //boolean bDeleted = false;
+    	
+        // loop through the printers
+        PrintService[] printServices = PrintServiceLookup.lookupPrintServices(null, null);
+        for (PrintService printService : printServices)
         {
-        	m_threadMonitor.stopPrintJobProcessing(printJobCancelDto.getCorrelationID());
+            Attribute[] attrs = printService.getAttributes().toArray();
+            for (int i = 0; i < attrs.length; i++)
+            {
+                String strName = attrs[i].getName();
+                String strValue = attrs[i].toString();
+
+                if (0 == strName.compareTo("printer-name"))
+                {
+                	logger.info("printer-name: " + strValue);
+                	if (0 == strValue.compareTo(strPrinterName))
+                	{
+                		// loop through the printJobs
+
+                        // TODO
+                		
+                		//bDeleted = true;
+                		break;
+                	}
+                }
+            }
+            //if (bDeleted)
+            	//break;
         }
-        catch (PrintException e) {
-            throw new PrintAccessException(
-                PrintAccessException.E_EXCEPTION_ID.PRINTJOB_CANCEL_FAILED,
-                "Failed to cancel printing:" + e.getMessage());
-        }
+		//debug
+    }
+
+    /**
+     * @brief Cancel a print job in the given printer's print queue.
+     * 
+     * @param[in] printJobCancelDto = info about the print job to cancel
+     * 
+     */
+    public void cancelQueuedPrintJob(PrintJobCancelDto printJobCancelDto) throws PrintAccessException
+    {
+        //int    correlationID  = printJobCancelDto.getCorrelationID(); 
+        //String strPrinterName = printJobCancelDto.getPrinterName();
+        
+        /*
+    	Since the caller can't provide the DocPrintJob, the printJob can't be cancelled directly.
+    	DocPrintJob CancelablePrintJob cancel() will only cancel a print job while
+    	it is being processed and written to the printer's queue,
+    	but it will not cancel a print job that is fully in the printer's queue.
+    	*/
+
+    	/*
+ 		To cancel 1 print job in a printer's queue
+		$ cancel {printerjob-id}
+		Ex: cancel HP-LaserJet4-345
+        */
     }
 }
 
