@@ -1,0 +1,7 @@
+{
+	"action": "PRINTJOB_PROCESSING",
+	"payload":
+	{
+		"correlationID": 123
+	}
+}
