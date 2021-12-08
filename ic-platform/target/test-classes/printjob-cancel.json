@@ -1,7 +1,0 @@
-{
-	"action": "PRINTJOB_CANCEL",
-	"payload":
-	{
-		"correlationID": 123
-	}
-}

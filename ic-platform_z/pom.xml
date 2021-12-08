@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.zoetis.hub</groupId>
-	<artifactId>ic-platform</artifactId>
+	<artifactId>ic-platform_z</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>ic-platform</name>
+	<name>ic-platform_z</name>
 	<description>Hub Platform (OS) Services: printing, audio, network</description>
 	<distributionManagement>
 		<repository>
