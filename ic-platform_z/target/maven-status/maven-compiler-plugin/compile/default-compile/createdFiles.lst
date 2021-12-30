@@ -1,0 +1,13 @@
+com/zoetis/hub/platform/controller/PlatformController.class
+com/zoetis/hub/platform/PlatformApplication.class
+com/zoetis/hub/platform/dto/PrintFileRequestDto.class
+com/zoetis/hub/platform/dto/PrintJobStateDto.class
+com/zoetis/hub/platform/service/PrinterAccessObject$1.class
+com/zoetis/hub/platform/service/KafkaConfiguration.class
+com/zoetis/hub/platform/service/Consumer.class
+com/zoetis/hub/platform/controller/ErrorMessages.class
+com/zoetis/hub/platform/service/PrinterAccessObject.class
+com/zoetis/hub/platform/controller/UserServiceException.class
+com/zoetis/hub/platform/dto/PrinterStateDto.class
+com/zoetis/hub/platform/dto/PrintJobProcessingStateDto.class
+com/zoetis/hub/platform/service/Producer.class

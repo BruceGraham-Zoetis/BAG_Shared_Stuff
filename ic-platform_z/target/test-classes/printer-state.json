@@ -1,0 +1,7 @@
+{
+	"action": "PRINTER_STATE",
+	"payload":
+	{
+		"correlationID": 123
+	}
+}

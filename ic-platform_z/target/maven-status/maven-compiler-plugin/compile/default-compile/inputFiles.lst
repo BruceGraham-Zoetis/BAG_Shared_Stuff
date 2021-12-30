@@ -1,0 +1,16 @@
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/service/Producer.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/controller/UserServiceException.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/controller/ErrorMessages.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/controller/package-info.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/service/KafkaConfiguration.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/PlatformApplication.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/service/PrinterAccessObject.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/dto/package-info.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/package-info.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/dto/PrinterStateDto.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/service/Consumer.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/service/package-info.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/controller/PlatformController.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/dto/PrintJobStateDto.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/dto/PrintJobProcessingStateDto.java
+/home/bag/vetscan-hub/ic-platform/src/main/java/com/zoetis/hub/platform/dto/PrintFileRequestDto.java
