@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=vetscan_splash
+Description=Vetscan splash for Plymouth
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/vetscan_splash
+ScriptFile=/usr/share/plymouth/themes/vetscan_splash/vetscan_splash.script

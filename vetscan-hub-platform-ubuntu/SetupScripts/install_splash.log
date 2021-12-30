@@ -1,0 +1,9 @@
+Thu 30 Dec 2021 04:46:20 PM EST
+OK - Plymouth is installed.
+Copying vetscan splash files
+OK - Copying vetscan splash files
+update-alternatives --install ...
+OK - update-alternatives --install ...
+update-initramfs -u
+OK - update-initramfs -u
+End with SUCCESS
