@@ -1,0 +1,20 @@
+Wed 19 Jan 2022 03:16:06 PM EST
+Creating ~/.config/lxsession/Lubuntu/autostart
+Copying autostart file
+....OK - Copying autostart file
+copy the image to the grub directory.
+....OK - cp ...hub_background.png
+update-grub
+....OK - update-grub
+....OK - Plymouth is installed.
+Copying vetscan splash files
+....OK - Copying vetscan splash files
+update-alternatives --install ...
+....OK - update-alternatives --install ...
+update-alternatives --auto ...
+....OK - update-alternatives --auto ...
+update-initramfs -u
+....OK - update-initramfs -u
+-------------------------------
+SUCCESS - Completed
+-------------------------------

@@ -1,0 +1,5 @@
+ sudo systemctl status delayed_splash.service
+ 
+ sudo reboot -h now
+ 
+ 
