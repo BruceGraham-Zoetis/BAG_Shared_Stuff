@@ -1,0 +1,15 @@
+[Unit]
+Description=Delayed Vetscan Splash Screen
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/delayed_splash/delayed_splash_exec.sh
+#ExecStart=/usr/bin/fbi -noverbose -T 1 -t 10 /home/vetscan/delayed_splash/hub_background.png
+StandardInput=tty
+StandardOutput=tty
+
+[Install]
+#WantedBy=multi-user.target
+WantedBy=sysinit.target

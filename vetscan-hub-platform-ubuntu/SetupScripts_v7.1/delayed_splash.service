@@ -1,0 +1,19 @@
+[Unit]
+Description=Delayed Vetscan Splash Screen
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=simple
+#Type=forking
+ExecStart=/delayed_splash/delayed_splash_exec.sh
+#ExecStart=/delayed_splash/delayed_splash_exec.sh
+#ExecStart=/usr/bin/fbi -noverbose -T 1 -t 10 /home/vetscan/delayed_splash/hub_background.png
+StandardInput=tty
+StandardOutput=tty
+IPAddressAllow=127.0.0.1
+IPAddressAllow=localhost
+
+[Install]
+#WantedBy=multi-user.target
+WantedBy=sysinit.target
