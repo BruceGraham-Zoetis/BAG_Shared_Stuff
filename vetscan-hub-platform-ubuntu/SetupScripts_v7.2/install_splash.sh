@@ -289,6 +289,30 @@ disable_desktop_icons_etc ()
 	fi
 }
 
+# =====================================
+# Modify the default Ubuntu plymouth splash
+# =====================================
+modify_ubuntu_plymouth_splash ()
+{
+	if [ -f /usr/share/plymouth/themes/spinner/watermake.png ]
+	then
+		# the watermake.png file contains the Ubuntu logo.
+		# rename the watermake.png file so that it is not displayed.
+		sudo mv /usr/share/plymouth/themes/spinner/watermake.png /usr/share/plymouth/themes/spinner/watermake.png.org
+		if [ $? -eq 0 ]
+		then
+			log_write "....OK - mv ...watermake.png"
+			rtnvalue=0
+		else
+			log_write "....ERROR: mv ...watermake.png"
+			rtnvalue=1
+		fi
+	else
+		log_write "....OK - watermake.png"
+		rtnvalue=0
+	fi
+}
+
 main ()
 {
     log_init
@@ -297,27 +321,32 @@ main ()
 	
     if [ 0 -eq $rtnvalue ]
     then
-		#copy_delayed_splash_files
+		modify_ubuntu_plymouth_splash
 	fi
 	
     if [ 0 -eq $rtnvalue ]
     then
-		#install_service
+		echo ....skipping copy_delayed_splash_files
 	fi
 	
     if [ 0 -eq $rtnvalue ]
     then
-        #install_plymouth
+		echo ....skipping install_service
+	fi
+	
+    if [ 0 -eq $rtnvalue ]
+    then
+        echo ....skipping install_plymouth
     fi
 
     if [ 0 -eq $rtnvalue ]
     then
-        #copy_vetscan_splash
+        echo ....skipping copy_vetscan_splash
     fi
 
     if [ 0 -eq $rtnvalue ]
     then
-        #setup_vetscan_splash
+        echo ....skipping setup_vetscan_splash
     fi
 	
     if [ 0 -eq $rtnvalue ]
