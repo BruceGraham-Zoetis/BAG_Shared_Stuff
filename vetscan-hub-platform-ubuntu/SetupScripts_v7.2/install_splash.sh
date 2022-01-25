@@ -38,13 +38,13 @@ log_write()
 # =====================================
 # setup grub with splash image
 # =====================================
-setup_grub_with_splash ()
+setup_grub_with_splash()
 {
-	log_write "copy the image to the grub directory."
+	log_write "setup_grub_with_splash()"
 	sudo cp ./files/usr/share/plymouth/themes/vetscan_splash/hub_background.png /boot/grub/hub_background.png
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - cp ...hub_background.png"
+		log_write "....OK: cp ...hub_background.png"
 		rtnvalue=0
 	else
 		log_write "....ERROR: cp ...hub_background.png"
@@ -57,7 +57,7 @@ setup_grub_with_splash ()
 		sudo update-grub
 		if [ $? -eq 0 ]
 		then
-			log_write "....OK - update-grub"
+			log_write "....OK: update-grub"
 			rtnvalue=0
 		else
 			log_write "....ERROR: update-grub"
@@ -69,8 +69,9 @@ setup_grub_with_splash ()
 # =====================================
 # Copy files used by the delayed_splash
 # =====================================
-copy_delayed_splash_files ()
+copy_delayed_splash_files()
 {
+	log_write "copy_delayed_splash_files()"
     rtnvalue=1
 
 	# Copy delayed_splash_exec.sh
@@ -79,7 +80,7 @@ copy_delayed_splash_files ()
 		sudo mkdir /delayed_splash
 		if [ $? -eq 0 ]
 		then
-			log_write "....OK - Creating /delayed_splash"
+			log_write "....OK: Creating /delayed_splash"
 			rtnvalue=0
 		else
 			log_write "....ERROR: Creating /delayed_splash"
@@ -93,7 +94,7 @@ copy_delayed_splash_files ()
 	sudo cp ./delayed_splash_exec.sh /delayed_splash/
     if [ $? -eq 0 ]
     then
-        log_write "....OK - Copying delayed_splash_exec.sh"
+        log_write "....OK: Copying delayed_splash_exec.sh"
         rtnvalue=0
     else
         log_write "....ERROR: Copying delayed_splash_exec.sh"
@@ -103,7 +104,7 @@ copy_delayed_splash_files ()
 	sudo cp ./hub_background.png /delayed_splash/
     if [ $? -eq 0 ]
     then
-        log_write "....OK - Copying hub_background.png"
+        log_write "....OK: Copying hub_background.png"
         rtnvalue=0
     else
         log_write "....ERROR: Copying hub_background.png"
@@ -115,6 +116,7 @@ copy_delayed_splash_files ()
 # =====================================
 install_plymouth()
 {
+	log_write "install_plymouth()"
 #    if [ ! -f /usr/share/plymouth/themes/default.plymouth ]
 #    then
         # Update the package index:
@@ -129,7 +131,7 @@ install_plymouth()
             log_write "ERROR: plymouth is not installed."
             rtnvalue=1
         else
-            log_write "OK - Plymouth is installed."
+            log_write "OK: Plymouth is installed."
             rtnvalue=0
         fi
 #    else
@@ -142,13 +144,13 @@ install_plymouth()
 # =====================================
 copy_vetscan_splash()
 {
+	log_write "copy_vetscan_splash()"
     rtnvalue=1
 
-    log_write "Copying vetscan splash files"
     sudo cp -r ./files/usr/share/plymouth/themes/vetscan_splash /usr/share/plymouth/themes/
     if [ $? -eq 0 ]
     then
-        log_write "OK - Copying vetscan splash files"
+        log_write "OK: Copying vetscan splash files"
         rtnvalue=0
     else
         log_write "ERROR: Copying vetscan splash files"
@@ -160,15 +162,15 @@ copy_vetscan_splash()
 # =====================================
 setup_vetscan_splash()
 {
+	log_write "setup_vetscan_splash()"
     rtnvalue=1
 
-    log_write "update-alternatives --install ... "
     # update-alternatives --install <link> <name> <path> <priority>
     # Note vetscan_splash needs to be set with the highest priority (200)
     sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vetscan_splash/vetscan_splash.plymouth 200
     if [ $? -eq 0 ]
     then
-        log_write "OK - update-alternatives --install ..."
+        log_write "OK: update-alternatives --install ..."
         rtnvalue=0
     else
         log_write "ERROR: update-alternatives --install ..."
@@ -181,7 +183,7 @@ setup_vetscan_splash()
         sudo update-initramfs -u
         if [ $? -eq 0 ]
         then
-            log_write "OK - update-initramfs -u"
+            log_write "OK: update-initramfs -u"
             rtnvalue=0
         else
             log_write "ERROR: update-initramfs -u"
@@ -193,12 +195,13 @@ setup_vetscan_splash()
 # =====================================
 # install the service for starting the delayed_splash
 # =====================================
-install_service ()
+install_service()
 {
+	log_write "install_service()"
 	sudo chmod +x /delayed_splash/delayed_splash_exec.sh
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - chmod +x delayed_splash_exec.sh"
+		log_write "....OK: chmod +x delayed_splash_exec.sh"
 		rtnvalue=0
 	else
 		log_write "....ERROR: chmod +x delayed_splash_exec.sh"
@@ -213,7 +216,7 @@ install_service ()
 		sudo cp ./delayed_splash.service /etc/systemd/system
 		if [ $? -eq 0 ]
 		then
-			log_write "....OK - Copying delayed_splash.service"
+			log_write "....OK: Copying delayed_splash.service"
 			rtnvalue=0
 		else
 			log_write "....ERROR: Copying delayed_splash.service"
@@ -228,7 +231,7 @@ install_service ()
 		sudo systemctl enable delayed_splash.service
 		if [ $? -eq 0 ]
 		then
-			log_write "....OK - update-rc.d"
+			log_write "....OK: update-rc.d"
 			rtnvalue=0
 		else
 			log_write "....ERROR: update-rc.d"
@@ -240,12 +243,13 @@ install_service ()
 # =====================================
 # Install gnome extension
 # =====================================
-install_gnome_extension ()
+install_gnome_extension()
 {
+	log_write "install_gnome_extension()"
 	sudo apt install gnome-shell-extension-prefs
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - install gnome extension"
+		log_write "....OK: install gnome extension"
 		rtnvalue=0
 	else
 		log_write "....ERROR: install gnome extension"
@@ -256,12 +260,13 @@ install_gnome_extension ()
 # =====================================
 # Disable desktop icons, dock, app indicators
 # =====================================
-disable_desktop_icons_etc ()
+disable_desktop_icons_etc()
 {
+	log_write "disable_desktop_icons_etc()"
 	gnome-extensions disable desktop-icons@csoriano
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - disable desktop-icons@csoriano"
+		log_write "....OK: disable desktop-icons@csoriano"
 		rtnvalue=0
 	else
 		log_write "....ERROR: disable desktop-icons@csoriano"
@@ -271,7 +276,7 @@ disable_desktop_icons_etc ()
 	gnome-extensions disable ubuntu-appindicators@ubuntu.com
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - disable ubuntu-appindicators@ubuntu.com"
+		log_write "....OK: disable ubuntu-appindicators@ubuntu.com"
 		rtnvalue=0
 	else
 		log_write "....ERROR: disable ubuntu-appindicators@ubuntu.com"
@@ -281,7 +286,7 @@ disable_desktop_icons_etc ()
 	gnome-extensions disable ubuntu-dock@ubuntu.com
 	if [ $? -eq 0 ]
 	then
-		log_write "....OK - disable ubuntu-dock@ubuntu.com"
+		log_write "....OK: disable ubuntu-dock@ubuntu.com"
 		rtnvalue=0
 	else
 		log_write "....ERROR: disable ubuntu-dock@ubuntu.com"
@@ -292,8 +297,9 @@ disable_desktop_icons_etc ()
 # =====================================
 # Modify the default Ubuntu plymouth splash
 # =====================================
-modify_ubuntu_plymouth_splash ()
+modify_ubuntu_plymouth_splash()
 {
+	log_write "modify_ubuntu_plymouth_splash()"
 	if [ -f /usr/share/plymouth/themes/spinner/watermake.png ]
 	then
 		# the watermake.png file contains the Ubuntu logo.
@@ -301,19 +307,111 @@ modify_ubuntu_plymouth_splash ()
 		sudo mv /usr/share/plymouth/themes/spinner/watermake.png /usr/share/plymouth/themes/spinner/watermake.png.org
 		if [ $? -eq 0 ]
 		then
-			log_write "....OK - mv ...watermake.png"
+			log_write "....OK: mv ...watermake.png"
 			rtnvalue=0
 		else
 			log_write "....ERROR: mv ...watermake.png"
 			rtnvalue=1
 		fi
 	else
-		log_write "....OK - watermake.png"
+		log_write "....OK: watermake.png"
 		rtnvalue=0
 	fi
 }
 
-main ()
+# =====================================
+# Copy autostart files
+# =====================================
+copy_autostart_files()
+{
+	log_write "copy_autostart_files()"
+    rtnvalue=1
+
+    sudo cp -r ./files/.config/autostart/bootScreen.desktop /home/vetscan/.config/autostart/bootScreen.desktop
+    if [ $? -eq 0 ]
+    then
+        log_write "OK: Copied bootScreen.desktop"
+        rtnvalue=0
+    else
+        log_write "ERROR: Copying bootScreen.desktop"
+		rtnvalue=1
+    fi
+	
+    if [ $? -eq 0 ]
+    then
+		sudo chmod 755 /home/vetscan/.config/autostart/bootScreen.desktop
+		if [ $? -eq 0 ]
+		then
+			log_write "....OK: chmod 755 ...bootScreen.desktop"
+			rtnvalue=0
+		else
+			log_write "....ERROR: chmod 755 ...bootScreen.desktop"
+			rtnvalue=1
+		fi
+	fi
+	
+    if [ $? -eq 0 ]
+		then
+		sudo cp -r ./files/Desktop/Screen_3.jpg /home/vetscan/Desktop/Screen_3.jpg
+		if [ $? -eq 0 ]
+		then
+			log_write "OK: Copied Screen_3.jpg"
+			rtnvalue=0
+		else
+			log_write "ERROR: Copying Screen_3.jpg"
+			rtnvalue=1
+		fi
+	fi
+
+    if [ $? -eq 0 ]
+    then
+		sudo cp -r ./files/Desktop/kiosk.sh /home/vetscan/Desktop/kiosk.sh
+		if [ $? -eq 0 ]
+		then
+			log_write "OK: Copied kiosk.sh"
+			rtnvalue=0
+		else
+			log_write "ERROR: Copying kiosk.sh"
+			rtnvalue=1
+		fi
+	fi
+	
+    if [ $? -eq 0 ]
+    then
+		sudo chmod 775 /home/vetscan/Desktop/kiosk.sh
+		if [ $? -eq 0 ]
+		then
+			log_write "OK: chmod 775 ...kiosk.sh"
+			rtnvalue=0
+		else
+			log_write "ERROR: chmod 775 ...kiosk.sh"
+			rtnvalue=1
+		fi
+	fi
+
+}
+
+# =====================================
+# Set the desktop's background color to white
+# =====================================
+set_desktop_background_color()
+{
+	log_write "copy_autostart_files()"
+    rtnvalue=1
+
+    sudo gsettings set org.gnome.desktop.background secondary-color '#000000'
+    if [ $? -eq 0 ]
+    then
+        log_write "OK: gsettings ...background"
+        rtnvalue=0
+    else
+        log_write "ERROR: gsettings ...background"
+		rtnvalue=1
+    fi
+}
+
+
+main()
 {
     log_init
 
@@ -322,6 +420,16 @@ main ()
     if [ 0 -eq $rtnvalue ]
     then
 		modify_ubuntu_plymouth_splash
+	fi
+	
+    if [ 0 -eq $rtnvalue ]
+    then
+		copy_autostart_files
+	fi
+	
+    if [ 0 -eq $rtnvalue ]
+    then
+		set_desktop_background_color
 	fi
 	
     if [ 0 -eq $rtnvalue ]
