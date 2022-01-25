@@ -128,10 +128,10 @@ install_plymouth()
         if [ ! -f /usr/share/plymouth/themes/default.plymouth ]
         then
             log_write "File does not exist: /usr/share/plymouth/themes/default.plymouth"
-            log_write "ERROR: plymouth is not installed."
+            log_write "....ERROR: plymouth is not installed."
             rtnvalue=1
         else
-            log_write "OK: Plymouth is installed."
+            log_write "....OK: Plymouth is installed."
             rtnvalue=0
         fi
 #    else
@@ -150,10 +150,10 @@ copy_vetscan_splash()
     sudo cp -r ./files/usr/share/plymouth/themes/vetscan_splash /usr/share/plymouth/themes/
     if [ $? -eq 0 ]
     then
-        log_write "OK: Copying vetscan splash files"
+        log_write "....OK: Copying vetscan splash files"
         rtnvalue=0
     else
-        log_write "ERROR: Copying vetscan splash files"
+        log_write "....ERROR: Copying vetscan splash files"
     fi
 }
 
@@ -170,10 +170,10 @@ setup_vetscan_splash()
     sudo update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth /usr/share/plymouth/themes/vetscan_splash/vetscan_splash.plymouth 200
     if [ $? -eq 0 ]
     then
-        log_write "OK: update-alternatives --install ..."
+        log_write "....OK: update-alternatives --install ..."
         rtnvalue=0
     else
-        log_write "ERROR: update-alternatives --install ..."
+        log_write "....ERROR: update-alternatives --install ..."
         rtnvalue=1
     fi
 
@@ -183,10 +183,10 @@ setup_vetscan_splash()
         sudo update-initramfs -u
         if [ $? -eq 0 ]
         then
-            log_write "OK: update-initramfs -u"
+            log_write "....OK: update-initramfs -u"
             rtnvalue=0
         else
-            log_write "ERROR: update-initramfs -u"
+            log_write "....ERROR: update-initramfs -u"
             rtnvalue=1
         fi
     fi
@@ -330,10 +330,10 @@ copy_autostart_files()
     sudo cp -r ./files/.config/autostart/bootScreen.desktop /home/vetscan/.config/autostart/bootScreen.desktop
     if [ $? -eq 0 ]
     then
-        log_write "OK: Copied bootScreen.desktop"
+        log_write "....OK: Copied bootScreen.desktop"
         rtnvalue=0
     else
-        log_write "ERROR: Copying bootScreen.desktop"
+        log_write "....ERROR: Copying bootScreen.desktop"
 		rtnvalue=1
     fi
 	
@@ -355,10 +355,10 @@ copy_autostart_files()
 		sudo cp -r ./files/Desktop/Screen_3.jpg /home/vetscan/Desktop/Screen_3.jpg
 		if [ $? -eq 0 ]
 		then
-			log_write "OK: Copied Screen_3.jpg"
+			log_write "....OK: Copied Screen_3.jpg"
 			rtnvalue=0
 		else
-			log_write "ERROR: Copying Screen_3.jpg"
+			log_write "....ERROR: Copying Screen_3.jpg"
 			rtnvalue=1
 		fi
 	fi
@@ -368,10 +368,10 @@ copy_autostart_files()
 		sudo cp -r ./files/Desktop/kiosk.sh /home/vetscan/Desktop/kiosk.sh
 		if [ $? -eq 0 ]
 		then
-			log_write "OK: Copied kiosk.sh"
+			log_write "....OK: Copied kiosk.sh"
 			rtnvalue=0
 		else
-			log_write "ERROR: Copying kiosk.sh"
+			log_write "....ERROR: Copying kiosk.sh"
 			rtnvalue=1
 		fi
 	fi
@@ -381,10 +381,10 @@ copy_autostart_files()
 		sudo chmod 775 /home/vetscan/Desktop/kiosk.sh
 		if [ $? -eq 0 ]
 		then
-			log_write "OK: chmod 775 ...kiosk.sh"
+			log_write "....OK: chmod 775 ...kiosk.sh"
 			rtnvalue=0
 		else
-			log_write "ERROR: chmod 775 ...kiosk.sh"
+			log_write "....ERROR: chmod 775 ...kiosk.sh"
 			rtnvalue=1
 		fi
 	fi
@@ -402,14 +402,45 @@ set_desktop_background_color()
     sudo gsettings set org.gnome.desktop.background secondary-color '#000000'
     if [ $? -eq 0 ]
     then
-        log_write "OK: gsettings ...background"
+        log_write "....OK: gsettings ...background color"
         rtnvalue=0
     else
-        log_write "ERROR: gsettings ...background"
+        log_write "....ERROR: gsettings ...background color"
 		rtnvalue=1
     fi
 }
 
+# =====================================
+# Set the desktop's background image
+# =====================================
+set_desktop_background_picture()
+{
+	log_write "set_desktop_background_picture()"
+    rtnvalue=1
+
+	sudo cp -r ./files/Desktop/Screen_2.gif /home/vetscan/Desktop/Screen_2.gif
+	if [ $? -eq 0 ]
+	then
+		log_write "....OK: Copied Screen_2.gif"
+		rtnvalue=0
+	else
+		log_write "....ERROR: Copying Screen_2.gif"
+		rtnvalue=1
+	fi
+
+	if [ $? -eq 0 ]
+	then
+		sudo gsettings set org.gnome.desktop.background picture-uri /home/vetscan/Desktop/Screen_2.gif 
+		if [ $? -eq 0 ]
+		then
+			log_write "....OK: gsettings ...background picture"
+			rtnvalue=0
+		else
+			log_write "....ERROR: gsettings ...background picture"
+			rtnvalue=1
+		fi
+	fi
+}
 
 main()
 {
@@ -430,6 +461,11 @@ main()
     if [ 0 -eq $rtnvalue ]
     then
 		set_desktop_background_color
+	fi
+	
+    if [ 0 -eq $rtnvalue ]
+    then
+		set_desktop_background_picture
 	fi
 	
     if [ 0 -eq $rtnvalue ]

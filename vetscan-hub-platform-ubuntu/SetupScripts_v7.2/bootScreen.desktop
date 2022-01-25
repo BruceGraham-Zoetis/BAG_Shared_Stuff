@@ -1,6 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=kiosk screen
-Exec=/home/vetscan/Desktop/kiosk.sh
-Hidden=false
-X-GNOME-Autostart-enabled=true
